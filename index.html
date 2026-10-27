@@ -258,7 +258,32 @@ body.cam .pv-top .nm{color:#fff;text-shadow:0 1px 10px rgba(0,20,50,.85)}
 .ic.xl{width:96px;height:96px;font-size:50px;border-radius:30px}
 
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
-h1,h2,h3,h4,.brand b,.sectitle,.hint b,.nm b,.hero2 b,.sheet h3,.sheet h4,.hero h1,.sheet h3{font-family:var(--font-t)!important;font-weight:700!important}
+h1,h2,h3,h4,.brand b,.sectitle,.hint b,.nm b,.hero2 b,.sheet h3,.sheet h4,.hero h1,.acard b,.big,.pit b,.alt b,.lit b,.cmpP b,.sc-top .t,.kicker,.cm small,.misalco p,.empty b{font-family:var(--font-t)!important;font-weight:700!important}
+
+/* ===== Tarjetas de información: estilo sobrio y profesional ===== */
+.acard{--ac:var(--blue);border-radius:14px;padding:11px 13px 11px 15px;font-size:12px;font-weight:600;line-height:1.35;letter-spacing:.005em;color:#16314d;background:rgba(255,255,255,.93);border:1px solid rgba(255,255,255,.7);box-shadow:0 1px 0 rgba(255,255,255,.8) inset,0 10px 24px -10px rgba(0,35,80,.55),0 2px 6px -2px rgba(0,35,80,.25);overflow:hidden;transition:box-shadow .2s,background .2s}
+.acard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3.5px;background:var(--ac);border-radius:14px 0 0 14px}
+.acard b{font-family:var(--font-t);font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--ac);margin-bottom:5px;padding-right:16px}
+.acard .more{position:absolute;right:11px;top:10px;width:7px;height:7px;border-top:2px solid #9bb0c4;border-right:2px solid #9bb0c4;transform:rotate(45deg);font-size:0;transition:transform .2s,border-color .2s}
+.acard:active{background:#fff}.acard:active .more{border-color:var(--ac);transform:rotate(45deg) translate(2px,-2px)}
+.acard .big{font-family:var(--font-t);font-size:19px;font-weight:700;letter-spacing:-.01em;color:#0b2a4a}
+.acard .big small{font-size:11px;font-weight:600;color:#6a8199}
+.acard .pill{border-radius:7px;font-size:10.5px;font-weight:700;padding:3px 8px;margin:2px 3px 0 0}
+.acard.ar{padding:11px 13px 11px 15px;background:rgba(255,255,255,.93)}
+.acard::after{display:none}
+.acard{animation:cardIn .7s cubic-bezier(.2,.8,.2,1) both}
+.acard.ar{animation:cardIn .7s cubic-bezier(.2,.8,.2,1) both}
+@keyframes cardIn{0%{opacity:0;translate:0 16px;scale:.92;filter:blur(6px)}60%{filter:blur(0)}100%{opacity:1;translate:0 0;scale:1;filter:blur(0)}}
+.acard::before{animation:barIn .6s .25s cubic-bezier(.2,.8,.2,1) both;transform-origin:top}
+@keyframes barIn{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+#arSvg line{stroke-dasharray:600;stroke-dashoffset:600;animation:draw .9s .1s ease-out forwards;stroke:rgba(255,255,255,.9);stroke-width:1.75;filter:drop-shadow(0 0 3px rgba(0,60,130,.8))}
+@keyframes draw{to{stroke-dashoffset:0}}
+#arSvg circle{r:4.5;stroke-width:2.5;animation:popIn .5s .6s cubic-bezier(.2,.8,.2,1) both;transform-box:fill-box;transform-origin:center}
+@keyframes popIn{from{opacity:0;transform:scale(0)}to{opacity:1;transform:scale(1)}}
+.arBox i{width:18px;height:18px;border-width:3px;animation:cornerIn .6s cubic-bezier(.2,.8,.2,1) both}
+.arBox{animation:fadein .4s both}
+@keyframes cornerIn{from{opacity:0;scale:1.5}to{opacity:1;scale:1}}
+@media (prefers-reduced-motion:reduce){.acard,.acard::before,#arSvg line,#arSvg circle,.arBox i{animation-duration:.01s!important;animation-delay:0s!important}}
 </style>
 </head>
 <body>
@@ -365,8 +390,8 @@ h1,h2,h3,h4,.brand b,.sectitle,.hint b,.nm b,.hero2 b,.sheet h3,.sheet h4,.hero 
 
 <script src="lib/zxing.min.js"></script>
 <script src="lib/qrcode.js"></script>
-<script src="js/config.js"></script>
-<script src="js/ar.js"></script>
-<script src="js/app.js"></script>
+<script src="js/config.js?v=8"></script>
+<script src="js/ar.js?v=8"></script>
+<script src="js/app.js?v=8"></script>
 </body>
 </html>
