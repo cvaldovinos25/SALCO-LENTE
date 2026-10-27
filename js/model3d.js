@@ -68,7 +68,7 @@
   function fromImage(THREE, im, m) {
     const IW = im.naturalWidth || im.width, IH = im.naturalHeight || im.height, rc = m.recorte || [0, 0, 1, 1];
     const sx = rc[0] * IW, sy = rc[1] * IH, sw = (rc[2] - rc[0]) * IW, sh = (rc[3] - rc[1]) * IH;
-    const MAXS = 520, k = Math.min(1, MAXS / Math.max(sw, sh));
+    const MAXS = 1024, k = Math.min(1, MAXS / Math.max(sw, sh));
     const cw = Math.max(8, Math.round(sw * k)), ch = Math.max(8, Math.round(sh * k));
     const cv = document.createElement('canvas'); cv.width = cw; cv.height = ch;
     const ctx = cv.getContext('2d', { willReadFrequently: true });
@@ -95,7 +95,7 @@
     const Hp = bot - top + 1, Wp = R - L + 1, asp = Wp / Hp;
     if (asp > 1.8 || asp < 0.12) return null;
     const avg = new THREE.Color(sr / sn / 255, sg / sn / 255, sb / sn / 255).lerp(new THREE.Color(1, 1, 1), 0.15);
-    const tex = new THREE.CanvasTexture(cv); tex.encoding = THREE.sRGBEncoding; tex.anisotropy = 8;
+    const tex = new THREE.CanvasTexture(cv); tex.encoding = THREE.sRGBEncoding; tex.anisotropy = 16;
     const H = 2.6, sc = H / Hp, tipo = m.tipo;
     const g = new THREE.Group();
     if (tipo === 'caja') {
@@ -133,7 +133,7 @@
     for (let i = N - 1; i >= 0; i--) pts.push(new THREE.Vector2(sm[i], yb(i)));
     for (let k2 = 1; k2 <= 5; k2++) { const a = (k2 / 5) * Math.PI / 2, b2 = bv(rT); pts.push(new THREE.Vector2(Math.max(0.0001, rT - b2 + b2 * Math.cos(a)), H / 2 - b2 + b2 * Math.sin(a))); }
     pts.push(new THREE.Vector2(0.0001, H / 2));
-    const geo = new THREE.LatheGeometry(pts, 96), pos = geo.attributes.position, uv = geo.attributes.uv;
+    const geo = new THREE.LatheGeometry(pts, 128), pos = geo.attributes.position, uv = geo.attributes.uv;
     for (let i = 0; i < pos.count; i++) {
       const px = cx0 + pos.getX(i) / sc, py = top + (H / 2 - pos.getY(i)) / sc;
       uv.setXY(i, Math.max(0.001, Math.min(0.999, px / cw)), 1 - Math.max(0, Math.min(ch - 1, py)) / ch);
@@ -154,7 +154,7 @@
       bx2.fillStyle = 'rgb(' + Math.round(r / n * 0.97) + ',' + Math.round(g2 / n * 0.97) + ',' + Math.round(b2 / n * 0.97) + ')'; bx2.fillRect(0, y, 1, 1);
     }
     const btex = new THREE.CanvasTexture(bc); btex.encoding = THREE.sRGBEncoding; btex.magFilter = btex.minFilter = THREE.LinearFilter; btex.generateMipmaps = false;
-    const mat = new THREE.MeshPhysicalMaterial({ map: tex, roughness: .34, metalness: .04, clearcoat: .55, clearcoatRoughness: .25, side: THREE.DoubleSide });
+    const mat = new THREE.MeshPhysicalMaterial({ map: tex, roughness: .36, metalness: .03, clearcoat: .45, clearcoatRoughness: .28, envMapIntensity: .55, side: THREE.DoubleSide });
     mat.onBeforeCompile = (sh) => {
       sh.uniforms.uBackTex = { value: btex }; sh.uniforms.uR = { value: rmax };
       sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying float vObjZ;').replace('#include <begin_vertex>', '#include <begin_vertex>\nvObjZ = position.z;');
@@ -171,7 +171,7 @@
     const m = Object.assign({ tipo: 'frasco', color: '#8fd3ff', acento: '#007dc3' }, p.modelo || {});
     const g = new THREE.Group();
     const col = new THREE.Color(m.color), acc = new THREE.Color(m.acento);
-    const body = (op) => new THREE.MeshPhysicalMaterial({ color: col, roughness: .22, metalness: .05, clearcoat: .8, clearcoatRoughness: .2, transparent: op < 1, opacity: op });
+    const body = (op) => new THREE.MeshPhysicalMaterial({ envMapIntensity: .6, color: col, roughness: .22, metalness: .05, clearcoat: .8, clearcoatRoughness: .2, transparent: op < 1, opacity: op });
     const cap = new THREE.MeshStandardMaterial({ color: acc, roughness: .35, metalness: .15 });
     const white = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: .4 });
     const lathe = (pts, mat, seg) => new THREE.Mesh(new THREE.LatheGeometry(pts.map((a) => new THREE.Vector2(a[0], a[1])), seg || 64), mat);
@@ -234,12 +234,23 @@
     renderer.outputEncoding = THREE.sRGBEncoding;
     const cv = renderer.domElement; cv.className = 'm3d'; cv.setAttribute('aria-label', 'Modelo 3D de ' + p.nombre);
     el.innerHTML = ''; el.appendChild(cv);
-    const hint = document.createElement('div'); hint.className = 'm3dhint'; hint.textContent = '↔ Arrastra para girar'; el.appendChild(hint);
+    const hint = document.createElement('div'); hint.className = 'm3dhint'; hint.textContent = '↔ Gira · pellizca para acercar'; el.appendChild(hint);
     const scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(32, 1, .1, 50);
-    cam.position.set(0, .15, 7.2);
+    cam.position.set(0, .05, 5.3);
     scene.add(new THREE.HemisphereLight(0xffffff, 0xbcd6ea, .95));
     const key = new THREE.DirectionalLight(0xffffff, 1.15); key.position.set(3, 4, 5); scene.add(key);
     const rim = new THREE.DirectionalLight(0x9fd8ff, .6); rim.position.set(-4, 2, -3); scene.add(rim);
+    // reflejos realistas: entorno de estudio (cielo degradado + dos cajas de luz) convertido a mapa de entorno
+    try {
+      const es = new THREE.Scene(), ec = document.createElement('canvas'); ec.width = 8; ec.height = 256; const ex = ec.getContext('2d');
+      const eg = ex.createLinearGradient(0, 0, 0, 256); eg.addColorStop(0, '#dfe9f0'); eg.addColorStop(.45, '#a9bccb'); eg.addColorStop(.55, '#6f8294'); eg.addColorStop(1, '#a8b5a8'); ex.fillStyle = eg; ex.fillRect(0, 0, 8, 256);
+      const et = new THREE.CanvasTexture(ec); et.encoding = THREE.sRGBEncoding;
+      es.add(new THREE.Mesh(new THREE.SphereGeometry(20, 32, 16), new THREE.MeshBasicMaterial({ map: et, side: THREE.BackSide })));
+      const box = (w, h, x, y, z, i) => { const m2 = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: new THREE.Color(i, i, i), side: THREE.DoubleSide })); m2.position.set(x, y, z); m2.lookAt(0, 0, 0); es.add(m2); };
+      box(9, 14, 12, 3, 8, 2.2); box(5, 12, -13, 2, 4, 1.4); box(16, 3, 0, 14, 0, 1.8);
+      const pm = new THREE.PMREMGenerator(renderer); scene.environment = pm.fromScene(es, 0.02).texture; pm.dispose();
+      es.traverse((o) => { if (o.geometry) o.geometry.dispose(); if (o.material) { if (o.material.map) o.material.map.dispose(); o.material.dispose(); } });
+    } catch (e) { /* sin entorno: se usan solo las luces */ }
     const model = build(THREE, p); const pivot = new THREE.Group(); pivot.add(model); scene.add(pivot);
     let pop = 1;
     if (p.imagen) {
@@ -261,22 +272,30 @@
     const sh = new THREE.Mesh(new THREE.PlaneGeometry(2.8, 2.8), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(sc), transparent: true, depthWrite: false }));
     sh.rotation.x = -Math.PI / 2; sh.position.y = -1.55; scene.add(sh);
 
-    let dead0 = 0, rx = -.12, ry = -.5, vx = 0, vy = 0, drag = false, lx = 0, ly = 0, idle = 0, raf = 0, dead = false, w = 0, h = 0;
+    let dead0 = 0, rx = -.12, ry = -.5, vx = 0, vy = 0, drag = false, lx = 0, ly = 0, idle = 0, raf = 0, dead = false, w = 0, h = 0, baseZ = 5.7;
     const resize = () => {
       const r = el.getBoundingClientRect(); const nw = Math.max(1, Math.round(r.width)), nh = Math.max(1, Math.round(r.height));
       if (nw === w && nh === h) return; w = nw; h = nh; renderer.setSize(w, h, false); cv.style.width = w + 'px'; cv.style.height = h + 'px';
-      cam.aspect = w / h; cam.position.z = w / h < .8 ? 8.4 : 7.2; cam.updateProjectionMatrix();
+      cam.aspect = w / h; baseZ = w / h < .7 ? 6.6 : 5.7; cam.updateProjectionMatrix();
     };
     const down = (e) => { drag = true; lx = e.clientX; ly = e.clientY; vx = vy = 0; idle = 0; hint.classList.add('off'); try { cv.setPointerCapture(e.pointerId); } catch (x) {} };
     const move = (e) => { if (!drag) return; const dx = e.clientX - lx, dy = e.clientY - ly; lx = e.clientX; ly = e.clientY; vy = dx * .012; vx = dy * .008; ry += vy; rx = Math.max(-.8, Math.min(.8, rx + vx)); };
-    const up = () => { drag = false; };
-    cv.addEventListener('pointerdown', down); cv.addEventListener('pointermove', move); cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up);
+    const ptrs = new Map(); let zoom = 1, pd0 = 0, z0 = 1;
+    const setZoom = (z) => { zoom = Math.max(0.65, Math.min(1.9, z)); };
+    const down2 = down, move2 = move;
+    const up = (e) => { drag = false; if (e && e.pointerId != null) ptrs.delete(e.pointerId); };
+    cv.addEventListener('pointerdown', (e) => { ptrs.set(e.pointerId, [e.clientX, e.clientY]); if (ptrs.size === 2) { const a = [...ptrs.values()]; pd0 = Math.hypot(a[0][0] - a[1][0], a[0][1] - a[1][1]); z0 = zoom; drag = false; } else down(e); });
+    cv.addEventListener('pointermove', (e) => { if (ptrs.has(e.pointerId)) ptrs.set(e.pointerId, [e.clientX, e.clientY]); if (ptrs.size === 2) { const a = [...ptrs.values()]; setZoom(z0 * Math.hypot(a[0][0] - a[1][0], a[0][1] - a[1][1]) / (pd0 || 1)); hint.classList.add('off'); } else move(e); });
+    cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up);
+    cv.addEventListener('wheel', (e) => { e.preventDefault(); setZoom(zoom * (e.deltaY < 0 ? 1.08 : 0.92)); hint.classList.add('off'); }, { passive: false });
+    cv.addEventListener('dblclick', () => setZoom(zoom > 1.2 ? 1 : 1.6));
     const ro = window.ResizeObserver ? new ResizeObserver(resize) : null; if (ro) ro.observe(el);
     const t0 = performance.now();
     const loop = (t) => {
       if (dead) return; raf = requestAnimationFrame(loop); resize();
       if (!drag) { idle++; if (idle > 90) ry += .008; ry += vy * .92; vy *= .92; rx += vx * .9; vx *= .9; rx += (-.12 - rx) * .01; rx = Math.max(-.8, Math.min(.8, rx)); }
       const f = Math.sin((t - t0) / 900) * .05;
+      cam.position.z += (baseZ / zoom - cam.position.z) * 0.18;
       if (pop < 1) pop = Math.min(1, pop + .06); pivot.scale.setScalar(pop);
       pivot.rotation.set(rx, ry, 0); pivot.position.y = f; sh.scale.setScalar(1 - f * .6);
       renderer.render(scene, cam);
