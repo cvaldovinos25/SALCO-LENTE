@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#007dc3">
+<title>Salco Lente | Farmacias Salcobrand</title>
+<meta name="description" content="Apunta la cámara a un producto y descubre qué es, cómo se usa y si es para ti.">
+<link rel="icon" href="img/sb-logo.png">
+<style>
+:root{
+  --blue:#007dc3;--blue-d:#005b94;--sky:#00a9e8;--green:#96c11f;--yellow:#ffd500;--orange:#f29100;--coral:#ff5b3a;
+  --ink:#0b2540;--muted:#5a6f85;--bg:#f1f8ff;--r:26px;
+  --shadow:0 18px 40px -20px rgba(0,70,140,.45);
+  --grad-main:linear-gradient(135deg,#005fb0 0%,#007dc3 40%,#00a9e8 80%,#35d6c4 100%);
+  --grad-cta:linear-gradient(135deg,#005fb0,#007dc3 45%,#00a9e8);
+  --grad-fun:linear-gradient(90deg,#007dc3,#00a9e8 40%,#96c11f 80%,#c8e23c);
+  --font:ui-rounded,"SF Pro Rounded","Nunito","Segoe UI Variable",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{color-scheme:light}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--font);-webkit-font-smoothing:antialiased;min-height:100vh;min-height:100dvh;overflow-x:hidden}
+h1,h2,h3{margin:0;line-height:1.1;letter-spacing:-.025em}
+p{margin:0}
+button{font:inherit;cursor:pointer;color:inherit}
+.hidden{display:none!important}
+
+/* Fondo */
+.bg{position:fixed;inset:0;z-index:-2;overflow:hidden;background:
+  radial-gradient(900px 600px at 110% -10%,#bfeaff 0%,transparent 60%),
+  radial-gradient(700px 500px at -20% 30%,#e6f7c8 0%,transparent 60%),
+  radial-gradient(700px 500px at 110% 85%,#fff1b8 0%,transparent 60%),#f1f8ff}
+.bg i{position:absolute;border-radius:50%;filter:blur(46px);opacity:.55;animation:drift 18s ease-in-out infinite alternate}
+.bg i:nth-child(1){width:300px;height:300px;left:-90px;top:10%;background:#7fdcff}
+.bg i:nth-child(2){width:260px;height:260px;right:-80px;top:44%;background:#d4ee6a;animation-duration:22s;animation-delay:-6s}
+.bg i:nth-child(3){width:240px;height:240px;left:20%;bottom:-90px;background:#ffe36b;animation-duration:26s;animation-delay:-12s}
+@keyframes drift{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(40px,-60px,0) scale(1.18)}}
+
+/* Barra superior */
+.top{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.74);backdrop-filter:saturate(1.8) blur(18px);-webkit-backdrop-filter:saturate(1.8) blur(18px);padding-top:env(safe-area-inset-top)}
+.top::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:linear-gradient(90deg,var(--sky),var(--green),var(--yellow),var(--orange),var(--coral),var(--sky));background-size:200% 100%;animation:slide 8s linear infinite}
+@keyframes slide{to{background-position:200% 0}}
+.top-in{max-width:560px;margin:auto;display:flex;align-items:center;gap:12px;padding:10px 16px 11px}
+.top img{width:44px;height:auto;display:block;filter:drop-shadow(0 4px 8px rgba(0,125,195,.35))}
+.brand{display:flex;flex-direction:column;line-height:1.02}
+.brand b{font-size:19px;font-weight:900;letter-spacing:-.03em;background:linear-gradient(90deg,var(--blue-d),var(--blue) 60%,var(--sky));-webkit-background-clip:text;background-clip:text;color:transparent}
+.brand small{font-size:11px;font-weight:800;color:var(--muted);letter-spacing:.14em;text-transform:uppercase}
+.pbtn{margin-left:auto;display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:999px;border:1px solid rgba(0,125,195,.2);background:linear-gradient(135deg,#e0f4ff,#effad8);color:var(--blue-d);font-size:12.5px;font-weight:800}
+
+.wrap{max-width:560px;margin:auto;padding:18px 16px calc(110px + env(safe-area-inset-bottom))}
+.screen{display:none}
+.screen.on{display:block;animation:in .45s cubic-bezier(.2,.9,.3,1) both}
+@keyframes in{from{opacity:0;transform:translateY(16px) scale(.985)}to{opacity:1;transform:none}}
+
+/* Tarjetas y botones */
+.card{position:relative;background:rgba(255,255,255,.82);backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);border:1.5px solid rgba(255,255,255,.95);border-radius:var(--r);box-shadow:var(--shadow);padding:18px}
+.btn{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border:0;border-radius:999px;padding:16px 20px;font-weight:900;font-size:16.5px;color:#fff;background:var(--grad-cta);box-shadow:0 16px 28px -12px rgba(0,125,195,.8),inset 0 1px 0 rgba(255,255,255,.45);transition:transform .18s cubic-bezier(.2,1.6,.4,1),opacity .2s}
+.btn::after{content:"";position:absolute;top:0;bottom:0;width:60%;left:-80%;background:linear-gradient(110deg,transparent 20%,rgba(255,255,255,.55) 50%,transparent 80%);transform:skewX(-18deg);animation:shine 3.6s ease-in-out infinite}
+@keyframes shine{0%,55%{left:-80%}100%{left:140%}}
+.btn:active{transform:scale(.96)}
+.btn[disabled]{opacity:.5}
+.btn.alt{background:rgba(255,255,255,.9);color:var(--blue-d);box-shadow:inset 0 0 0 2.5px var(--blue),0 8px 18px -12px rgba(0,125,195,.6)}
+.btn.alt::after,.btn.ghost::after{display:none}
+.btn.ghost{background:transparent;color:var(--blue-d);box-shadow:none;font-weight:800;font-size:15px;padding:12px}
+.btn.sm{padding:11px 16px;font-size:14px;width:auto}
+.btn+.btn{margin-top:10px}
+
+/* Inicio */
+.hero{position:relative;overflow:hidden;isolation:isolate;border-radius:32px;color:#fff;padding:26px 22px;background:var(--grad-main);box-shadow:0 28px 50px -22px rgba(0,80,160,.8),inset 0 1px 0 rgba(255,255,255,.4)}
+.hero::before{content:"";position:absolute;inset:-40% -20% auto auto;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(255,225,60,.65),transparent 62%);z-index:-1;animation:drift 12s ease-in-out infinite alternate}
+.kicker{display:inline-flex;gap:6px;align-items:center;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:800;letter-spacing:.04em}
+.hero h1{font-size:38px;font-weight:950;margin:14px 0 10px}
+.hero h1 em{font-style:normal;background:linear-gradient(90deg,#fff 0%,#ffe36b 55%,#c8e23c);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{font-size:16.5px;font-weight:600;opacity:.96;max-width:420px}
+.hero .go{margin-top:20px}
+.hero .btn{background:#fff;color:var(--blue-d);box-shadow:0 14px 26px -12px rgba(0,30,80,.7)}
+.sectitle{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:950;letter-spacing:.1em;text-transform:uppercase;color:var(--blue-d);margin:26px 4px 12px}
+.sectitle::after{content:"";flex:1;height:2.5px;border-radius:9px;background:linear-gradient(90deg,rgba(0,169,232,.45),transparent)}
+.cats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.cat{display:flex;align-items:center;gap:12px;border:0;text-align:left;padding:14px;border-radius:22px;background:rgba(255,255,255,.85);border:1.5px solid rgba(255,255,255,.95);box-shadow:var(--shadow);font-weight:900;font-size:15.5px;transition:transform .18s cubic-bezier(.2,1.6,.4,1)}
+.cat:active{transform:scale(.96)}
+.ic{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;font-size:23px;background:linear-gradient(135deg,var(--c1,#e3f4ff),var(--c2,#f0fadb));box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 6px 14px -8px rgba(0,60,120,.5);flex:none}
+.cat small{display:block;font-size:12px;color:var(--muted);font-weight:700}
+.how{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+.how li{display:flex;gap:12px;align-items:center;font-weight:800}
+.how small{display:block;color:var(--muted);font-weight:600;font-size:13px}
+.legal{font-size:12.5px;color:var(--muted);line-height:1.5;margin-top:22px;padding:0 4px;font-weight:500}
+.foot{text-align:center;color:var(--muted);font-size:12px;margin-top:18px;font-weight:600}
+
+/* Buscar */
+.srch{width:100%;border:1.5px solid rgba(0,125,195,.25);border-radius:999px;padding:14px 18px;font:inherit;font-weight:700;background:rgba(255,255,255,.92);outline:none}
+.srch:focus{border-color:var(--sky);box-shadow:0 0 0 4px rgba(0,169,232,.18)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 14px}
+.chp{border:1.5px solid rgba(0,125,195,.22);background:rgba(255,255,255,.85);border-radius:999px;padding:8px 13px;font-weight:800;font-size:13.5px;color:var(--blue-d)}
+.chp.on{background:var(--grad-cta);color:#fff;border-color:transparent}
+.plist{display:grid;gap:10px}
+.pit{display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:22px;background:rgba(255,255,255,.88);border:1.5px solid rgba(255,255,255,.95);box-shadow:0 12px 24px -18px rgba(0,60,120,.6);text-align:left;width:100%}
+.pit b{font-size:14.5px;font-weight:900;display:block;line-height:1.2}
+.pit .s{font-size:12.5px;color:var(--muted);font-weight:700}
+.pit .p{margin-left:auto;text-align:right;font-weight:950;font-size:14.5px;white-space:nowrap}
+.pit .p small{display:block;font-size:11px;color:var(--muted);font-weight:700}
+.empty{text-align:center;color:var(--muted);font-weight:700;padding:30px 10px}
+
+/* Navegación inferior */
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:30;padding:0 14px calc(10px + env(safe-area-inset-bottom));pointer-events:none}
+.nav-in{pointer-events:auto;max-width:520px;margin:auto;display:grid;grid-template-columns:1fr 1fr 78px 1fr 1fr;align-items:end;background:rgba(255,255,255,.88);backdrop-filter:blur(18px) saturate(1.5);-webkit-backdrop-filter:blur(18px) saturate(1.5);border:1.5px solid rgba(255,255,255,.95);border-radius:28px;box-shadow:0 18px 40px -16px rgba(0,50,110,.55);padding:8px 6px}
+.nb{position:relative;border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0;font-size:11px;font-weight:800;color:var(--muted)}
+.nb span{font-size:22px;line-height:1}
+.nb.on{color:var(--blue)}
+.nb .badge{position:absolute;top:0;right:calc(50% - 22px);min-width:18px;height:18px;border-radius:9px;background:var(--coral);color:#fff;font-size:11px;font-weight:900;display:grid;place-items:center;padding:0 5px}
+.nb.mid{transform:translateY(-18px)}
+.nb.mid .fab{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font-size:28px;color:#fff;background:var(--grad-cta);box-shadow:0 14px 26px -8px rgba(0,125,195,.9),0 0 0 5px rgba(255,255,255,.9)}
+.nb.mid{color:var(--blue-d)}
+
+/* Cámara */
+.camLayer{position:fixed;inset:0;z-index:40;background:#04101e;display:none}
+body.cam .camLayer{display:block}
+.camLayer video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.camLayer::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 80% at 50% 45%,transparent 40%,rgba(0,20,50,.5));pointer-events:none}
+.ov{position:fixed;inset:0;z-index:50;display:none}
+.ov.on{display:block}
+.sc-top{position:absolute;left:0;right:0;top:0;display:flex;align-items:center;gap:10px;padding:calc(12px + env(safe-area-inset-top)) 14px 12px;background:linear-gradient(rgba(0,20,50,.6),transparent);color:#fff}
+.sc-top .t{font-weight:900;font-size:16px;text-shadow:0 1px 8px rgba(0,0,0,.5)}
+.rbtn{white-space:nowrap;flex:none;border:0;border-radius:999px;padding:9px 14px;font-weight:800;font-size:14px;background:rgba(255,255,255,.9);color:var(--blue-d)}
+.reticle{position:absolute;left:50%;top:44%;width:min(76vw,330px);height:min(46vw,200px);transform:translate(-50%,-50%);border-radius:26px;box-shadow:0 0 0 2000px rgba(0,20,50,.38)}
+.reticle svg{position:absolute;inset:-6px;width:calc(100% + 12px);height:calc(100% + 12px)}
+.reticle .laser{position:absolute;left:8%;right:8%;top:10%;height:3px;border-radius:3px;background:linear-gradient(90deg,transparent,var(--green),#fff,var(--green),transparent);box-shadow:0 0 18px 4px rgba(150,193,31,.8);animation:laser 2.2s ease-in-out infinite alternate}
+@keyframes laser{to{top:88%}}
+.reticle.ok{animation:okp .5s}
+@keyframes okp{50%{transform:translate(-50%,-50%) scale(1.06)}}
+.sc-bot{position:absolute;left:14px;right:14px;bottom:calc(20px + env(safe-area-inset-bottom));display:grid;gap:10px}
+.glass{background:rgba(255,255,255,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1.5px solid rgba(255,255,255,.95);border-radius:20px;box-shadow:0 14px 28px -14px rgba(0,30,70,.6)}
+.hint{padding:14px 16px;text-align:center}
+.hint b{display:block;font-size:17px;font-weight:900}
+.hint span{font-size:13px;color:var(--muted);font-weight:600}
+.manual{display:flex;gap:8px}
+.manual input{flex:1;min-width:0;border:0;border-radius:999px;padding:13px 16px;font:inherit;font-weight:800;background:rgba(255,255,255,.95);outline:none}
+.toast{position:fixed;left:50%;top:calc(80px + env(safe-area-inset-top));transform:translateX(-50%);z-index:90;max-width:88vw;background:rgba(11,37,64,.92);color:#fff;border-radius:16px;padding:12px 16px;font-weight:700;font-size:14px;box-shadow:0 14px 30px -10px rgba(0,0,0,.5);animation:in .3s both}
+.flash{position:absolute;inset:0;background:#fff;pointer-events:none;animation:fl .5s ease-out forwards}
+@keyframes fl{from{opacity:.85}to{opacity:0}}
+
+/* Vista de producto (RA) */
+.pv{background:linear-gradient(160deg,#cfe9ff,#eaf6e0 55%,#fff3c4)}
+body.cam .pv{background:none}
+.pv::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,60,120,.4),rgba(0,125,195,.1) 40%,rgba(6,24,50,.55));opacity:0}
+body.cam .pv::before{opacity:1}
+.pv-in{position:absolute;inset:0;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr) auto auto;gap:10px;padding:calc(10px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom))}
+.pv-top{display:flex;align-items:center;gap:10px}
+.pv-top .nm{min-width:0;flex:1;color:var(--ink);text-shadow:none}
+body.cam .pv-top .nm{color:#fff;text-shadow:0 1px 10px rgba(0,20,50,.85)}
+.nm b{display:block;font-size:17px;font-weight:950;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nm small{font-size:12px;font-weight:800;opacity:.9}
+.row2{display:grid;grid-template-columns:1.15fr 1fr;gap:10px;transform:translate3d(calc(var(--tx,0)*-6px),calc(var(--ty,0)*-4px),0);transition:transform .2s}
+.acard{position:relative;text-align:left;border:0;padding:11px 13px;font-size:12.5px;font-weight:700;line-height:1.3;color:var(--ink);animation:in .5s both}
+.acard b{display:block;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:900;margin-bottom:3px}
+.acard .more{position:absolute;right:11px;top:6px;font-size:20px;line-height:1;color:var(--blue);font-weight:900}
+.acard::after{content:"";position:absolute;width:12px;height:12px;border-radius:50%;background:#fff;box-shadow:0 0 0 4px rgba(255,255,255,.35),0 0 0 2px var(--sky);animation:pulse 2s infinite}
+.row2.t .acard::after{bottom:-7px;left:50%}
+.row2.b .acard::after{top:-7px;left:50%}
+@keyframes pulse{50%{box-shadow:0 0 0 8px rgba(255,255,255,0),0 0 0 2px var(--sky)}}
+.stage{position:relative;min-height:0;transform:translate3d(calc(var(--tx,0)*4px),calc(var(--ty,0)*3px),0)}
+.stage .fallback{position:absolute;inset:0;display:grid;place-items:center;font-size:110px}
+.big{font-size:21px;font-weight:950;letter-spacing:-.02em}
+.big small{font-size:12px;font-weight:800;color:var(--muted)}
+.pill{display:inline-block;border-radius:999px;padding:3px 9px;font-size:11px;font-weight:900;margin:2px 3px 2px 0}
+.pill.g{background:#e3f6c4;color:#2f5a05}.pill.y{background:#fff0b0;color:#6b5000}.pill.r{background:#ffd9d1;color:#8a2a12}.pill.n{background:#e6eef7;color:#33516e}
+.pv-act{display:flex;gap:10px}
+.pv-act .btn{padding:14px 10px;font-size:15px}
+.pv-act .btn.sel{background:linear-gradient(135deg,#6a9a00,#96c11f)}
+.cupon{display:flex;align-items:center;gap:10px;padding:9px 14px;font-size:12.5px;font-weight:800}
+
+/* Hoja inferior */
+.sheet-bg{position:fixed;inset:0;z-index:70;background:rgba(0,20,50,.45);display:none}
+.sheet-bg.on{display:block}
+.sheet{position:absolute;left:0;right:0;bottom:0;max-height:82vh;overflow:auto;background:#fff;border-radius:30px 30px 0 0;padding:10px 18px calc(24px + env(safe-area-inset-bottom));animation:up .35s cubic-bezier(.2,.9,.3,1)}
+@keyframes up{from{transform:translateY(100%)}}
+.sheet .grip{width:44px;height:5px;border-radius:3px;background:#d3dde8;margin:0 auto 14px}
+.sheet h3{font-size:22px;font-weight:950;margin-bottom:10px}
+.sheet h4{margin:16px 0 6px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:900}
+.sheet ul,.sheet ol{margin:6px 0;padding-left:20px;font-weight:600}
+.sheet li{margin:4px 0}
+.alt{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:16px;background:#f3f8fd;margin:8px 0;width:100%;border:0;text-align:left}
+.alt b{font-size:14px;display:block;font-weight:900}
+.alt .s{font-size:12px;color:var(--muted);font-weight:700}
+.alt .p{margin-left:auto;text-align:right;font-weight:900;font-size:13.5px;white-space:nowrap}
+.note{padding:11px 13px;border-radius:14px;background:#fff6d6;color:#6b5000;font-weight:700;font-size:13.5px;margin:8px 0}
+
+/* Comparar */
+.cmpH{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cmpP{padding:14px;text-align:center}
+.cmpP .mini{height:84px;display:grid;place-items:center;font-size:54px}
+.cmpP b{display:block;font-weight:900;font-size:14.5px;line-height:1.15}
+.cmpP small{color:var(--muted);font-weight:700;font-size:12px}
+.cmpP .btn{margin-top:8px}
+.cm{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px 0;border-bottom:1px solid rgba(0,60,120,.1);font-size:13.5px;font-weight:800}
+.cm:last-child{border:0}
+.cm small{grid-column:1/3;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:900;margin-bottom:-6px}
+.tip{display:flex;gap:10px;align-items:flex-start;margin-top:12px;padding:13px 14px;font-size:13.5px;font-weight:700}
+
+/* Lista */
+.lit{display:flex;align-items:center;gap:12px;padding:11px 14px;margin-bottom:10px}
+.lit b{display:block;font-size:14px;font-weight:900;line-height:1.2}
+.lit .s{font-size:12px;color:var(--muted);font-weight:700}
+.lit .p{margin-left:auto;font-weight:900;font-size:14px;text-align:right;white-space:nowrap}
+.lit .x{border:0;background:#eef3f8;border-radius:50%;width:30px;height:30px;font-weight:900;color:var(--muted)}
+.qrbox{text-align:center;padding:16px}
+.qrbox .qr{width:170px;height:170px;margin:8px auto 0;background:#fff;border-radius:14px;padding:8px}
+.qrbox .qr svg{width:100%;height:100%;display:block}
+.coupon{margin-top:12px;padding:14px;display:flex;gap:12px;align-items:center;background:linear-gradient(135deg,#fff9d6,#ffeeb5);border:1.5px dashed #e6b800}
+.coupon .meter{height:8px;border-radius:6px;background:rgba(0,0,0,.08);overflow:hidden;margin-top:6px}
+.coupon .meter i{display:block;height:100%;background:var(--grad-fun);border-radius:6px;transition:width .5s}
+
+/* Perfil */
+.tog{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(0,60,120,.08);font-weight:800;font-size:14.5px}
+.tog:last-child{border:0}
+.tog small{display:block;color:var(--muted);font-weight:600;font-size:12.5px}
+.sw{margin-left:auto;position:relative;width:50px;height:30px;flex:none}
+.sw input{opacity:0;position:absolute;inset:0;width:100%;height:100%;margin:0;z-index:2}
+.sw i{position:absolute;inset:0;border-radius:15px;background:#cfd9e4;transition:.2s}
+.sw i::after{content:"";position:absolute;left:3px;top:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.3);transition:.2s}
+.sw input:checked+i{background:var(--grad-cta)}.sw input:checked+i::after{transform:translateX(20px)}
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true"><i></i><i></i><i></i></div>
+
+<header class="top">
+  <div class="top-in">
+    <img src="img/sb-logo.png" alt="Farmacias Salcobrand">
+    <div class="brand"><b>Salco Lente</b><small>Explora tu farmacia</small></div>
+    <button class="pbtn" id="openProfile" type="button">👤 Mi perfil</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- Inicio -->
+  <section class="screen on" id="s-home">
+    <div class="hero">
+      <span class="kicker">📷 Realidad aumentada · Salcobrand</span>
+      <h1>Apunta, descubre y <em>decide</em></h1>
+      <p>Apunta la cámara al código de cualquier producto y mira qué es, cómo se usa, cuánto cuesta por unidad y si es para ti.</p>
+      <div class="go"><button class="btn" id="homeScan">Escanear un producto 📷</button></div>
+    </div>
+    <div class="sectitle">Explora por categoría</div>
+    <div class="cats" id="homeCats"></div>
+    <div class="sectitle">Cómo funciona</div>
+    <div class="card"><ul class="how">
+      <li><span class="ic" style="--c1:#d9f0ff;--c2:#9fd8ff">📷</span><div>Escanea el código de barras<small>O búscalo por nombre si prefieres</small></div></li>
+      <li><span class="ic" style="--c1:#e5f6b8;--c2:#c2e66a">✨</span><div>Mira tarjetas en realidad aumentada<small>Para qué sirve, ingredientes, precio por unidad y uso</small></div></li>
+      <li><span class="ic" style="--c1:#ffe9c4;--c2:#ffc978">⚖️</span><div>Compara y arma tu lista<small>Y muéstrala en caja con un QR</small></div></li>
+    </ul></div>
+    <p class="legal" id="legalHome"></p>
+    <p class="foot">Farmacias Salcobrand · No se guarda ni se envía ninguna imagen de tu cámara.</p>
+  </section>
+
+  <!-- Buscar -->
+  <section class="screen" id="s-search">
+    <h2 style="font-size:28px;font-weight:950;margin-bottom:12px">Buscar productos</h2>
+    <input class="srch" id="q" type="search" placeholder="Nombre, marca o categoría" autocomplete="off">
+    <div class="chips" id="qchips"></div>
+    <div class="plist" id="plist"></div>
+  </section>
+
+  <!-- Comparar -->
+  <section class="screen" id="s-compare"></section>
+
+  <!-- Mi lista -->
+  <section class="screen" id="s-list"></section>
+</main>
+
+<nav class="nav"><div class="nav-in">
+  <button class="nb on" data-go="home"><span>🏠</span>Inicio</button>
+  <button class="nb" data-go="search"><span>🔎</span>Buscar</button>
+  <button class="nb mid" id="navScan"><div class="fab">📷</div>Escanear</button>
+  <button class="nb" data-go="compare"><span>⚖️</span>Comparar</button>
+  <button class="nb" data-go="list"><span>🛒</span>Mi lista<b class="badge hidden" id="badge">0</b></button>
+</div></nav>
+
+<!-- Cámara de fondo (compartida por escaneo y vista RA) -->
+<div class="camLayer" id="camLayer"><video id="vid" playsinline muted autoplay></video></div>
+
+<!-- Escaneo -->
+<div class="ov" id="scan">
+  <div class="reticle" id="reticle">
+    <svg viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" stroke="#fff" stroke-width="1.6" vector-effect="non-scaling-stroke"><path d="M0 22V8Q0 0 8 0H22M78 0H92Q100 0 100 8V22M100 78V92Q100 100 92 100H78M22 100H8Q0 100 0 92V78" stroke-width="5" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>
+    <div class="laser"></div>
+  </div>
+  <div class="sc-top"><button class="rbtn" id="scClose">✕ Cerrar</button><span class="t" id="scTitle">Escanear producto</span></div>
+  <div class="sc-bot">
+    <div class="glass hint"><b id="scMsg">Apunta al código de barras</b><span id="scSub">Acércate hasta que se vea nítido. Lo reconocemos en segundos.</span></div>
+    <form class="manual" id="manual"><input id="manualIn" inputmode="numeric" placeholder="O escribe el código" autocomplete="off"><button class="rbtn" type="submit">Buscar</button></form>
+    <button class="btn alt" id="scList" type="button">🔎 Buscar por nombre</button>
+  </div>
+</div>
+
+<!-- Vista de producto -->
+<div class="ov pv" id="pv">
+  <div class="pv-in">
+    <div class="pv-top">
+      <button class="rbtn" id="pvBack">← Volver</button>
+      <div class="nm"><b id="pvName"></b><small id="pvBrand"></small></div>
+    </div>
+    <div class="row2 t" id="rowT"></div>
+    <div class="stage" id="stage"></div>
+    <div class="row2 b" id="rowB"></div>
+    <div>
+      <div class="glass cupon hidden" id="pvCupon"></div>
+      <div class="pv-act" style="margin-top:8px">
+        <button class="btn alt" id="pvCompare">⚖️ Comparar</button>
+        <button class="btn" id="pvAdd">＋ A mi lista</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sheet-bg" id="sheetBg"><div class="sheet" id="sheet"></div></div>
+
+<script src="lib/three.min.js"></script>
+<script src="lib/zxing.min.js"></script>
+<script src="lib/qrcode.js"></script>
+<script src="js/config.js"></script>
+<script src="js/model3d.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
