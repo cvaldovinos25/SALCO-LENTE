@@ -6,8 +6,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#007dc3">
-<title>Salco Lente | Farmacias Salcobrand</title>
-<meta name="description" content="Apunta la cámara a un producto y descubre qué es, cómo se usa y si es para ti.">
+<title>SALCO LENTE | Farmacias Salcobrand</title>
+<meta name="description" content="Apunta la cámara a un producto y descubre más sobre el.">
 <link rel="icon" href="img/sb-logo.png">
 <style>
 :root{
@@ -216,7 +216,7 @@ body.cam .pv-top .nm{color:#fff;text-shadow:0 1px 10px rgba(0,20,50,.85)}
 .misalco img{height:44px;width:auto;border-radius:12px}
 .misalco p{margin:0;font-weight:800;font-size:13.5px}
 
-/* Perfil */
+/* historial */
 .tog{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(0,60,120,.08);font-weight:800;font-size:14.5px}
 .tog:last-child{border:0}
 .tog small{display:block;color:var(--muted);font-weight:600;font-size:12.5px}
@@ -276,24 +276,24 @@ h1,h2,h3,h4,.brand b,.sectitle,.hint b,.nm b,.hero2 b,.sheet h3,.sheet h4,.hero 
   <!-- Inicio -->
   <section class="screen on" id="s-home">
     <div class="hero">
-      <span class="kicker">📷 Realidad aumentada · Salcobrand</span>
-      <h1>Apunta, descubre y <em>decide</em></h1>
-      <p>Apunta la cámara al código de cualquier producto y mira qué es, cómo se usa, cuánto cuesta por unidad y si es para ti.</p>
+      <span class="kicker">📷 Herramienta de Realidad Aumenta · Salcobrand</span>
+      <h1>APUNTA, DESCUBRE Y <em>DECIDE</em></h1>
+      <p>Escanéa el código en barra de cualquier producto y descubre más información sobre el.</p>
       <div class="go"><button class="btn" id="homeScan">Escanear un producto 📷</button></div>
     </div>
-    <div class="sectitle">Cómo funciona</div>
+    <div class="sectitle">CÓMO FUNCIONA</div>
     <div class="card"><ul class="how">
       <li><span class="ic" style="--c1:#d9f0ff;--c2:#9fd8ff">📷</span><div>Escanea el código de barras<small>O búscalo por nombre si prefieres</small></div></li>
       <li><span class="ic" style="--c1:#e5f6b8;--c2:#c2e66a">✨</span><div>Mira tarjetas en realidad aumentada<small>Para qué sirve, ingredientes, precio por unidad y uso</small></div></li>
       <li><span class="ic" style="--c1:#ffe9c4;--c2:#ffc978">⚖️</span><div>Compara y arma tu lista<small>Y muéstrala en caja con un QR</small></div></li>
     </ul></div>
     <p class="legal" id="legalHome"></p>
-    <p class="foot">Farmacias Salcobrand · No se guarda ni se envía ninguna imagen de tu cámara.</p>
+    <p class="foot">Farmacias Salcobrand · No guardaremos ninguna imagen de tu cámara.</p>
   </section>
 
   <!-- Buscar -->
   <section class="screen" id="s-search">
-    <h2 style="font-size:28px;margin-bottom:12px">Buscar productos</h2>
+    <h2 style="font-size:28px;margin-bottom:12px">Buscar producto</h2>
     <input class="srch" id="q" type="search" placeholder="Nombre, marca o categoría" autocomplete="off">
     <div class="chips" id="qchips"></div>
     <div class="plist" id="plist"></div>
@@ -328,9 +328,9 @@ h1,h2,h3,h4,.brand b,.sectitle,.hint b,.nm b,.hero2 b,.sheet h3,.sheet h4,.hero 
   </div>
   <div class="sc-top"><button class="rbtn" id="scClose">✕ Cerrar</button><span class="t" id="scTitle">Escanear producto</span></div>
   <div class="sc-bot">
-    <div class="glass hint"><b id="scMsg">Apunta al código de barras</b><span id="scSub">Acércate hasta que se vea nítido. Lo reconocemos en segundos.</span></div>
+    <div class="glass hint"><b id="scMsg">Apunta al código de barras</b><span id="scSub">Acércate hasta que se vea nítido. Lo reconoceremos en segundos.</span></div>
     <form class="manual" id="manual"><input id="manualIn" inputmode="numeric" placeholder="O escribe el código" autocomplete="off"><button class="rbtn" type="submit">Buscar</button></form>
-    <button class="btn alt" id="scList" type="button">🔎 Buscar por nombre</button>
+    <button class="btn alt" id="scList" type="button">🔎 Busca por nombre</button>
   </div>
 </div>
 
@@ -356,7 +356,7 @@ h1,h2,h3,h4,.brand b,.sectitle,.hint b,.nm b,.hero2 b,.sheet h3,.sheet h4,.hero 
     <svg id="arSvg" width="100%" height="100%"><line/><circle r="6"/></svg>
     <div class="arBox" id="arBox"><i></i><i></i><i></i><i></i></div>
     <div id="arCards"></div>
-    <div class="glass arMsg" id="arMsg">📍 Apunta de nuevo al código para reubicar la información</div>
+    <div class="glass arMsg" id="arMsg">📍 Apunta al producto para ver la información</div>
     <div class="arDbg" id="arDbg"></div>
   </div>
 </div>
