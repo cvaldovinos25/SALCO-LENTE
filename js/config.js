@@ -10,7 +10,7 @@ SL.CONFIG = {
   /* Recordatorio de Mi Salcobrand (se muestra en la vista de producto y en Mi lista) */
   MI_SALCO: {
     activo: true,
-    corto: 'No olvides usar tu código Mi Salcobrand en caja.',
+    corto: 'Usa tu código Mi Salcobrand.',
     largo: 'Antes de pagar, indica tu código Mi Salcobrand en caja para aprovechar tus beneficios.'
   },
 
@@ -26,7 +26,7 @@ SL.CONFIG = {
   },
 
   TEXTO: {
-    AVISO: 'Información referencial. No reemplaza la orientación de un médico, químico farmacéutico u otro profesional de la salud. Revisa siempre el envase y el folleto.',
+    AVISO: 'Información referencial. No reemplaza la orientación de un médico, químico farmacéutico u otro profesional de la salud. Revisa siempre el envase y consulta con un especialista.',
     AVISO_SALUD: 'Los medicamentos se muestran solo con información de la ficha. Esta herramienta no recomienda ni diagnostica: consulta a un químico farmacéutico o a tu médico.'
   }
 };
