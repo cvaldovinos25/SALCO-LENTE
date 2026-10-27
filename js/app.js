@@ -13,14 +13,15 @@
   const qs = new URLSearchParams(location.search);
   const DEBUG = qs.has('debug');
 
-  /* ---------- Almacenamiento local (solo perfil, lista y categorías vistas) ---------- */
+  /* ---------- Almacenamiento local (historial, lista y categorías vistas) ---------- */
   const mem = {};
   const sget = (k, d) => { try { const v = localStorage.getItem('sl_' + k); return v ? JSON.parse(v) : d; } catch (e) { return mem[k] !== undefined ? mem[k] : d; } };
   const sset = (k, v) => { mem[k] = v; try { localStorage.setItem('sl_' + k, JSON.stringify(v)); } catch (e) {} };
 
   const S = {
     cat: [], byId: {}, byEan: {},
-    profile: Object.assign({ embarazo: false, fragancias: false, sensible: false }, sget('perfil', {})),
+    profile: { embarazo: false, fragancias: false, sensible: false },
+    hist: sget('historial', []),        // [{id, t}] más reciente primero
     list: sget('lista', []),            // [{id, qty}]
     seen: sget('vistas', []),           // categorías exploradas
     unlocked: sget('cupon', false),
@@ -78,17 +79,12 @@
     $$('.screen').forEach((s) => s.classList.toggle('on', s.id === 's-' + name));
     $$('.nb[data-go]').forEach((b) => b.classList.toggle('on', b.dataset.go === name));
     window.scrollTo(0, 0);
-    if (name === 'home') renderHome(); else if (name === 'search') renderSearch(); else if (name === 'compare') renderCompare(); else if (name === 'list') renderList();
+    if (name === 'home') renderHome(); else if (name === 'search') renderSearch(); else if (name === 'compare') renderCompare(); else if (name === 'list') renderList(); else if (name === 'history') renderHistory();
   }
   $$('.nb[data-go]').forEach((b) => b.addEventListener('click', () => { S.pick = null; go(b.dataset.go); }));
 
   /* ---------- Inicio ---------- */
   function renderHome() {
-    $('#homeCats').innerHTML = Object.keys(C.CATEGORIAS).map((k) => {
-      const m = C.CATEGORIAS[k], n = S.cat.filter((p) => p.categoria === k).length;
-      return '<button class="cat" data-cat="' + k + '"><span class="ic" style="--c1:' + m.c1 + ';--c2:' + m.c2 + '">' + m.emoji + '</span><span>' + m.nombre + '<small>' + n + ' producto' + (n === 1 ? '' : 's') + '</small></span></button>';
-    }).join('');
-    $$('#homeCats .cat').forEach((b) => b.addEventListener('click', () => { qcat = b.dataset.cat; qtext = ''; $('#q').value = ''; go('search'); }));
     $('#legalHome').textContent = C.TEXTO.AVISO;
   }
   $('#homeScan').addEventListener('click', () => openScan('view'));
@@ -155,6 +151,7 @@
     }
   }
   function found(p) {
+    addHist(p);
     if (navigator.vibrate) try { navigator.vibrate(30); } catch (e) {}
     $('#reticle').classList.add('ok');
     const fl = document.createElement('div'); fl.className = 'flash'; $('#scan').appendChild(fl); setTimeout(() => fl.remove(), 600);
@@ -230,6 +227,7 @@
   }
   function closePV() {
     $('#pv').classList.remove('on', 'ar'); closeSheet(); S.view = null; S.arMode = false; $('#arCards').innerHTML = '';
+    if (S.screen === 'history') renderHistory(); else if (S.screen === 'list') renderList();
   }
   $('#pvBack').addEventListener('click', () => {
     closePV();
@@ -306,7 +304,7 @@
       h += '<h3>Para qué sirve</h3><p style="font-weight:600">' + esc(p.resumen) + '</p><h4>Enfoque</h4><p style="font-weight:700">' + esc(p.foco.charAt(0).toUpperCase() + p.foco.slice(1)) + '.</p>' + adv + aviso;
     } else if (k === 'ingr') {
       h += '<h3>Ingredientes y semáforo</h3><div>' + pills(sema(p, true)) + '</div><h4>Ingredientes clave</h4><ul>' + (p.ingredientes || []).map((i) => '<li>' + esc(i) + '</li>').join('') + '</ul>' +
-        (S.profile.embarazo || S.profile.fragancias || S.profile.sensible ? '<p class="legal">Los avisos consideran tu perfil. Puedes cambiarlo en “Mi perfil”.</p>' : '<p class="legal">Tip: completa “Mi perfil” para ver avisos según embarazo, fragancias o piel sensible.</p>') + adv + aviso;
+        adv + aviso;
     } else if (k === 'precio') {
       h += '<h3>Precio por unidad</h3><p class="big">' + clp(p.precio) + ' <small>· ' + esc(p.formato) + '</small></p><p style="font-weight:800;margin-top:4px">' + esc(unitTxt(p)) + '</p>';
       const alts = (p.alternativas || []).map((id) => S.byId[id]).filter(Boolean);
@@ -394,16 +392,44 @@
     const le = $('#lEmpty'); if (le) le.addEventListener('click', () => openScan('view'));
   }
 
-  /* ---------- Perfil ---------- */
-  $('#openProfile').addEventListener('click', () => {
-    const pr = S.profile;
-    const tog = (k, t, d) => '<label class="tog"><span>' + t + '<small>' + d + '</small></span><span class="sw"><input type="checkbox" data-k="' + k + '"' + (pr[k] ? ' checked' : '') + '><i></i></span></label>';
-    $('#sheet').innerHTML = '<div class="grip"></div><h3>Mi perfil</h3><p style="color:var(--muted);font-weight:600;margin-bottom:8px">Personaliza los avisos del semáforo de ingredientes. Se guarda solo en tu celular.</p>' +
-      tog('embarazo', '🤰 Embarazo o lactancia', 'Muestra el aviso en cada producto') + tog('fragancias', '🌸 Evito las fragancias', 'Marca en rojo los productos con fragancia') + tog('sensible', '🌿 Piel sensible', 'Sugiere hacer una prueba en zona pequeña') +
-      '<p class="legal">' + esc(C.TEXTO.AVISO) + '</p>';
-    $('#sheetBg').classList.add('on');
-    $$('#sheet input[data-k]').forEach((i) => i.addEventListener('change', () => { S.profile[i.dataset.k] = i.checked; sset('perfil', S.profile); if (S.cur && $('#pv').classList.contains('on')) openProduct(S.cur, S.pvFromScan); }));
-  });
+  /* ---------- Historial de escaneos ---------- */
+  function addHist(p) {
+    S.hist = S.hist.filter((h) => h.id !== p.id);
+    S.hist.unshift({ id: p.id, t: Date.now() });
+    S.hist = S.hist.slice(0, 50); sset('historial', S.hist);
+  }
+  function ago(t) {
+    const m = Math.round((Date.now() - t) / 60000);
+    if (m < 1) return 'Recién escaneado';
+    if (m < 60) return 'Hace ' + m + ' min';
+    const h = Math.round(m / 60);
+    if (h < 24) return 'Hace ' + h + ' h';
+    const d = Math.round(h / 24);
+    return d === 1 ? 'Ayer' : 'Hace ' + d + ' días';
+  }
+  function renderHistory() {
+    const el = $('#s-history'), items = S.hist.map((h) => ({ p: S.byId[h.id], t: h.t })).filter((i) => i.p);
+    let h = '<h2 style="font-size:28px;font-weight:950;margin-bottom:4px">Historial</h2><p style="color:var(--muted);font-weight:700;margin-bottom:14px">Los productos que escaneaste, del más reciente al más antiguo. Tócalos para ver su información de nuevo.</p>';
+    if (!items.length) {
+      h += '<div class="empty">Aún no has escaneado productos.<br><button class="btn" id="hEmpty" style="margin-top:14px">Escanear un producto 📷</button></div>';
+    } else {
+      h += items.map((i) => {
+        const on = !!inList(i.p.id);
+        return '<div class="hrow"><button class="pit" data-id="' + esc(i.p.id) + '">' + icBubble(i.p) + '<span><b>' + esc(i.p.marca) + ' ' + esc(i.p.nombre) + '</b><span class="s">' + esc(i.p.formato) + ' · ' + esc(catMeta(i.p).nombre) + '</span><span class="htime">' + ago(i.t) + '</span></span><span class="p">' + clp(i.p.precio) + '<small>' + unitTxt(i.p) + '</small></span></button>' +
+          '<button class="hadd' + (on ? ' sel' : '') + '" data-add="' + esc(i.p.id) + '" aria-label="' + (on ? 'Quitar de mi lista' : 'Agregar a mi lista') + '"><span>' + (on ? '✓' : '＋') + '</span>' + (on ? 'En lista' : 'Lista') + '</button></div>';
+      }).join('') + '<button class="btn ghost" id="hClear" style="margin-top:6px">Borrar historial</button>';
+    }
+    el.innerHTML = h;
+    $$('#s-history .pit').forEach((b) => b.addEventListener('click', () => openProduct(S.byId[b.dataset.id], false)));
+    $$('#s-history [data-add]').forEach((b) => b.addEventListener('click', () => {
+      const id = b.dataset.add;
+      if (inList(id)) S.list = S.list.filter((i) => i.id !== id); else { S.list.push({ id, qty: 1 }); toast('Agregado a tu lista ✓', 1500); }
+      sset('lista', S.list); badge(); renderHistory();
+    }));
+    const hc = $('#hClear'); if (hc) hc.addEventListener('click', () => { S.hist = []; sset('historial', S.hist); renderHistory(); });
+    const he = $('#hEmpty'); if (he) he.addEventListener('click', () => openScan('view'));
+  }
+  $('#openHist').addEventListener('click', () => { S.pick = null; go('history'); });
 
   /* ---------- Inicio ---------- */
   (async function init() {

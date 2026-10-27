@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#007dc3">
 <title>Salco Lente | Farmacias Salcobrand</title>
-<meta name="description" content="Apunta la cámara a un producto para descubrir más de el.">
+<meta name="description" content="Apunta la cámara a un producto y descubre qué es, cómo se usa y si es para ti.">
 <link rel="icon" href="img/sb-logo.png">
 <style>
 :root{
@@ -45,6 +45,7 @@ button{font:inherit;cursor:pointer;color:inherit}
 .brand{display:flex;flex-direction:column;line-height:1.02}
 .brand b{font-size:19px;font-weight:900;letter-spacing:-.03em;background:linear-gradient(90deg,var(--blue-d),var(--blue) 60%,var(--sky));-webkit-background-clip:text;background-clip:text;color:transparent}
 .brand small{font-size:11px;font-weight:800;color:var(--muted);letter-spacing:.14em;text-transform:uppercase}
+.hrow{display:flex;gap:8px;align-items:stretch;margin-bottom:10px}.hrow .pit{flex:1;min-width:0}.hadd{flex:0 0 auto;width:58px;border-radius:22px;background:linear-gradient(135deg,#0090d8,#00a9e8);color:#fff;font-size:12px;font-weight:900;box-shadow:0 10px 20px -12px rgba(0,100,180,.8);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}.hadd.sel{background:linear-gradient(135deg,#7fb11a,#96c11f)}.hadd span{font-size:20px;line-height:1}.htime{display:block;font-size:11px;font-weight:700;color:var(--muted);margin-top:1px}
 .pbtn{margin-left:auto;display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:999px;border:1px solid rgba(0,125,195,.2);background:linear-gradient(135deg,#e0f4ff,#effad8);color:var(--blue-d);font-size:12.5px;font-weight:800}
 
 .wrap{max-width:560px;margin:auto;padding:18px 16px calc(110px + env(safe-area-inset-bottom))}
@@ -261,7 +262,7 @@ body.cam .pv-top .nm{color:#fff;text-shadow:0 1px 10px rgba(0,20,50,.85)}
   <div class="top-in">
     <img src="img/sb-logo.png" alt="Farmacias Salcobrand">
     <div class="brand"><b>Salco Lente</b><small>Explora tu farmacia</small></div>
-    <button class="pbtn" id="openProfile" type="button">👤 Mi perfil</button>
+    <button class="pbtn" id="openHist" type="button">🕘 Historial</button>
   </div>
 </header>
 
@@ -274,8 +275,6 @@ body.cam .pv-top .nm{color:#fff;text-shadow:0 1px 10px rgba(0,20,50,.85)}
       <p>Apunta la cámara al código de cualquier producto y mira qué es, cómo se usa, cuánto cuesta por unidad y si es para ti.</p>
       <div class="go"><button class="btn" id="homeScan">Escanear un producto 📷</button></div>
     </div>
-    <div class="sectitle">Explora por categoría</div>
-    <div class="cats" id="homeCats"></div>
     <div class="sectitle">Cómo funciona</div>
     <div class="card"><ul class="how">
       <li><span class="ic" style="--c1:#d9f0ff;--c2:#9fd8ff">📷</span><div>Escanea el código de barras<small>O búscalo por nombre si prefieres</small></div></li>
@@ -283,7 +282,7 @@ body.cam .pv-top .nm{color:#fff;text-shadow:0 1px 10px rgba(0,20,50,.85)}
       <li><span class="ic" style="--c1:#ffe9c4;--c2:#ffc978">⚖️</span><div>Compara y arma tu lista<small>Y muéstrala en caja con un QR</small></div></li>
     </ul></div>
     <p class="legal" id="legalHome"></p>
-    <p class="foot">Farmacias Salcobrand · No guardamos ninguna imagen de tu cámara.</p>
+    <p class="foot">Farmacias Salcobrand · No se guarda ni se envía ninguna imagen de tu cámara.</p>
   </section>
 
   <!-- Buscar -->
@@ -299,6 +298,9 @@ body.cam .pv-top .nm{color:#fff;text-shadow:0 1px 10px rgba(0,20,50,.85)}
 
   <!-- Mi lista -->
   <section class="screen" id="s-list"></section>
+
+  <!-- Historial -->
+  <section class="screen" id="s-history"></section>
 </main>
 
 <nav class="nav"><div class="nav-in">
@@ -348,7 +350,7 @@ body.cam .pv-top .nm{color:#fff;text-shadow:0 1px 10px rgba(0,20,50,.85)}
     <svg id="arSvg" width="100%" height="100%"><line/><circle r="6"/></svg>
     <div class="arBox" id="arBox"><i></i><i></i><i></i><i></i></div>
     <div id="arCards"></div>
-    <div class="glass arMsg" id="arMsg">📍 Apunta al producto para reubicar la información</div>
+    <div class="glass arMsg" id="arMsg">📍 Apunta de nuevo al código para reubicar la información</div>
     <div class="arDbg" id="arDbg"></div>
   </div>
 </div>

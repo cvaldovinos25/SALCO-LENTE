@@ -3,11 +3,11 @@
 Experiencia web con **realidad aumentada** para ayudar a decidir una compra en Farmacias Salcobrand. La persona apunta la cámara al **código de barras** de un producto (de cualquier categoría) y la app superpone tarjetas flotantes con:
 
 - **Para qué sirve** y cómo se usa (con pasos).
-- **Semáforo de ingredientes** según su perfil (embarazo o lactancia, evita fragancias, piel sensible).
+- **Semáforo de ingredientes** (fragancia, alcohol, embarazo o lactancia, piel sensible), según la ficha del producto.
 - **Precio por unidad** (por ml, g, cápsula, pañal…) y **alternativas** más baratas o parecidas.
 - Las tarjetas **siguen al producto** y se mantienen ancladas a él mientras se mueve el celular o el envase.
 
-Además: **comparar dos productos** lado a lado, **Mi lista** con un **QR para caja**, y un **cupón por explorar categorías** (mecánica de juego, configurable).
+Además: **comparar dos productos** lado a lado, un **historial** de lo escaneado (se puede reabrir cada producto y agregarlo a la lista), **Mi lista** con un **QR para caja**, y un **cupón por explorar categorías** (mecánica de juego, configurable).
 
 > Es una herramienta **informativa**. No diagnostica ni recomienda medicamentos. Los medicamentos se muestran solo con la información de su ficha.
 
@@ -20,7 +20,7 @@ SALCO-LENTE/
 ├── index.html          Interfaz (mobile first), estilos y pantallas
 ├── js/
 │   ├── config.js       Cupón, categorías y textos legales (lo que se edita)
-│   ├── app.js          Flujo: escaneo, vista RA, comparar, lista, perfil
+│   ├── app.js          Flujo: escaneo, vista RA, comparar, lista, historial
 │   └── ar.js           Lectura del código y seguimiento visual (anclaje al producto)
 ├── data/productos.json Catálogo (¡DE EJEMPLO, hay que reemplazarlo!)
 ├── lib/                ZXing (lector de códigos), qrcode-generator, licencias
@@ -83,7 +83,7 @@ Usa el lector nativo del navegador (`BarcodeDetector`, en Chrome Android) y, si 
 ## Privacidad
 
 - Las imágenes de la cámara **no se guardan ni se envían**: se procesan en el celular.
-- El perfil, la lista y las categorías exploradas se guardan solo en el celular (almacenamiento local del navegador).
+- El historial, la lista y las categorías exploradas se guardan solo en el celular (almacenamiento local del navegador).
 - No hay analítica ni cookies. Las librerías se sirven desde el mismo sitio.
 
 ## Aspectos legales y de salud (revisar antes del lanzamiento)
