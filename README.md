@@ -57,6 +57,7 @@ Para probar sin productos reales: abre `demo-codigos.html` en una pantalla y apu
 | `flags` | `fragancia` (true/false/null), `alcohol`, `embarazo` (`ok`/`consultar`/`evitar`), `sensible` (`ok`/`revisar`), `alergenos` |
 | `advertencias` | Avisos que aparecen en la hoja de detalle |
 | `alternativas` | `id` de productos parecidos (se muestra su precio por unidad) |
+| `imagen` | Ruta o URL de la foto del producto (ej. `img/productos/centella.jpg`). Si falta o no carga, se muestra el ícono de la categoría. `tools/descargar-imagenes.py` las descarga desde un CSV `id,url_imagen` |
 | `verificado` | Marca interna: pasa a `true` cuando el equipo revisó la ficha |
 
 **Fuentes recomendadas**: el maestro de productos de Salcobrand (EAN, precio, formato), fichas técnicas de los laboratorios y, para medicamentos, el folleto aprobado. Los textos de salud y de ingredientes deben ser **revisados por un químico farmacéutico**.

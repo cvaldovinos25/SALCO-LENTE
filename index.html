@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#007dc3">
 <title>SALCO LENTE | Farmacias Salcobrand</title>
-<meta name="description" content="Apunta la cámara a un producto y descubre más sobre él.">
+<meta name="description" content="Apunta la cámara a un producto y descubre más sobre el.">
 <link rel="icon" href="img/sb-logo.png">
 <style>
 :root{
@@ -284,6 +284,10 @@ h1,h2,h3,h4,.brand b,.sectitle,.hint b,.nm b,.hero2 b,.sheet h3,.sheet h4,.hero 
 .arBox{animation:fadein .4s both}
 @keyframes cornerIn{from{opacity:0;scale:1.5}to{opacity:1;scale:1}}
 @media (prefers-reduced-motion:reduce){.acard,.acard::before,#arSvg line,#arSvg circle,.arBox i{animation-duration:.01s!important;animation-delay:0s!important}}
+.ic.pimg{background:#fff;padding:3px;overflow:hidden}
+.ic.pimg img{width:100%;height:100%;object-fit:contain;display:block}
+.ic.xl.pimg{width:150px;height:150px;border-radius:24px;padding:8px}
+.cmpP .mini img{max-height:84px;max-width:100%;object-fit:contain}
 </style>
 </head>
 <body>
@@ -301,9 +305,9 @@ h1,h2,h3,h4,.brand b,.sectitle,.hint b,.nm b,.hero2 b,.sheet h3,.sheet h4,.hero 
   <!-- Inicio -->
   <section class="screen on" id="s-home">
     <div class="hero">
-      <span class="kicker">📷 Herramienta con Realidad Aumentada</span>
+      <span class="kicker">📷 Herramienta con Realidad Aumenta</span>
       <h1>APUNTA, DESCUBRE Y <em>DECIDE</em></h1>
-      <p>Escanea el código en barra de cualquier producto y descubre más información sobre él.</p>
+      <p>Escanéa el código en barra de cualquier producto y descubre más información sobre el.</p>
       <div class="go"><button class="btn" id="homeScan">Escanear un producto 📷</button></div>
     </div>
     <div class="sectitle">CÓMO FUNCIONA</div>
@@ -390,8 +394,8 @@ h1,h2,h3,h4,.brand b,.sectitle,.hint b,.nm b,.hero2 b,.sheet h3,.sheet h4,.hero 
 
 <script src="lib/zxing.min.js"></script>
 <script src="lib/qrcode.js"></script>
-<script src="js/config.js?v=8"></script>
-<script src="js/ar.js?v=8"></script>
-<script src="js/app.js?v=8"></script>
+<script src="js/config.js?v=9"></script>
+<script src="js/ar.js?v=9"></script>
+<script src="js/app.js?v=9"></script>
 </body>
 </html>

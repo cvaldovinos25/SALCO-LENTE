@@ -4,7 +4,7 @@
    Todo ocurre en el celular: no se envían imágenes ni datos.
    ============================================================ */
 (function () {
-  const SL = window.SL, C = SL.CONFIG;
+  const SL = window.SL, C = SL.CONFIG; C.MI_SALCO = C.MI_SALCO || { activo: true, corto: 'No olvides usar tu código Mi Salcobrand en caja.', largo: 'Antes de pagar, indica tu código Mi Salcobrand en caja para aprovechar tus beneficios.' };
   const $ = (s, r) => (r || document).querySelector(s);
   const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
   const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -53,7 +53,11 @@
   const unitVal = (p) => p.precio / (p.cantidad && p.cantidad.valor ? p.cantidad.valor : 1);
   const unitTxt = (p) => { const v = unitVal(p); return '$ ' + (v < 10 ? v.toFixed(1).replace('.', ',') : Math.round(v).toLocaleString('es-CL')) + ' / ' + p.cantidad.unidad; };
   const catMeta = (p) => C.CATEGORIAS[p.categoria] || { nombre: p.categoria, emoji: '🛍️', c1: '#e3f4ff', c2: '#f0fadb' };
-  const icBubble = (p, cls) => '<span class="ic ' + (cls || '') + '" style="--c1:' + catMeta(p).c1 + ';--c2:' + catMeta(p).c2 + '">' + catMeta(p).emoji + '</span>';
+  /* Imagen del producto (campo "imagen" del catálogo); si falta o no carga, se usa el ícono de la categoría */
+  const pimg = (p, cls) => p.imagen
+    ? '<span class="ic pimg ' + (cls || '') + '"><img src="' + esc(p.imagen) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.classList.remove(\'pimg\');this.parentNode.style.cssText=\'--c1:' + catMeta(p).c1 + ';--c2:' + catMeta(p).c2 + '\';this.parentNode.textContent=\'' + catMeta(p).emoji + '\'"></span>'
+    : '';
+  const icBubble = (p, cls) => pimg(p, cls) || '<span class="ic ' + (cls || '') + '" style="--c1:' + catMeta(p).c1 + ';--c2:' + catMeta(p).c2 + '">' + catMeta(p).emoji + '</span>';
 
   /* Semáforo de ingredientes según el perfil */
   function sema(p, all) {
@@ -198,11 +202,11 @@
     S.cur = p; S.pvFromScan = !!fromScan; S.arMode = ar; S.view = 'pv';
     $('#pvName').textContent = p.nombre; $('#pvBrand').textContent = p.marca + ' · ' + p.formato;
     const sm = sema(p), pr = unitTxt(p);
-    const card = (k, tit, color, body, delay) => '<button class="glass acard' + (ar ? ' ar' : '') + '" data-k="' + k + '" style="animation-delay:' + delay + 's"><b style="color:' + color + '">' + tit + '</b><span class="more">›</span>' + body + '</button>';
-    const c1 = card('sirve', 'Para qué sirve', 'var(--blue)', esc(p.resumen), 0.05);
-    const c2 = card('precio', 'Precio por unidad', 'var(--orange)', '<span class="big">' + esc(pr.split(' / ')[0]) + ' <small>/ ' + esc(p.cantidad.unidad) + '</small></span><br>' + clp(p.precio) + ' · ' + esc(p.formato), 0.12);
-    const c3 = card('ingr', 'Ingredientes y semáforo', 'var(--green)', pills(sm, 3) || 'Revisa el envase', 0.19);
-    const c4 = card('uso', 'Cómo usar', 'var(--coral)', esc(p.cuando) + ' ▶', 0.26);
+    const card = (k, tit, color, body, delay) => '<button class="glass acard' + (ar ? ' ar' : '') + '" data-k="' + k + '" style="--ac:' + color + ';animation-delay:' + delay + 's"><b>' + tit + '</b><span class="more" aria-hidden="true"></span>' + body + '</button>';
+    const c1 = card('sirve', 'Para qué sirve', 'var(--blue)', esc(p.resumen), 0.35);
+    const c2 = card('precio', 'Precio por unidad', 'var(--orange)', '<span class="big">' + esc(pr.split(' / ')[0]) + ' <small>/ ' + esc(p.cantidad.unidad) + '</small></span><br>' + clp(p.precio) + ' · ' + esc(p.formato), 0.5);
+    const c3 = card('ingr', 'Ingredientes y semáforo', 'var(--green)', pills(sm, 3) || 'Revisa el envase', 0.65);
+    const c4 = card('uso', 'Cómo usar', 'var(--coral)', esc(p.cuando), 0.8);
     if (ar) {
       $('#arCards').innerHTML = c1 + c2 + c3 + c4; $('#rowT').innerHTML = ''; $('#rowB').innerHTML = ''; $('#stage').innerHTML = '';
       AP.has = false; $('#arLayer').classList.add('wait'); $('#arLayer').classList.remove('lost', 'gone');
@@ -319,7 +323,7 @@
     const a = S.cmp.a, b = S.cmp.b, el = $('#s-compare');
     let h = '<h2 style="font-size:28px;font-weight:950;margin-bottom:12px">Comparar ⚖️</h2>';
     const col = (p, slot) => p
-      ? '<div class="card cmpP"><div class="mini">' + catMeta(p).emoji + '</div><b>' + esc(p.marca) + '</b><small>' + esc(p.nombre) + '</small><button class="btn sm alt" data-slot="' + slot + '">Cambiar</button></div>'
+      ? '<div class="card cmpP"><div class="mini">' + (p.imagen ? '<img src="' + esc(p.imagen) + '" alt="" referrerpolicy="no-referrer">' : catMeta(p).emoji) + '</div><b>' + esc(p.marca) + '</b><small>' + esc(p.nombre) + '</small><button class="btn sm alt" data-slot="' + slot + '">Cambiar</button></div>'
       : '<div class="card cmpP"><div class="mini">➕</div><b>Elige un producto</b><button class="btn sm" data-slot="' + slot + '">Escanear</button><button class="btn sm ghost" data-pick="' + slot + '">Buscar por nombre</button></div>';
     h += '<div class="cmpH">' + col(a, 'a') + col(b, 'b') + '</div>';
     if (a && b) {

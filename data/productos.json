@@ -1,529 +1,532 @@
 {
- "_nota": "DATOS DE EJEMPLO. Reemplazar por el catálogo real de Salcobrand (EAN, precios, fichas). Los EAN de ejemplo son válidos pero ficticios. Ver README.",
- "actualizado": "2026-10-27",
- "productos": [
-  {
-   "id": "centella",
-   "ean": "7800000000016",
-   "categoria": "skincare",
-   "marca": "SKIN1004",
-   "nombre": "Madagascar Centella Ampoule",
-   "formato": "55 ml",
-   "cantidad": {
-    "valor": 55,
-    "unidad": "ml"
-   },
-   "precio": 15990,
-   "foco": "calmar e hidratar",
-   "resumen": "Ampolla de fórmula simple con extracto de centella asiática, para calmar e hidratar la piel.",
-   "cuando": "Día y noche, antes de la crema",
-   "pasos": [
-    "Limpia tu rostro",
-    "Aplica 3 a 4 gotas y extiende suavemente",
-    "Sigue con tu crema hidratante"
-   ],
-   "ingredientes": [
-    "Extracto de centella asiática",
-    "Glicerina",
-    "Butilenglicol"
-   ],
-   "flags": {
-    "fragancia": false,
-    "alcohol": false,
-    "embarazo": "consultar",
-    "sensible": "ok",
-    "alergenos": []
-   },
-   "advertencias": [
-    "Si tienes alergia a la centella asiática, no la uses."
-   ],
-   "alternativas": [
-    "cluny",
-    "nivea"
-   ],
-   "verificado": false
-  },
-  {
-   "id": "cluny",
-   "ean": "7800000000023",
-   "categoria": "skincare",
-   "marca": "Cluny",
-   "nombre": "Luminaclear Sérum Anti Manchas",
-   "formato": "30 ml",
-   "cantidad": {
-    "valor": 30,
-    "unidad": "ml"
-   },
-   "precio": 13199,
-   "foco": "unificar el tono y dar luminosidad",
-   "resumen": "Sérum que reduce imperfecciones y aporta luminosidad al rostro.",
-   "cuando": "Con protector solar de día",
-   "pasos": [
-    "Limpia tu rostro",
-    "Aplica una pequeña cantidad en el rostro",
-    "Usa protector solar durante el día"
-   ],
-   "ingredientes": [
-    "Lista de ingredientes: revisar el envase"
-   ],
-   "flags": {
-    "fragancia": null,
-    "alcohol": null,
-    "embarazo": "consultar",
-    "sensible": "revisar",
-    "alergenos": []
-   },
-   "advertencias": [
-    "Los productos para manchas se usan junto con protector solar."
-   ],
-   "alternativas": [
-    "centella",
-    "nivea"
-   ],
-   "verificado": false
-  },
-  {
-   "id": "nivea",
-   "ean": "7800000000030",
-   "categoria": "skincare",
-   "marca": "NIVEA",
-   "nombre": "Cellular Epigenetics Sérum",
-   "formato": "30 ml",
-   "cantidad": {
-    "valor": 30,
-    "unidad": "ml"
-   },
-   "precio": 29990,
-   "foco": "cuidado anti-edad",
-   "resumen": "Sérum rejuvenecedor pensado para el cuidado anti-edad del rostro.",
-   "cuando": "Sobre el rostro limpio, antes de la crema",
-   "pasos": [
-    "Limpia tu rostro",
-    "Aplica el sérum y extiende",
-    "Sigue con tu crema hidratante"
-   ],
-   "ingredientes": [
-    "Lista de ingredientes: revisar el envase"
-   ],
-   "flags": {
-    "fragancia": null,
-    "alcohol": null,
-    "embarazo": "consultar",
-    "sensible": "revisar",
-    "alergenos": []
-   },
-   "advertencias": [],
-   "alternativas": [
-    "centella",
-    "cluny"
-   ],
-   "verificado": false
-  },
-  {
-   "id": "fps-a",
-   "ean": "7800000000047",
-   "categoria": "skincare",
-   "marca": "Marca demo",
-   "nombre": "Protector solar FPS 50",
-   "formato": "50 ml",
-   "cantidad": {
-    "valor": 50,
-    "unidad": "ml"
-   },
-   "precio": 12990,
-   "foco": "proteger del sol",
-   "resumen": "Protector solar facial de amplio espectro para el uso diario.",
-   "cuando": "Cada mañana y cada 2 a 3 horas al sol",
-   "pasos": [
-    "Aplica sobre el rostro limpio y seco",
-    "Usa cantidad suficiente para cubrir rostro y cuello",
-    "Reaplica cada 2 a 3 horas si estás al sol"
-   ],
-   "ingredientes": [
-    "Filtros UV de amplio espectro"
-   ],
-   "flags": {
-    "fragancia": true,
-    "alcohol": false,
-    "embarazo": "ok",
-    "sensible": "revisar",
-    "alergenos": []
-   },
-   "advertencias": [],
-   "alternativas": [
-    "fps-b"
-   ],
-   "verificado": false
-  },
-  {
-   "id": "fps-b",
-   "ean": "7800000000054",
-   "categoria": "skincare",
-   "marca": "Otra marca demo",
-   "nombre": "Protector solar FPS 50 Toque seco",
-   "formato": "50 ml",
-   "cantidad": {
-    "valor": 50,
-    "unidad": "ml"
-   },
-   "precio": 9990,
-   "foco": "proteger del sol",
-   "resumen": "Protector solar facial de textura liviana y acabado mate.",
-   "cuando": "Cada mañana y cada 2 a 3 horas al sol",
-   "pasos": [
-    "Aplica sobre el rostro limpio y seco",
-    "Cubre rostro y cuello",
-    "Reaplica cada 2 a 3 horas si estás al sol"
-   ],
-   "ingredientes": [
-    "Filtros UV de amplio espectro"
-   ],
-   "flags": {
-    "fragancia": true,
-    "alcohol": false,
-    "embarazo": "ok",
-    "sensible": "revisar",
-    "alergenos": []
-   },
-   "advertencias": [],
-   "alternativas": [
-    "fps-a"
-   ],
-   "verificado": false
-  },
-  {
-   "id": "panales",
-   "ean": "7800000000061",
-   "categoria": "bebe",
-   "marca": "Marca demo",
-   "nombre": "Pañales etapa 3 (6 a 10 kg)",
-   "formato": "60 un.",
-   "cantidad": {
-    "valor": 60,
-    "unidad": "un"
-   },
-   "precio": 17990,
-   "foco": "comodidad y absorción para bebés de 6 a 10 kg",
-   "resumen": "Pañales desechables para bebés de 6 a 10 kg, con ajuste elástico y capa absorbente.",
-   "cuando": "Cambio cada 3 a 4 horas o cuando esté lleno",
-   "pasos": [
-    "Elige la talla según el peso de tu bebé",
-    "Ajusta las tiras sin apretar",
-    "Cambia el pañal en cuanto se sature"
-   ],
-   "ingredientes": [
-    "Capa absorbente",
-    "Ajuste elástico"
-   ],
-   "flags": {
-    "fragancia": false,
-    "alcohol": false,
-    "embarazo": "ok",
-    "sensible": "ok",
-    "alergenos": []
-   },
-   "advertencias": [
-    "Si hay enrojecimiento persistente en la piel del bebé, consulta al pediatra."
-   ],
-   "alternativas": [],
-   "verificado": false
-  },
-  {
-   "id": "crema-panal",
-   "ean": "7800000000078",
-   "categoria": "bebe",
-   "marca": "Marca demo",
-   "nombre": "Crema para pañal",
-   "formato": "100 g",
-   "cantidad": {
-    "valor": 100,
-    "unidad": "g"
-   },
-   "precio": 4990,
-   "foco": "proteger la piel del bebé",
-   "resumen": "Crema de barrera para proteger la piel de la zona del pañal.",
-   "cuando": "En cada cambio de pañal",
-   "pasos": [
-    "Limpia y seca la zona",
-    "Aplica una capa fina",
-    "Coloca el pañal limpio"
-   ],
-   "ingredientes": [
-    "Óxido de zinc"
-   ],
-   "flags": {
-    "fragancia": false,
-    "alcohol": false,
-    "embarazo": "ok",
-    "sensible": "ok",
-    "alergenos": []
-   },
-   "advertencias": [
-    "Suspende si aparece irritación y consulta al pediatra."
-   ],
-   "alternativas": [],
-   "verificado": false
-  },
-  {
-   "id": "toallitas",
-   "ean": "7800000000085",
-   "categoria": "bebe",
-   "marca": "Marca demo",
-   "nombre": "Toallitas húmedas bebé",
-   "formato": "80 un.",
-   "cantidad": {
-    "valor": 80,
-    "unidad": "un"
-   },
-   "precio": 3490,
-   "foco": "limpieza suave de manitos y cambio de pañal",
-   "resumen": "Toallitas húmedas sin alcohol para la limpieza diaria del bebé.",
-   "cuando": "En cada cambio o al limpiar manos y rostro",
-   "pasos": [
-    "Saca una toallita",
-    "Limpia suavemente",
-    "Desecha en la basura, no en el WC"
-   ],
-   "ingredientes": [
-    "Agua",
-    "Sin alcohol"
-   ],
-   "flags": {
-    "fragancia": false,
-    "alcohol": false,
-    "embarazo": "ok",
-    "sensible": "ok",
-    "alergenos": []
-   },
-   "advertencias": [],
-   "alternativas": [],
-   "verificado": false
-  },
-  {
-   "id": "vitd-60",
-   "ean": "7800000000092",
-   "categoria": "vitaminas",
-   "marca": "Marca demo",
-   "nombre": "Vitamina D3 1000 UI",
-   "formato": "60 cáps.",
-   "cantidad": {
-    "valor": 60,
-    "unidad": "cáps"
-   },
-   "precio": 9490,
-   "foco": "aporte de vitamina D",
-   "resumen": "Suplemento de vitamina D3 en cápsulas.",
-   "cuando": "Con una comida, una vez al día",
-   "pasos": [
-    "Tómala con una comida",
-    "No excedas la dosis indicada en el envase",
-    "Guárdala fuera del alcance de los niños"
-   ],
-   "ingredientes": [
-    "Vitamina D3 (colecalciferol)"
-   ],
-   "flags": {
-    "fragancia": false,
-    "alcohol": false,
-    "embarazo": "consultar",
-    "sensible": "ok",
-    "alergenos": []
-   },
-   "advertencias": [
-    "Un suplemento no reemplaza una alimentación variada."
-   ],
-   "alternativas": [
-    "vitd-30"
-   ],
-   "verificado": false
-  },
-  {
-   "id": "vitd-30",
-   "ean": "7800000000108",
-   "categoria": "vitaminas",
-   "marca": "Otra marca demo",
-   "nombre": "Vitamina D3 1000 UI",
-   "formato": "30 cáps.",
-   "cantidad": {
-    "valor": 30,
-    "unidad": "cáps"
-   },
-   "precio": 6990,
-   "foco": "aporte de vitamina D",
-   "resumen": "Suplemento de vitamina D3 en cápsulas, formato pequeño.",
-   "cuando": "Con una comida, una vez al día",
-   "pasos": [
-    "Tómala con una comida",
-    "No excedas la dosis indicada en el envase",
-    "Guárdala fuera del alcance de los niños"
-   ],
-   "ingredientes": [
-    "Vitamina D3 (colecalciferol)"
-   ],
-   "flags": {
-    "fragancia": false,
-    "alcohol": false,
-    "embarazo": "consultar",
-    "sensible": "ok",
-    "alergenos": []
-   },
-   "advertencias": [
-    "Un suplemento no reemplaza una alimentación variada."
-   ],
-   "alternativas": [
-    "vitd-60"
-   ],
-   "verificado": false
-  },
-  {
-   "id": "omega3",
-   "ean": "7800000000115",
-   "categoria": "vitaminas",
-   "marca": "Marca demo",
-   "nombre": "Omega 3",
-   "formato": "60 cáps.",
-   "cantidad": {
-    "valor": 60,
-    "unidad": "cáps"
-   },
-   "precio": 12990,
-   "foco": "aporte de ácidos grasos omega 3",
-   "resumen": "Suplemento de aceite de pescado rico en omega 3.",
-   "cuando": "Con una comida",
-   "pasos": [
-    "Tómalo con una comida",
-    "Sigue la dosis del envase",
-    "Guárdalo en un lugar fresco"
-   ],
-   "ingredientes": [
-    "Aceite de pescado"
-   ],
-   "flags": {
-    "fragancia": false,
-    "alcohol": false,
-    "embarazo": "consultar",
-    "sensible": "ok",
-    "alergenos": [
-     "pescado"
-    ]
-   },
-   "advertencias": [
-    "Contiene pescado."
-   ],
-   "alternativas": [],
-   "verificado": false
-  },
-  {
-   "id": "para-a",
-   "ean": "7800000000122",
-   "categoria": "salud",
-   "marca": "Marca demo",
-   "nombre": "Paracetamol 500 mg",
-   "formato": "20 comp.",
-   "cantidad": {
-    "valor": 20,
-    "unidad": "comp"
-   },
-   "precio": 2490,
-   "foco": "alivio del dolor leve y la fiebre",
-   "resumen": "Medicamento de venta libre para el dolor leve a moderado y la fiebre.",
-   "cuando": "Según indicación del envase o de tu médico",
-   "pasos": [
-    "Lee el envase y el folleto",
-    "Respeta la dosis y el intervalo indicados",
-    "No lo combines con otros productos que contengan paracetamol"
-   ],
-   "ingredientes": [
-    "Paracetamol 500 mg"
-   ],
-   "flags": {
-    "fragancia": false,
-    "alcohol": false,
-    "embarazo": "consultar",
-    "sensible": "ok",
-    "alergenos": []
-   },
-   "advertencias": [
-    "Información referencial, no reemplaza el folleto ni la orientación de un químico farmacéutico o médico.",
-    "Si los síntomas persisten, consulta a un profesional."
-   ],
-   "alternativas": [
-    "para-bio"
-   ],
-   "verificado": false
-  },
-  {
-   "id": "para-bio",
-   "ean": "7800000000139",
-   "categoria": "salud",
-   "marca": "Bioequivalente demo",
-   "nombre": "Paracetamol 500 mg",
-   "formato": "20 comp.",
-   "cantidad": {
-    "valor": 20,
-    "unidad": "comp"
-   },
-   "precio": 1290,
-   "foco": "alivio del dolor leve y la fiebre",
-   "resumen": "Medicamento bioequivalente de venta libre, misma sustancia activa y dosis.",
-   "cuando": "Según indicación del envase o de tu médico",
-   "pasos": [
-    "Lee el envase y el folleto",
-    "Respeta la dosis y el intervalo indicados",
-    "No lo combines con otros productos que contengan paracetamol"
-   ],
-   "ingredientes": [
-    "Paracetamol 500 mg"
-   ],
-   "flags": {
-    "fragancia": false,
-    "alcohol": false,
-    "embarazo": "consultar",
-    "sensible": "ok",
-    "alergenos": []
-   },
-   "advertencias": [
-    "Información referencial, no reemplaza el folleto ni la orientación de un químico farmacéutico o médico.",
-    "Si los síntomas persisten, consulta a un profesional."
-   ],
-   "alternativas": [
-    "para-a"
-   ],
-   "verificado": false
-  },
-  {
-   "id": "shampoo",
-   "ean": "7800000000146",
-   "categoria": "higiene",
-   "marca": "Marca demo",
-   "nombre": "Shampoo cabello seco",
-   "formato": "400 ml",
-   "cantidad": {
-    "valor": 400,
-    "unidad": "ml"
-   },
-   "precio": 5490,
-   "foco": "hidratar el cabello seco",
-   "resumen": "Shampoo de limpieza suave para cabello seco o con puntas abiertas.",
-   "cuando": "En cada lavado",
-   "pasos": [
-    "Moja el cabello",
-    "Masajea el shampoo en el cuero cabelludo",
-    "Enjuaga bien"
-   ],
-   "ingredientes": [
-    "Agentes limpiantes suaves"
-   ],
-   "flags": {
-    "fragancia": true,
-    "alcohol": false,
-    "embarazo": "ok",
-    "sensible": "revisar",
-    "alergenos": []
-   },
-   "advertencias": [],
-   "alternativas": [],
-   "verificado": false
-  }
- ]
+  "_nota": "DATOS DE EJEMPLO. Reemplazar por el catálogo real de Salcobrand (EAN, precios, fichas). Los EAN de ejemplo son válidos pero ficticios. Ver README.",
+  "actualizado": "2026-10-27",
+  "productos": [
+    {
+      "id": "centella",
+      "ean": "7800000000016",
+      "categoria": "skincare",
+      "marca": "SKIN1004",
+      "nombre": "Madagascar Centella Ampoule",
+      "formato": "55 ml",
+      "cantidad": {
+        "valor": 55,
+        "unidad": "ml"
+      },
+      "precio": 15990,
+      "foco": "calmar e hidratar",
+      "resumen": "Ampolla de fórmula simple con extracto de centella asiática, para calmar e hidratar la piel.",
+      "cuando": "Día y noche, antes de la crema",
+      "pasos": [
+        "Limpia tu rostro",
+        "Aplica 3 a 4 gotas y extiende suavemente",
+        "Sigue con tu crema hidratante"
+      ],
+      "ingredientes": [
+        "Extracto de centella asiática",
+        "Glicerina",
+        "Butilenglicol"
+      ],
+      "flags": {
+        "fragancia": false,
+        "alcohol": false,
+        "embarazo": "consultar",
+        "sensible": "ok",
+        "alergenos": []
+      },
+      "advertencias": [
+        "Si tienes alergia a la centella asiática, no la uses."
+      ],
+      "alternativas": [
+        "cluny",
+        "nivea"
+      ],
+      "verificado": false,
+      "imagen": "https://static.salcobrand.cl/spree/products/148873/large/590400.jpg?1750277314"
+    },
+    {
+      "id": "cluny",
+      "ean": "7800000000023",
+      "categoria": "skincare",
+      "marca": "Cluny",
+      "nombre": "Luminaclear Sérum Anti Manchas",
+      "formato": "30 ml",
+      "cantidad": {
+        "valor": 30,
+        "unidad": "ml"
+      },
+      "precio": 13199,
+      "foco": "unificar el tono y dar luminosidad",
+      "resumen": "Sérum que reduce imperfecciones y aporta luminosidad al rostro.",
+      "cuando": "Con protector solar de día",
+      "pasos": [
+        "Limpia tu rostro",
+        "Aplica una pequeña cantidad en el rostro",
+        "Usa protector solar durante el día"
+      ],
+      "ingredientes": [
+        "Lista de ingredientes: revisar el envase"
+      ],
+      "flags": {
+        "fragancia": null,
+        "alcohol": null,
+        "embarazo": "consultar",
+        "sensible": "revisar",
+        "alergenos": []
+      },
+      "advertencias": [
+        "Los productos para manchas se usan junto con protector solar."
+      ],
+      "alternativas": [
+        "centella",
+        "nivea"
+      ],
+      "verificado": false,
+      "imagen": "https://static.salcobrand.cl/spree/products/134126/large/589732.jpg?1737556357"
+    },
+    {
+      "id": "nivea",
+      "ean": "7800000000030",
+      "categoria": "skincare",
+      "marca": "NIVEA",
+      "nombre": "Cellular Epigenetics Sérum",
+      "formato": "30 ml",
+      "cantidad": {
+        "valor": 30,
+        "unidad": "ml"
+      },
+      "precio": 29990,
+      "foco": "cuidado anti-edad",
+      "resumen": "Sérum rejuvenecedor pensado para el cuidado anti-edad del rostro.",
+      "cuando": "Sobre el rostro limpio, antes de la crema",
+      "pasos": [
+        "Limpia tu rostro",
+        "Aplica el sérum y extiende",
+        "Sigue con tu crema hidratante"
+      ],
+      "ingredientes": [
+        "Lista de ingredientes: revisar el envase"
+      ],
+      "flags": {
+        "fragancia": null,
+        "alcohol": null,
+        "embarazo": "consultar",
+        "sensible": "revisar",
+        "alergenos": []
+      },
+      "advertencias": [],
+      "alternativas": [
+        "centella",
+        "cluny"
+      ],
+      "verificado": false,
+      "imagen": "https://static.salcobrand.cl/spree/products/164090/large/593006-1.jpg?1761056722"
+    },
+    {
+      "id": "fps-a",
+      "ean": "7800000000047",
+      "categoria": "skincare",
+      "marca": "Marca demo",
+      "nombre": "Protector solar FPS 50",
+      "formato": "50 ml",
+      "cantidad": {
+        "valor": 50,
+        "unidad": "ml"
+      },
+      "precio": 12990,
+      "foco": "proteger del sol",
+      "resumen": "Protector solar facial de amplio espectro para el uso diario.",
+      "cuando": "Cada mañana y cada 2 a 3 horas al sol",
+      "pasos": [
+        "Aplica sobre el rostro limpio y seco",
+        "Usa cantidad suficiente para cubrir rostro y cuello",
+        "Reaplica cada 2 a 3 horas si estás al sol"
+      ],
+      "ingredientes": [
+        "Filtros UV de amplio espectro"
+      ],
+      "flags": {
+        "fragancia": true,
+        "alcohol": false,
+        "embarazo": "ok",
+        "sensible": "revisar",
+        "alergenos": []
+      },
+      "advertencias": [],
+      "alternativas": [
+        "fps-b"
+      ],
+      "verificado": false
+    },
+    {
+      "id": "fps-b",
+      "ean": "7800000000054",
+      "categoria": "skincare",
+      "marca": "Otra marca demo",
+      "nombre": "Protector solar FPS 50 Toque seco",
+      "formato": "50 ml",
+      "cantidad": {
+        "valor": 50,
+        "unidad": "ml"
+      },
+      "precio": 9990,
+      "foco": "proteger del sol",
+      "resumen": "Protector solar facial de textura liviana y acabado mate.",
+      "cuando": "Cada mañana y cada 2 a 3 horas al sol",
+      "pasos": [
+        "Aplica sobre el rostro limpio y seco",
+        "Cubre rostro y cuello",
+        "Reaplica cada 2 a 3 horas si estás al sol"
+      ],
+      "ingredientes": [
+        "Filtros UV de amplio espectro"
+      ],
+      "flags": {
+        "fragancia": true,
+        "alcohol": false,
+        "embarazo": "ok",
+        "sensible": "revisar",
+        "alergenos": []
+      },
+      "advertencias": [],
+      "alternativas": [
+        "fps-a"
+      ],
+      "verificado": false
+    },
+    {
+      "id": "panales",
+      "ean": "7800000000061",
+      "categoria": "bebe",
+      "marca": "Marca demo",
+      "nombre": "Pañales etapa 3 (6 a 10 kg)",
+      "formato": "60 un.",
+      "cantidad": {
+        "valor": 60,
+        "unidad": "un"
+      },
+      "precio": 17990,
+      "foco": "comodidad y absorción para bebés de 6 a 10 kg",
+      "resumen": "Pañales desechables para bebés de 6 a 10 kg, con ajuste elástico y capa absorbente.",
+      "cuando": "Cambio cada 3 a 4 horas o cuando esté lleno",
+      "pasos": [
+        "Elige la talla según el peso de tu bebé",
+        "Ajusta las tiras sin apretar",
+        "Cambia el pañal en cuanto se sature"
+      ],
+      "ingredientes": [
+        "Capa absorbente",
+        "Ajuste elástico"
+      ],
+      "flags": {
+        "fragancia": false,
+        "alcohol": false,
+        "embarazo": "ok",
+        "sensible": "ok",
+        "alergenos": []
+      },
+      "advertencias": [
+        "Si hay enrojecimiento persistente en la piel del bebé, consulta al pediatra."
+      ],
+      "alternativas": [],
+      "verificado": false
+    },
+    {
+      "id": "crema-panal",
+      "ean": "7800000000078",
+      "categoria": "bebe",
+      "marca": "Marca demo",
+      "nombre": "Crema para pañal",
+      "formato": "100 g",
+      "cantidad": {
+        "valor": 100,
+        "unidad": "g"
+      },
+      "precio": 4990,
+      "foco": "proteger la piel del bebé",
+      "resumen": "Crema de barrera para proteger la piel de la zona del pañal.",
+      "cuando": "En cada cambio de pañal",
+      "pasos": [
+        "Limpia y seca la zona",
+        "Aplica una capa fina",
+        "Coloca el pañal limpio"
+      ],
+      "ingredientes": [
+        "Óxido de zinc"
+      ],
+      "flags": {
+        "fragancia": false,
+        "alcohol": false,
+        "embarazo": "ok",
+        "sensible": "ok",
+        "alergenos": []
+      },
+      "advertencias": [
+        "Suspende si aparece irritación y consulta al pediatra."
+      ],
+      "alternativas": [],
+      "verificado": false
+    },
+    {
+      "id": "toallitas",
+      "ean": "7800000000085",
+      "categoria": "bebe",
+      "marca": "Marca demo",
+      "nombre": "Toallitas húmedas bebé",
+      "formato": "80 un.",
+      "cantidad": {
+        "valor": 80,
+        "unidad": "un"
+      },
+      "precio": 3490,
+      "foco": "limpieza suave de manitos y cambio de pañal",
+      "resumen": "Toallitas húmedas sin alcohol para la limpieza diaria del bebé.",
+      "cuando": "En cada cambio o al limpiar manos y rostro",
+      "pasos": [
+        "Saca una toallita",
+        "Limpia suavemente",
+        "Desecha en la basura, no en el WC"
+      ],
+      "ingredientes": [
+        "Agua",
+        "Sin alcohol"
+      ],
+      "flags": {
+        "fragancia": false,
+        "alcohol": false,
+        "embarazo": "ok",
+        "sensible": "ok",
+        "alergenos": []
+      },
+      "advertencias": [],
+      "alternativas": [],
+      "verificado": false
+    },
+    {
+      "id": "vitd-60",
+      "ean": "7800000000092",
+      "categoria": "vitaminas",
+      "marca": "Marca demo",
+      "nombre": "Vitamina D3 1000 UI",
+      "formato": "60 cáps.",
+      "cantidad": {
+        "valor": 60,
+        "unidad": "cáps"
+      },
+      "precio": 9490,
+      "foco": "aporte de vitamina D",
+      "resumen": "Suplemento de vitamina D3 en cápsulas.",
+      "cuando": "Con una comida, una vez al día",
+      "pasos": [
+        "Tómala con una comida",
+        "No excedas la dosis indicada en el envase",
+        "Guárdala fuera del alcance de los niños"
+      ],
+      "ingredientes": [
+        "Vitamina D3 (colecalciferol)"
+      ],
+      "flags": {
+        "fragancia": false,
+        "alcohol": false,
+        "embarazo": "consultar",
+        "sensible": "ok",
+        "alergenos": []
+      },
+      "advertencias": [
+        "Un suplemento no reemplaza una alimentación variada."
+      ],
+      "alternativas": [
+        "vitd-30"
+      ],
+      "verificado": false
+    },
+    {
+      "id": "vitd-30",
+      "ean": "7800000000108",
+      "categoria": "vitaminas",
+      "marca": "Otra marca demo",
+      "nombre": "Vitamina D3 1000 UI",
+      "formato": "30 cáps.",
+      "cantidad": {
+        "valor": 30,
+        "unidad": "cáps"
+      },
+      "precio": 6990,
+      "foco": "aporte de vitamina D",
+      "resumen": "Suplemento de vitamina D3 en cápsulas, formato pequeño.",
+      "cuando": "Con una comida, una vez al día",
+      "pasos": [
+        "Tómala con una comida",
+        "No excedas la dosis indicada en el envase",
+        "Guárdala fuera del alcance de los niños"
+      ],
+      "ingredientes": [
+        "Vitamina D3 (colecalciferol)"
+      ],
+      "flags": {
+        "fragancia": false,
+        "alcohol": false,
+        "embarazo": "consultar",
+        "sensible": "ok",
+        "alergenos": []
+      },
+      "advertencias": [
+        "Un suplemento no reemplaza una alimentación variada."
+      ],
+      "alternativas": [
+        "vitd-60"
+      ],
+      "verificado": false
+    },
+    {
+      "id": "omega3",
+      "ean": "7800000000115",
+      "categoria": "vitaminas",
+      "marca": "Marca demo",
+      "nombre": "Omega 3",
+      "formato": "60 cáps.",
+      "cantidad": {
+        "valor": 60,
+        "unidad": "cáps"
+      },
+      "precio": 12990,
+      "foco": "aporte de ácidos grasos omega 3",
+      "resumen": "Suplemento de aceite de pescado rico en omega 3.",
+      "cuando": "Con una comida",
+      "pasos": [
+        "Tómalo con una comida",
+        "Sigue la dosis del envase",
+        "Guárdalo en un lugar fresco"
+      ],
+      "ingredientes": [
+        "Aceite de pescado"
+      ],
+      "flags": {
+        "fragancia": false,
+        "alcohol": false,
+        "embarazo": "consultar",
+        "sensible": "ok",
+        "alergenos": [
+          "pescado"
+        ]
+      },
+      "advertencias": [
+        "Contiene pescado."
+      ],
+      "alternativas": [],
+      "verificado": false
+    },
+    {
+      "id": "para-a",
+      "ean": "7800000000122",
+      "categoria": "salud",
+      "marca": "Marca demo",
+      "nombre": "Paracetamol 500 mg",
+      "formato": "20 comp.",
+      "cantidad": {
+        "valor": 20,
+        "unidad": "comp"
+      },
+      "precio": 2490,
+      "foco": "alivio del dolor leve y la fiebre",
+      "resumen": "Medicamento de venta libre para el dolor leve a moderado y la fiebre.",
+      "cuando": "Según indicación del envase o de tu médico",
+      "pasos": [
+        "Lee el envase y el folleto",
+        "Respeta la dosis y el intervalo indicados",
+        "No lo combines con otros productos que contengan paracetamol"
+      ],
+      "ingredientes": [
+        "Paracetamol 500 mg"
+      ],
+      "flags": {
+        "fragancia": false,
+        "alcohol": false,
+        "embarazo": "consultar",
+        "sensible": "ok",
+        "alergenos": []
+      },
+      "advertencias": [
+        "Información referencial, no reemplaza el folleto ni la orientación de un químico farmacéutico o médico.",
+        "Si los síntomas persisten, consulta a un profesional."
+      ],
+      "alternativas": [
+        "para-bio"
+      ],
+      "verificado": false
+    },
+    {
+      "id": "para-bio",
+      "ean": "7800000000139",
+      "categoria": "salud",
+      "marca": "Bioequivalente demo",
+      "nombre": "Paracetamol 500 mg",
+      "formato": "20 comp.",
+      "cantidad": {
+        "valor": 20,
+        "unidad": "comp"
+      },
+      "precio": 1290,
+      "foco": "alivio del dolor leve y la fiebre",
+      "resumen": "Medicamento bioequivalente de venta libre, misma sustancia activa y dosis.",
+      "cuando": "Según indicación del envase o de tu médico",
+      "pasos": [
+        "Lee el envase y el folleto",
+        "Respeta la dosis y el intervalo indicados",
+        "No lo combines con otros productos que contengan paracetamol"
+      ],
+      "ingredientes": [
+        "Paracetamol 500 mg"
+      ],
+      "flags": {
+        "fragancia": false,
+        "alcohol": false,
+        "embarazo": "consultar",
+        "sensible": "ok",
+        "alergenos": []
+      },
+      "advertencias": [
+        "Información referencial, no reemplaza el folleto ni la orientación de un químico farmacéutico o médico.",
+        "Si los síntomas persisten, consulta a un profesional."
+      ],
+      "alternativas": [
+        "para-a"
+      ],
+      "verificado": false
+    },
+    {
+      "id": "shampoo",
+      "ean": "7800000000146",
+      "categoria": "higiene",
+      "marca": "Marca demo",
+      "nombre": "Shampoo cabello seco",
+      "formato": "400 ml",
+      "cantidad": {
+        "valor": 400,
+        "unidad": "ml"
+      },
+      "precio": 5490,
+      "foco": "hidratar el cabello seco",
+      "resumen": "Shampoo de limpieza suave para cabello seco o con puntas abiertas.",
+      "cuando": "En cada lavado",
+      "pasos": [
+        "Moja el cabello",
+        "Masajea el shampoo en el cuero cabelludo",
+        "Enjuaga bien"
+      ],
+      "ingredientes": [
+        "Agentes limpiantes suaves"
+      ],
+      "flags": {
+        "fragancia": true,
+        "alcohol": false,
+        "embarazo": "ok",
+        "sensible": "revisar",
+        "alergenos": []
+      },
+      "advertencias": [],
+      "alternativas": [],
+      "verificado": false
+    }
+  ]
 }
