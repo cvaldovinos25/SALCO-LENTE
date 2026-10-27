@@ -23,8 +23,6 @@
     profile: { embarazo: false, fragancias: false, sensible: false },
     hist: sget('historial', []),        // [{id, t}] más reciente primero
     list: sget('lista', []),            // [{id, qty}]
-    seen: sget('vistas', []),           // categorías exploradas
-    unlocked: sget('cupon', false),
     cmp: { a: null, b: null }, mode: 'view', pick: null,
     cur: null, pvFromScan: false, screen: 'home', view: null, arMode: false
   };
@@ -117,7 +115,7 @@
     if (stream) { document.body.classList.add('cam'); return true; }
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { toast('Tu navegador no permite usar la cámara. Abre este enlace en Safari o Chrome.', 4500); return false; }
     try {
-      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false });
+      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1080 } }, audio: false });
     } catch (e) { toast('No pudimos usar la cámara. Permite el acceso o busca el producto por nombre.', 4500); return false; }
     vid.srcObject = stream; document.body.classList.add('cam');
     try { await vid.play(); } catch (e) {}
@@ -187,25 +185,17 @@
   });
 
   /* ---------- Vista de producto (RA) ---------- */
-  function categoriesSeen(p) {
-    if (!S.seen.includes(p.categoria)) {
-      S.seen.push(p.categoria); sset('vistas', S.seen);
-      if (C.CUPON.activo && !S.unlocked && S.seen.length >= C.CUPON.categorias) { S.unlocked = true; sset('cupon', true); setTimeout(() => toast('🎁 ¡Desbloqueaste tu ' + C.CUPON.titulo.toLowerCase() + '! Míralo en Mi lista.', 4500), 900); }
-    }
-  }
   function cupBar() {
     const el = $('#pvCupon');
-    if (!C.CUPON.activo) { el.classList.add('hidden'); return; }
-    const n = Math.min(S.seen.length, C.CUPON.categorias);
+    if (!C.MI_SALCO.activo) { el.classList.add('hidden'); return; }
     el.classList.remove('hidden');
-    el.innerHTML = S.unlocked ? '🎁 <span><b>Cupón desbloqueado.</b> Míralo en Mi lista.</span>' : '🎁 <span>Explora <b>' + (C.CUPON.categorias - n) + ' categoría' + (C.CUPON.categorias - n === 1 ? '' : 's') + ' más</b> y desbloquea tu ' + esc(C.CUPON.titulo.toLowerCase()) + ' (' + n + ' de ' + C.CUPON.categorias + ')</span>';
+    el.innerHTML = '<img src="img/mi-salcobrand.png" alt="Mi Salcobrand"><span>' + esc(C.MI_SALCO.corto) + '</span>';
   }
   const inList = (id) => S.list.find((i) => i.id === id);
 
   function openProduct(p, fromScan) {
     const ar = !!fromScan && !!stream;
     S.cur = p; S.pvFromScan = !!fromScan; S.arMode = ar; S.view = 'pv';
-    categoriesSeen(p);
     $('#pvName').textContent = p.nombre; $('#pvBrand').textContent = p.marca + ' · ' + p.formato;
     const sm = sema(p), pr = unitTxt(p);
     const card = (k, tit, color, body, delay) => '<button class="glass acard' + (ar ? ' ar' : '') + '" data-k="' + k + '" style="animation-delay:' + delay + 's"><b style="color:' + color + '">' + tit + '</b><span class="more">›</span>' + body + '</button>';
@@ -245,7 +235,7 @@
     const s = toScreen(t.x, t.y);
     if (!AP.has) { AP.x = s.x; AP.y = s.y; AP.has = true; $('#arLayer').classList.remove('wait'); }
     else { AP.x += (s.x - AP.x) * 0.6; AP.y += (s.y - AP.y) * 0.6; }
-    layoutAR(AP.x, AP.y, Math.max(90, Math.min(380, (t.w || 200) * s.sc)), t);
+    layoutAR(AP.x, AP.y, Math.max(36, Math.min(380, (t.w || 200) * s.sc)), t);
   }
   function layoutAR(ax, ay, wS, t) {
     const W = innerWidth, H = innerHeight, cw = Math.min(158, Math.floor((W - 24) / 2)), gap = 8, topMin = 76, botMax = H - 172;
@@ -254,7 +244,7 @@
     cards.forEach((c) => { c.style.width = cw + 'px'; });
     const hs = cards.map((c) => c.offsetHeight || 96);
     const r1 = Math.max(hs[0], hs[1]), r2 = Math.max(hs[2], hs[3]), bh = r1 + r2 + gap, bw = cw * 2 + gap;
-    const boxW = wS * 1.1, boxH = Math.max(56, Math.min(230, wS * 0.62)), g = 18;
+    const boxW = Math.min(W - 16, wS * 1.7), boxH = Math.max(40, Math.min(260, wS * 1.05)), g = 14;
     const roomA = ay - boxH / 2 - g - topMin, roomB = botMax - (ay + boxH / 2 + g);
     const above = roomA >= bh || (roomB < bh && roomA >= roomB);
     const bx = Math.max(8, Math.min(W - bw - 8, ax - bw / 2));
@@ -372,17 +362,12 @@
       h += '<div class="card" style="display:flex;justify-content:space-between;font-weight:950;font-size:17px"><span>Total referencial</span><span>' + clp(total) + '</span></div>';
       h += '<div class="card qrbox" style="margin-top:12px"><small class="k" style="font-size:12px;font-weight:900;letter-spacing:.1em;color:var(--muted)">MUESTRA ESTE QR EN CAJA</small><div class="qr" id="qrBox"></div><p class="legal" style="margin-top:8px">Los precios son referenciales: confirma el valor vigente en caja.</p></div>';
     }
-    if (C.CUPON.activo) {
-      const n = Math.min(S.seen.length, C.CUPON.categorias);
-      h += S.unlocked
-        ? '<div class="card coupon"><span style="font-size:32px">🎁</span><div><b>' + esc(C.CUPON.titulo) + ' desbloqueado</b><div style="font-weight:700;font-size:13px">' + esc(C.CUPON.detalle) + '</div><div style="font-weight:950;font-size:18px;margin-top:4px;letter-spacing:.06em">' + esc(C.CUPON.codigo) + '</div></div></div>'
-        : '<div class="card coupon"><span style="font-size:32px">🎁</span><div style="flex:1"><b>' + esc(C.CUPON.titulo) + '</b><div style="font-weight:700;font-size:13px">Explora ' + C.CUPON.categorias + ' categorías distintas para desbloquearlo (' + n + ' de ' + C.CUPON.categorias + ').</div><div class="meter"><i style="width:' + (n / C.CUPON.categorias * 100) + '%"></i></div></div></div>';
-    }
+    if (C.MI_SALCO.activo) h += '<div class="card misalco"><img src="img/mi-salcobrand.png" alt="Mi Salcobrand"><p>' + esc(C.MI_SALCO.largo) + '</p></div>';
     if (items.length) h += '<button class="btn ghost" id="lClear" style="margin-top:8px">Vaciar lista</button>';
     el.innerHTML = h;
     if (items.length && window.qrcode) {
       try {
-        const txt = 'SALCOLENTE:' + items.map((i) => i.p.ean + 'x' + i.qty).join(',') + (S.unlocked ? ';CUPON=' + C.CUPON.codigo : '');
+        const txt = 'SALCOLENTE:' + items.map((i) => i.p.ean + 'x' + i.qty).join(',');
         const q = qrcode(0, 'M'); q.addData(txt); q.make();
         $('#qrBox').innerHTML = q.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
       } catch (e) { console.warn(e); }
@@ -409,7 +394,7 @@
   }
   function renderHistory() {
     const el = $('#s-history'), items = S.hist.map((h) => ({ p: S.byId[h.id], t: h.t })).filter((i) => i.p);
-    let h = '<h2 style="font-size:28px;font-weight:950;margin-bottom:4px">Historial</h2><p style="color:var(--muted);font-weight:700;margin-bottom:14px">Los productos que escaneaste, del más reciente al más antiguo. Tócalos para ver su información de nuevo.</p>';
+    let h = '<h2 style="font-size:28px;margin-bottom:4px">Historial</h2><p style="color:var(--muted);font-weight:700;margin-bottom:14px">Los productos que escaneaste, del más reciente al más antiguo. Tócalos para ver su información de nuevo.</p>';
     if (!items.length) {
       h += '<div class="empty">Aún no has escaneado productos.<br><button class="btn" id="hEmpty" style="margin-top:14px">Escanear un producto 📷</button></div>';
     } else {

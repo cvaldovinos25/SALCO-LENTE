@@ -7,17 +7,15 @@ window.SL = window.SL || {};
 SL.CONFIG = {
   CATALOGO_URL: 'data/productos.json',   // puede ser la URL de un servicio con el mismo formato (debe permitir CORS)
 
-  /* Cupón por explorar categorías distintas (mecánica de juego) */
-  CUPON: {
+  /* Recordatorio de Mi Salcobrand (se muestra en la vista de producto y en Mi lista) */
+  MI_SALCO: {
     activo: true,
-    categorias: 3,                       // categorías distintas que hay que mirar para desbloquearlo
-    titulo: 'Cupón sorpresa',
-    detalle: 'Muéstralo en caja. (Texto de ejemplo: reemplazar por las bases reales.)',
-    codigo: 'LENTE-DEMO'
+    corto: 'No olvides usar tu código Mi Salcobrand en caja.',
+    largo: 'Antes de pagar, indica tu código Mi Salcobrand en caja para aprovechar tus beneficios.'
   },
 
   /* Lectura de códigos de barras */
-  SCAN: { INTERVALO_MS: 140, ANCHO_ANALISIS: 640 },
+  SCAN: { INTERVALO_MS: 140, ANCHO_ANALISIS: 1280 },
 
   CATEGORIAS: {
     skincare:  { nombre: 'Skincare',  emoji: '🧴', c1: '#d9f0ff', c2: '#9fd8ff' },

@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="es">
 <head>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700&display=swap" rel="stylesheet">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#007dc3">
@@ -15,11 +17,13 @@
   --grad-main:linear-gradient(135deg,#005fb0 0%,#007dc3 40%,#00a9e8 80%,#35d6c4 100%);
   --grad-cta:linear-gradient(135deg,#005fb0,#007dc3 45%,#00a9e8);
   --grad-fun:linear-gradient(90deg,#007dc3,#00a9e8 40%,#96c11f 80%,#c8e23c);
+  --font-t:"Avenir Next","Avenir","Avenir Next LT Pro","Nunito","Segoe UI",system-ui,sans-serif;
   --font:ui-rounded,"SF Pro Rounded","Nunito","Segoe UI Variable",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{color-scheme:light}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--font);-webkit-font-smoothing:antialiased;min-height:100vh;min-height:100dvh;overflow-x:hidden}
+h1,h2,h3,h4,.brand b,.sectitle,.hint b,.nm b,.hero2 b,.sheet h3,.sheet h4{font-family:var(--font-t);font-weight:700}
 h1,h2,h3{margin:0;line-height:1.1;letter-spacing:-.025em}
 p{margin:0}
 button{font:inherit;cursor:pointer;color:inherit}
@@ -168,7 +172,8 @@ body.cam .pv-top .nm{color:#fff;text-shadow:0 1px 10px rgba(0,20,50,.85)}
 .pv-act{display:flex;gap:10px}
 .pv-act .btn{padding:14px 10px;font-size:15px}
 .pv-act .btn.sel{background:linear-gradient(135deg,#6a9a00,#96c11f)}
-.cupon{display:flex;align-items:center;gap:10px;padding:9px 14px;font-size:12.5px;font-weight:800}
+.cupon{display:flex;align-items:center;gap:10px;padding:8px 14px;font-size:12.5px;font-weight:800}
+.cupon img{height:26px;width:auto;flex:0 0 auto;border-radius:8px}
 
 /* Hoja inferior */
 .sheet-bg{position:fixed;inset:0;z-index:70;background:rgba(0,20,50,.45);display:none}
@@ -207,9 +212,9 @@ body.cam .pv-top .nm{color:#fff;text-shadow:0 1px 10px rgba(0,20,50,.85)}
 .qrbox{text-align:center;padding:16px}
 .qrbox .qr{width:170px;height:170px;margin:8px auto 0;background:#fff;border-radius:14px;padding:8px}
 .qrbox .qr svg{width:100%;height:100%;display:block}
-.coupon{margin-top:12px;padding:14px;display:flex;gap:12px;align-items:center;background:linear-gradient(135deg,#fff9d6,#ffeeb5);border:1.5px dashed #e6b800}
-.coupon .meter{height:8px;border-radius:6px;background:rgba(0,0,0,.08);overflow:hidden;margin-top:6px}
-.coupon .meter i{display:block;height:100%;background:var(--grad-fun);border-radius:6px;transition:width .5s}
+.misalco{margin-top:12px;padding:14px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+.misalco img{height:44px;width:auto;border-radius:12px}
+.misalco p{margin:0;font-weight:800;font-size:13.5px}
 
 /* Perfil */
 .tog{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(0,60,120,.08);font-weight:800;font-size:14.5px}
@@ -253,6 +258,7 @@ body.cam .pv-top .nm{color:#fff;text-shadow:0 1px 10px rgba(0,20,50,.85)}
 .ic.xl{width:96px;height:96px;font-size:50px;border-radius:30px}
 
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+h1,h2,h3,h4,.brand b,.sectitle,.hint b,.nm b,.hero2 b,.sheet h3,.sheet h4,.hero h1,.sheet h3{font-family:var(--font-t)!important;font-weight:700!important}
 </style>
 </head>
 <body>
@@ -287,7 +293,7 @@ body.cam .pv-top .nm{color:#fff;text-shadow:0 1px 10px rgba(0,20,50,.85)}
 
   <!-- Buscar -->
   <section class="screen" id="s-search">
-    <h2 style="font-size:28px;font-weight:950;margin-bottom:12px">Buscar productos</h2>
+    <h2 style="font-size:28px;margin-bottom:12px">Buscar productos</h2>
     <input class="srch" id="q" type="search" placeholder="Nombre, marca o categoría" autocomplete="off">
     <div class="chips" id="qchips"></div>
     <div class="plist" id="plist"></div>

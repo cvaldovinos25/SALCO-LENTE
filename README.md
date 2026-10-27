@@ -7,7 +7,7 @@ Experiencia web con **realidad aumentada** para ayudar a decidir una compra en F
 - **Precio por unidad** (por ml, g, cápsula, pañal…) y **alternativas** más baratas o parecidas.
 - Las tarjetas **siguen al producto** y se mantienen ancladas a él mientras se mueve el celular o el envase.
 
-Además: **comparar dos productos** lado a lado, un **historial** de lo escaneado (se puede reabrir cada producto y agregarlo a la lista), **Mi lista** con un **QR para caja**, y un **cupón por explorar categorías** (mecánica de juego, configurable).
+Además: **comparar dos productos** lado a lado, un **historial** de lo escaneado (se puede reabrir cada producto y agregarlo a la lista), **Mi lista** con un **QR para caja**, y un **recordatorio de usar tu código Mi Salcobrand** en caja.
 
 > Es una herramienta **informativa**. No diagnostica ni recomienda medicamentos. Los medicamentos se muestran solo con la información de su ficha.
 
@@ -19,7 +19,7 @@ Sitio (GitHub Pages): `https://cvaldovinos25.github.io/SALCO-LENTE/`
 SALCO-LENTE/
 ├── index.html          Interfaz (mobile first), estilos y pantallas
 ├── js/
-│   ├── config.js       Cupón, categorías y textos legales (lo que se edita)
+│   ├── config.js       Recordatorio Mi Salcobrand, categorías y textos legales (lo que se edita)
 │   ├── app.js          Flujo: escaneo, vista RA, comparar, lista, historial
 │   └── ar.js           Lectura del código y seguimiento visual (anclaje al producto)
 ├── data/productos.json Catálogo (¡DE EJEMPLO, hay que reemplazarlo!)
@@ -66,7 +66,7 @@ Para probar sin productos reales: abre `demo-codigos.html` en una pantalla y apu
 ## Cómo se ancla la información al producto (`js/ar.js`)
 
 1. Se lee el código de barras (cada ~140 ms) y se obtiene su posición en la imagen.
-2. Esa zona (el código y parte del envase) se guarda como plantilla y se sigue cuadro a cuadro por comparación de imagen (template matching sobre una versión reducida y suavizada).
+2. Esa zona (el código y el envase que lo rodea, en proporción al tamaño del código) se guarda como plantilla y se sigue cuadro a cuadro por comparación de imagen (template matching sobre una versión reducida y suavizada), probando también pequeños cambios de tamaño: así la información sigue al producto aunque lo acerques o lo alejes, y se puede leer sin tener el código pegado a la cámara. La lectura usa la cámara en alta resolución (hasta 1920 px) y alterna cuadro completo y recorte central para detectar códigos más pequeños.
 3. Las tarjetas se ubican alrededor de esa posición, con una línea guía y un marco sobre el producto. Cada vez que el código se lee de nuevo, la posición se corrige para evitar deriva.
 4. Si se pierde el seguimiento (movimiento muy brusco, tapar el envase o sacarlo de cuadro), las tarjetas se atenúan y aparece "Apunta de nuevo al código para reubicar la información".
 
@@ -76,6 +76,10 @@ Para probar sin productos reales: abre `demo-codigos.html` en una pantalla y apu
 
 La cámara se ve de fondo y la información se mantiene en el espacio sobre el producto, sin instalar nada: funciona desde un QR en el navegador. Si el navegador no permite la cámara, hay una vista sin RA con la misma información.
 
+## Tipografía
+
+Los títulos usan **Avenir Bold** (`Avenir Next`/`Avenir` si el dispositivo la tiene, como iPhone y Mac). Avenir es una fuente con licencia y no se puede incluir en el sitio: en Android y Windows se usa Nunito Bold (Google Fonts) como reemplazo. Para usar Avenir en todos los dispositivos hay que comprar la licencia web y cargarla con `@font-face` en `index.html`.
+
 ## Lectura de códigos de barras
 
 Usa el lector nativo del navegador (`BarcodeDetector`, en Chrome Android) y, si no existe (por ejemplo Safari en iPhone), la librería ZXing incluida. Si no se logra leer, la persona puede **escribir el código** o **buscar por nombre**. Probado con un código EAN-13 simulado en navegador de escritorio; falta probar en celulares reales con envases reales (brillos, curvatura y poca luz afectan la lectura).
@@ -83,21 +87,19 @@ Usa el lector nativo del navegador (`BarcodeDetector`, en Chrome Android) y, si 
 ## Privacidad
 
 - Las imágenes de la cámara **no se guardan ni se envían**: se procesan en el celular.
-- El historial, la lista y las categorías exploradas se guardan solo en el celular (almacenamiento local del navegador).
+- El historial y la lista se guardan solo en el celular (almacenamiento local del navegador).
 - No hay analítica ni cookies. Las librerías se sirven desde el mismo sitio.
 
 ## Aspectos legales y de salud (revisar antes del lanzamiento)
 
 - Medicamentos: solo información de ficha, sin recomendar ni comparar eficacia. Revisión del área técnica (químico farmacéutico) y legal.
 - Semáforo y avisos de embarazo, alergias, etc.: son orientativos y dependen de la calidad de los datos cargados.
-- Cupón: las bases y el texto de `config.js` son de ejemplo.
 
 ## Pendientes y límites
 
 - Cargar el catálogo real y validar los textos.
 - Probar en celulares reales (iPhone y Android) y en la góndola con su luz.
 - Opcional: stock por local (requiere acceso al inventario), fotos reales de productos, QR por pasillo/categoría, medición de uso.
-- La mecánica del "cupón" no se valida en caja: es un código de ejemplo.
 
 ## Créditos
 
