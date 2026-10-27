@@ -197,7 +197,9 @@
   }
   const inList = (id) => S.list.find((i) => i.id === id);
 
+  let model3 = null;
   function openProduct(p, fromScan) {
+    if (model3) { model3.destroy(); model3 = null; }
     const ar = !!fromScan && !!stream;
     S.cur = p; S.pvFromScan = !!fromScan; S.arMode = ar; S.view = 'pv';
     $('#pvName').textContent = p.nombre; $('#pvBrand').textContent = p.marca + ' · ' + p.formato;
@@ -213,13 +215,14 @@
       SL.AR.lock(norm(p.ean));
     } else {
       $('#arCards').innerHTML = ''; $('#rowT').innerHTML = c1 + c2; $('#rowB').innerHTML = c3 + c4;
-      $('#stage').innerHTML = '<div class="hero2">' + icBubble(p, 'xl') + '<b>' + esc(p.marca) + '</b><span>' + esc(p.nombre) + '</span></div>';
+      if (!(SL.Model3D && (model3 = SL.Model3D.mount($('#stage'), p)))) $('#stage').innerHTML = '<div class="hero2">' + icBubble(p, 'xl') + '<b>' + esc(p.marca) + '</b><span>' + esc(p.nombre) + '</span></div>';
     }
     $$('.acard').forEach((b) => b.addEventListener('click', () => openSheet(b.dataset.k)));
     syncAdd(); cupBar();
     $('#pv').classList.add('on'); $('#pv').classList.toggle('ar', ar);
   }
   function closePV() {
+    if (model3) { model3.destroy(); model3 = null; }
     $('#pv').classList.remove('on', 'ar'); closeSheet(); S.view = null; S.arMode = false; $('#arCards').innerHTML = '';
     if (S.screen === 'history') renderHistory(); else if (S.screen === 'list') renderList();
   }

@@ -21,9 +21,10 @@ SALCO-LENTE/
 ├── js/
 │   ├── config.js       Recordatorio Mi Salcobrand, categorías y textos legales (lo que se edita)
 │   ├── app.js          Flujo: escaneo, vista RA, comparar, lista, historial
+│   ├── model3d.js      Modelo 3D del producto a partir de su foto (vista sin cámara)
 │   └── ar.js           Lectura del código y seguimiento visual (anclaje al producto)
 ├── data/productos.json Catálogo (¡DE EJEMPLO, hay que reemplazarlo!)
-├── lib/                ZXing (lector de códigos), qrcode-generator, licencias
+├── lib/                three.js (3D), ZXing (lector de códigos), qrcode-generator, licencias
 ├── img/sb-logo.png     Logo de Farmacias Salcobrand
 ├── qr/                 QR de acceso listo para imprimir
 ├── demo-codigos.html   Códigos de barras de prueba (solo para probar)
@@ -63,6 +64,12 @@ Para probar sin productos reales: abre `demo-codigos.html` en una pantalla y apu
 **Fuentes recomendadas**: el maestro de productos de Salcobrand (EAN, precio, formato), fichas técnicas de los laboratorios y, para medicamentos, el folleto aprobado. Los textos de salud y de ingredientes deben ser **revisados por un químico farmacéutico**.
 
 **Catálogo en vivo**: en `js/config.js`, `CATALOGO_URL` puede apuntar a un servicio de Salcobrand que devuelva este mismo JSON (debe permitir CORS desde el dominio del sitio). Si falla, se usa `data/productos.json`. No existe una API pública documentada de Salcobrand que yo conozca: hay que pedirla a TI o a e-commerce.
+
+## Modelo 3D (vista sin cámara)
+
+Al abrir un producto desde la búsqueda, el historial o la lista, se muestra un **modelo 3D que se gira con el dedo** (gira solo mientras no se toca). Está **basado en la foto del producto** (`imagen` en el catálogo): se separa el producto del fondo, con su silueta se arma el sólido (frasco, tubo, ampolla o caja) y la foto se proyecta en el frente; la parte de atrás lleva el color medio del envase. `modelo.tipo` (`ampolla`, `frasco`, `bomba`, `pote`, `tubo`, `caja`) indica si es redondo, plano (`tubo`) o rectangular (`caja`).
+
+**Condiciones**: el navegador solo puede leer los píxeles de la foto si está en el mismo sitio o si su servidor permite CORS. Con las fotos enlazadas directo desde `static.salcobrand.cl` puede no funcionar: en ese caso se muestra un modelo genérico con la etiqueta. Lo más seguro es **descargar las fotos al repo** con `tools/descargar-imagenes.py` (quedan en `img/productos/`). Funciona mejor con fotos de fondo liso (blanco). Es una aproximación: no reproduce detalles que no se ven en una sola foto (la parte de atrás, el relieve).
 
 ## Cómo se ancla la información al producto (`js/ar.js`)
 
@@ -104,4 +111,4 @@ Usa el lector nativo del navegador (`BarcodeDetector`, en Chrome Android) y, si 
 
 ## Créditos
 
-[ZXing](https://github.com/zxing-js/library) (Apache 2.0), [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) (MIT). Ver licencias en `lib/`.
+[three.js](https://threejs.org) (MIT), [ZXing](https://github.com/zxing-js/library) (Apache 2.0), [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) (MIT). Ver licencias en `lib/`.

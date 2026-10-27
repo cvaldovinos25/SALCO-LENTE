@@ -42,7 +42,12 @@
         "nivea"
       ],
       "verificado": false,
-      "imagen": "https://static.salcobrand.cl/spree/products/148873/large/590400.jpg?1750277314"
+      "imagen": "img/productos/centella.jpg",
+      "modelo": {
+        "tipo": "ampolla",
+        "color": "#f3d58a",
+        "acento": "#4f8a3c"
+      }
     },
     {
       "id": "cluny",
@@ -61,11 +66,11 @@
       "cuando": "Con protector solar de día",
       "pasos": [
         "Limpia tu rostro",
-        "Aplica una pequeña cantidad en el rostro y masajea",
-        "¡Usa protector solar durante el día!"
+        "Aplica una pequeña cantidad en el rostro",
+        "Usa protector solar durante el día"
       ],
       "ingredientes": [
-        "Lista de ingredientes: Ácido Glicólico"
+        "Lista de ingredientes: revisar el envase"
       ],
       "flags": {
         "fragancia": null,
@@ -82,7 +87,18 @@
         "nivea"
       ],
       "verificado": false,
-      "imagen": "https://static.salcobrand.cl/spree/products/134126/large/589732.jpg?1737556357"
+      "imagen": "img/productos/cluny.jpg",
+      "modelo": {
+        "tipo": "frasco",
+        "color": "#ffffff",
+        "acento": "#2f8f4e",
+        "recorte": [
+          0.575,
+          0.115,
+          1,
+          0.985
+        ]
+      }
     },
     {
       "id": "nivea",
@@ -105,7 +121,7 @@
         "Sigue con tu crema hidratante"
       ],
       "ingredientes": [
-        "Lista de ingredientes: Palmitoyl Tripeptide-5, Creatine, 1-Methylhydantoin-2-Imide"
+        "Lista de ingredientes: revisar el envase"
       ],
       "flags": {
         "fragancia": null,
@@ -120,7 +136,12 @@
         "cluny"
       ],
       "verificado": false,
-      "imagen": "https://static.salcobrand.cl/spree/products/164090/large/593006-1.jpg?1761056722"
+      "imagen": "img/productos/nivea.jpg",
+      "modelo": {
+        "tipo": "ampolla",
+        "color": "#dff0ff",
+        "acento": "#005b94"
+      }
     },
     {
       "id": "fps-a",
@@ -156,7 +177,12 @@
       "alternativas": [
         "fps-b"
       ],
-      "verificado": false
+      "verificado": false,
+      "modelo": {
+        "tipo": "tubo",
+        "color": "#fff3b0",
+        "acento": "#f29100"
+      }
     },
     {
       "id": "fps-b",
@@ -192,7 +218,12 @@
       "alternativas": [
         "fps-a"
       ],
-      "verificado": false
+      "verificado": false,
+      "modelo": {
+        "tipo": "tubo",
+        "color": "#ffe0d6",
+        "acento": "#ff5b3a"
+      }
     },
     {
       "id": "panales",
@@ -229,7 +260,12 @@
         "Si hay enrojecimiento persistente en la piel del bebé, consulta al pediatra."
       ],
       "alternativas": [],
-      "verificado": false
+      "verificado": false,
+      "modelo": {
+        "tipo": "caja",
+        "color": "#d9f0ff",
+        "acento": "#007dc3"
+      }
     },
     {
       "id": "crema-panal",
@@ -265,7 +301,12 @@
         "Suspende si aparece irritación y consulta al pediatra."
       ],
       "alternativas": [],
-      "verificado": false
+      "verificado": false,
+      "modelo": {
+        "tipo": "tubo",
+        "color": "#eafbea",
+        "acento": "#2f8f4e"
+      }
     },
     {
       "id": "toallitas",
@@ -300,7 +341,12 @@
       },
       "advertencias": [],
       "alternativas": [],
-      "verificado": false
+      "verificado": false,
+      "modelo": {
+        "tipo": "caja",
+        "color": "#e8f7ff",
+        "acento": "#00a9e8"
+      }
     },
     {
       "id": "vitd-60",
@@ -338,7 +384,12 @@
       "alternativas": [
         "vitd-30"
       ],
-      "verificado": false
+      "verificado": false,
+      "modelo": {
+        "tipo": "frasco",
+        "color": "#ffe9b8",
+        "acento": "#f29100"
+      }
     },
     {
       "id": "vitd-30",
@@ -376,7 +427,12 @@
       "alternativas": [
         "vitd-60"
       ],
-      "verificado": false
+      "verificado": false,
+      "modelo": {
+        "tipo": "frasco",
+        "color": "#ffe9b8",
+        "acento": "#d97b00"
+      }
     },
     {
       "id": "omega3",
@@ -414,7 +470,12 @@
         "Contiene pescado."
       ],
       "alternativas": [],
-      "verificado": false
+      "verificado": false,
+      "modelo": {
+        "tipo": "frasco",
+        "color": "#cfeaf5",
+        "acento": "#007dc3"
+      }
     },
     {
       "id": "para-a",
@@ -453,7 +514,12 @@
       "alternativas": [
         "para-bio"
       ],
-      "verificado": false
+      "verificado": false,
+      "modelo": {
+        "tipo": "caja",
+        "color": "#ffffff",
+        "acento": "#ff5b3a"
+      }
     },
     {
       "id": "para-bio",
@@ -492,7 +558,12 @@
       "alternativas": [
         "para-a"
       ],
-      "verificado": false
+      "verificado": false,
+      "modelo": {
+        "tipo": "caja",
+        "color": "#f0fadb",
+        "acento": "#6a9a00"
+      }
     },
     {
       "id": "shampoo",
@@ -526,7 +597,12 @@
       },
       "advertencias": [],
       "alternativas": [],
-      "verificado": false
+      "verificado": false,
+      "modelo": {
+        "tipo": "bomba",
+        "color": "#eadcff",
+        "acento": "#7a4fd6"
+      }
     }
   ]
 }
