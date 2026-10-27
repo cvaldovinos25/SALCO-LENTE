@@ -5,7 +5,7 @@ Experiencia web con **realidad aumentada** para ayudar a decidir una compra en F
 - **Para qué sirve** y cómo se usa (con pasos).
 - **Semáforo de ingredientes** según su perfil (embarazo o lactancia, evita fragancias, piel sensible).
 - **Precio por unidad** (por ml, g, cápsula, pañal…) y **alternativas** más baratas o parecidas.
-- Un **modelo 3D** del producto flotando al centro, que se puede girar con el dedo.
+- Las tarjetas **siguen al producto** y se mantienen ancladas a él mientras se mueve el celular o el envase.
 
 Además: **comparar dos productos** lado a lado, **Mi lista** con un **QR para caja**, y un **cupón por explorar categorías** (mecánica de juego, configurable).
 
@@ -21,9 +21,9 @@ SALCO-LENTE/
 ├── js/
 │   ├── config.js       Cupón, categorías y textos legales (lo que se edita)
 │   ├── app.js          Flujo: escaneo, vista RA, comparar, lista, perfil
-│   └── model3d.js      Modelos 3D genéricos (ampolla, tubo, caja, pote, frasco, bomba)
+│   └── ar.js           Lectura del código y seguimiento visual (anclaje al producto)
 ├── data/productos.json Catálogo (¡DE EJEMPLO, hay que reemplazarlo!)
-├── lib/                three.js (3D), ZXing (lector de códigos), qrcode-generator, licencias
+├── lib/                ZXing (lector de códigos), qrcode-generator, licencias
 ├── img/sb-logo.png     Logo de Farmacias Salcobrand
 ├── qr/                 QR de acceso listo para imprimir
 ├── demo-codigos.html   Códigos de barras de prueba (solo para probar)
@@ -57,20 +57,24 @@ Para probar sin productos reales: abre `demo-codigos.html` en una pantalla y apu
 | `flags` | `fragancia` (true/false/null), `alcohol`, `embarazo` (`ok`/`consultar`/`evitar`), `sensible` (`ok`/`revisar`), `alergenos` |
 | `advertencias` | Avisos que aparecen en la hoja de detalle |
 | `alternativas` | `id` de productos parecidos (se muestra su precio por unidad) |
-| `modelo` | Forma 3D, colores y texto de la etiqueta (ver abajo) |
 | `verificado` | Marca interna: pasa a `true` cuando el equipo revisó la ficha |
 
 **Fuentes recomendadas**: el maestro de productos de Salcobrand (EAN, precio, formato), fichas técnicas de los laboratorios y, para medicamentos, el folleto aprobado. Los textos de salud y de ingredientes deben ser **revisados por un químico farmacéutico**.
 
 **Catálogo en vivo**: en `js/config.js`, `CATALOGO_URL` puede apuntar a un servicio de Salcobrand que devuelva este mismo JSON (debe permitir CORS desde el dominio del sitio). Si falla, se usa `data/productos.json`. No existe una API pública documentada de Salcobrand que yo conozca: hay que pedirla a TI o a e-commerce.
 
-## Modelos 3D
+## Cómo se ancla la información al producto (`js/ar.js`)
 
-Se generan por código con three.js según `modelo.tipo`: `ampolla`, `frasco`, `pote`, `tubo`, `caja`, `bomba`, con `color`, `acento` y las `lineas` de texto de la etiqueta. Son **representaciones estilizadas**, no copias exactas del envase. Para parecerse más a cada envase se pueden ajustar colores y textos, o agregar una forma nueva en `js/model3d.js`.
+1. Se lee el código de barras (cada ~140 ms) y se obtiene su posición en la imagen.
+2. Esa zona (el código y parte del envase) se guarda como plantilla y se sigue cuadro a cuadro por comparación de imagen (template matching sobre una versión reducida y suavizada).
+3. Las tarjetas se ubican alrededor de esa posición, con una línea guía y un marco sobre el producto. Cada vez que el código se lee de nuevo, la posición se corrige para evitar deriva.
+4. Si se pierde el seguimiento (movimiento muy brusco, tapar el envase o sacarlo de cuadro), las tarjetas se atenúan y aparece "Apunta de nuevo al código para reubicar la información".
 
-## Qué es "realidad aumentada" acá (y qué no)
+**Límites honestos**: es seguimiento **2D en la imagen**, no hay pose 3D real ni WebXR, así que no hay perspectiva ni oclusión: las tarjetas siguen al producto cuando se mueve o el celular se desplaza, pero no "se pegan" en una cara del envase al girarlo. En pruebas con video simulado el error medio fue ~14 px (sobre 1280 px) con seguimiento continuo. **Falta probar en celulares reales** con envases reales (brillos, curvatura, poca luz).
 
-La cámara se ve de fondo y las tarjetas y el modelo 3D flotan encima, con un leve efecto de paralaje con el movimiento del celular. **No hay seguimiento (tracking) del envase físico**: las tarjetas no se pegan al producto si lo mueves. Es una RA ligera, robusta y que funciona en cualquier celular desde un QR, sin instalar nada.
+## Qué es "realidad aumentada" acá
+
+La cámara se ve de fondo y la información se mantiene en el espacio sobre el producto, sin instalar nada: funciona desde un QR en el navegador. Si el navegador no permite la cámara, hay una vista sin RA con la misma información.
 
 ## Lectura de códigos de barras
 
@@ -97,4 +101,4 @@ Usa el lector nativo del navegador (`BarcodeDetector`, en Chrome Android) y, si 
 
 ## Créditos
 
-[three.js](https://threejs.org) (MIT), [ZXing](https://github.com/zxing-js/library) (Apache 2.0), [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) (MIT). Ver licencias en `lib/`.
+[ZXing](https://github.com/zxing-js/library) (Apache 2.0), [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) (MIT). Ver licencias en `lib/`.

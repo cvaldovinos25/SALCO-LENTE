@@ -41,34 +41,6 @@
     "cluny",
     "nivea"
    ],
-   "modelo": {
-    "tipo": "ampolla",
-    "color": "#cdebd7",
-    "liquido": "#b8dc7c",
-    "acento": "#3f8f5b",
-    "lineas": [
-     [
-      "SKIN1004",
-      "logo"
-     ],
-     [
-      "MADAGASCAR",
-      "sub"
-     ],
-     [
-      "CENTELLA",
-      "big"
-     ],
-     [
-      "AMPOULE",
-      "sub"
-     ],
-     [
-      "55 ml",
-      "tiny"
-     ]
-    ]
-   },
    "verificado": false
   },
   {
@@ -108,30 +80,6 @@
     "centella",
     "nivea"
    ],
-   "modelo": {
-    "tipo": "ampolla",
-    "color": "#fff3e0",
-    "liquido": "#f5c46b",
-    "acento": "#e89a1c",
-    "lineas": [
-     [
-      "Cluny",
-      "logo"
-     ],
-     [
-      "LUMINACLEAR",
-      "big"
-     ],
-     [
-      "Sérum anti manchas",
-      "small"
-     ],
-     [
-      "30 ml",
-      "tiny"
-     ]
-    ]
-   },
    "verificado": false
   },
   {
@@ -169,34 +117,6 @@
     "centella",
     "cluny"
    ],
-   "modelo": {
-    "tipo": "ampolla",
-    "color": "#eaf2fc",
-    "liquido": "#d6e6f8",
-    "acento": "#1d4f9c",
-    "lineas": [
-     [
-      "NIVEA",
-      "logo"
-     ],
-     [
-      "CELLULAR",
-      "sub"
-     ],
-     [
-      "EPIGENETICS",
-      "big"
-     ],
-     [
-      "Sérum rejuvenecedor",
-      "small"
-     ],
-     [
-      "30 ml",
-      "tiny"
-     ]
-    ]
-   },
    "verificado": false
   },
   {
@@ -233,29 +153,6 @@
    "alternativas": [
     "fps-b"
    ],
-   "modelo": {
-    "tipo": "tubo",
-    "color": "#ffd36b",
-    "acento": "#ef7d00",
-    "lineas": [
-     [
-      "MARCA DEMO",
-      "sub"
-     ],
-     [
-      "PROTECTOR",
-      "big"
-     ],
-     [
-      "SOLAR",
-      "big"
-     ],
-     [
-      "FPS 50",
-      "logo"
-     ]
-    ]
-   },
    "verificado": false
   },
   {
@@ -292,29 +189,6 @@
    "alternativas": [
     "fps-a"
    ],
-   "modelo": {
-    "tipo": "tubo",
-    "color": "#9fd8ff",
-    "acento": "#007dc3",
-    "lineas": [
-     [
-      "OTRA MARCA",
-      "sub"
-     ],
-     [
-      "SOLAR",
-      "big"
-     ],
-     [
-      "TOQUE SECO",
-      "sub"
-     ],
-     [
-      "FPS 50",
-      "logo"
-     ]
-    ]
-   },
    "verificado": false
   },
   {
@@ -352,33 +226,6 @@
     "Si hay enrojecimiento persistente en la piel del bebé, consulta al pediatra."
    ],
    "alternativas": [],
-   "modelo": {
-    "tipo": "caja",
-    "color": "#fff7d6",
-    "acento": "#ffb300",
-    "lineas": [
-     [
-      "MARCA DEMO",
-      "sub"
-     ],
-     [
-      "PAÑALES",
-      "logo"
-     ],
-     [
-      "ETAPA 3",
-      "big"
-     ],
-     [
-      "6 a 10 kg",
-      "small"
-     ],
-     [
-      "60 un.",
-      "tiny"
-     ]
-    ]
-   },
    "verificado": false
   },
   {
@@ -415,29 +262,6 @@
     "Suspende si aparece irritación y consulta al pediatra."
    ],
    "alternativas": [],
-   "modelo": {
-    "tipo": "pote",
-    "color": "#ffffff",
-    "acento": "#00a9e8",
-    "lineas": [
-     [
-      "MARCA DEMO",
-      "sub"
-     ],
-     [
-      "CREMA",
-      "big"
-     ],
-     [
-      "PARA PAÑAL",
-      "small"
-     ],
-     [
-      "100 g",
-      "tiny"
-     ]
-    ]
-   },
    "verificado": false
   },
   {
@@ -473,29 +297,6 @@
    },
    "advertencias": [],
    "alternativas": [],
-   "modelo": {
-    "tipo": "caja",
-    "color": "#e0f4ff",
-    "acento": "#00a9e8",
-    "lineas": [
-     [
-      "MARCA DEMO",
-      "sub"
-     ],
-     [
-      "TOALLITAS",
-      "logo"
-     ],
-     [
-      "HÚMEDAS BEBÉ",
-      "small"
-     ],
-     [
-      "80 un.",
-      "tiny"
-     ]
-    ]
-   },
    "verificado": false
   },
   {
@@ -534,29 +335,6 @@
    "alternativas": [
     "vitd-30"
    ],
-   "modelo": {
-    "tipo": "frasco",
-    "color": "#ffc94a",
-    "acento": "#e08a00",
-    "lineas": [
-     [
-      "MARCA DEMO",
-      "sub"
-     ],
-     [
-      "VITAMINA D3",
-      "big"
-     ],
-     [
-      "1000 UI",
-      "logo"
-     ],
-     [
-      "60 cápsulas",
-      "tiny"
-     ]
-    ]
-   },
    "verificado": false
   },
   {
@@ -595,29 +373,6 @@
    "alternativas": [
     "vitd-60"
    ],
-   "modelo": {
-    "tipo": "frasco",
-    "color": "#bfe3ff",
-    "acento": "#007dc3",
-    "lineas": [
-     [
-      "OTRA MARCA",
-      "sub"
-     ],
-     [
-      "VITAMINA D3",
-      "big"
-     ],
-     [
-      "1000 UI",
-      "logo"
-     ],
-     [
-      "30 cápsulas",
-      "tiny"
-     ]
-    ]
-   },
    "verificado": false
   },
   {
@@ -656,25 +411,6 @@
     "Contiene pescado."
    ],
    "alternativas": [],
-   "modelo": {
-    "tipo": "frasco",
-    "color": "#d6f0d0",
-    "acento": "#3f8f5b",
-    "lineas": [
-     [
-      "MARCA DEMO",
-      "sub"
-     ],
-     [
-      "OMEGA 3",
-      "logo"
-     ],
-     [
-      "60 cápsulas",
-      "tiny"
-     ]
-    ]
-   },
    "verificado": false
   },
   {
@@ -714,29 +450,6 @@
    "alternativas": [
     "para-bio"
    ],
-   "modelo": {
-    "tipo": "caja",
-    "color": "#ffffff",
-    "acento": "#007dc3",
-    "lineas": [
-     [
-      "MARCA DEMO",
-      "sub"
-     ],
-     [
-      "PARACETAMOL",
-      "big"
-     ],
-     [
-      "500 mg",
-      "logo"
-     ],
-     [
-      "20 comprimidos",
-      "tiny"
-     ]
-    ]
-   },
    "verificado": false
   },
   {
@@ -776,29 +489,6 @@
    "alternativas": [
     "para-a"
    ],
-   "modelo": {
-    "tipo": "caja",
-    "color": "#e8f7cf",
-    "acento": "#5d8a00",
-    "lineas": [
-     [
-      "BIOEQUIVALENTE",
-      "sub"
-     ],
-     [
-      "PARACETAMOL",
-      "big"
-     ],
-     [
-      "500 mg",
-      "logo"
-     ],
-     [
-      "20 comprimidos",
-      "tiny"
-     ]
-    ]
-   },
    "verificado": false
   },
   {
@@ -833,29 +523,6 @@
    },
    "advertencias": [],
    "alternativas": [],
-   "modelo": {
-    "tipo": "bomba",
-    "color": "#f3e5ff",
-    "acento": "#8a4bd6",
-    "lineas": [
-     [
-      "MARCA DEMO",
-      "sub"
-     ],
-     [
-      "SHAMPOO",
-      "logo"
-     ],
-     [
-      "CABELLO SECO",
-      "small"
-     ],
-     [
-      "400 ml",
-      "tiny"
-     ]
-    ]
-   },
    "verificado": false
   }
  ]

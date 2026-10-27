@@ -25,7 +25,7 @@
     seen: sget('vistas', []),           // categorías exploradas
     unlocked: sget('cupon', false),
     cmp: { a: null, b: null }, mode: 'view', pick: null,
-    cur: null, pvFromScan: false, screen: 'home', model: null
+    cur: null, pvFromScan: false, screen: 'home', view: null, arMode: false
   };
 
   function toast(msg, ms) {
@@ -128,87 +128,56 @@
     return true;
   }
   function camStop() {
+    if (SL.AR) SL.AR.stop();
     if (stream) { stream.getTracks().forEach((t) => t.stop()); stream = null; }
     vid.srcObject = null; document.body.classList.remove('cam');
   }
   document.addEventListener('visibilitychange', () => { if (!document.hidden && stream) { const pl = vid.play(); if (pl && pl.catch) pl.catch(() => {}); } });
 
-  /* ---------- Lectura de códigos de barras ---------- */
-  let loopId = 0, scanning = false, lastCode = '', lastT = 0;
-  function startLoop() {
-    const id = ++loopId; scanning = true;
-    let det = null;
-    if ('BarcodeDetector' in window) { try { det = new BarcodeDetector({ formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128'] }); } catch (e) { det = null; } }
-    let reader = null;
-    if (!det && window.ZXing) {
-      const h = new Map(); h.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, [ZXing.BarcodeFormat.EAN_13, ZXing.BarcodeFormat.EAN_8, ZXing.BarcodeFormat.UPC_A, ZXing.BarcodeFormat.UPC_E, ZXing.BarcodeFormat.CODE_128]);
-      h.set(ZXing.DecodeHintType.TRY_HARDER, true);
-      reader = new ZXing.MultiFormatReader(); reader.setHints(h);
-    }
-    const cv = document.createElement('canvas'), cx = cv.getContext('2d', { willReadFrequently: true });
-    (async function tick() {
-      while (loopId === id && scanning) {
-        try {
-          if (vid.readyState >= 2 && vid.videoWidth) {
-            let code = null;
-            if (det) {
-              try { const r = await det.detect(vid); if (r.length) code = r[0].rawValue; } catch (e) { det = null; }
-            }
-            if (!det && reader) {
-              const vw = vid.videoWidth, vh = vid.videoHeight, cw = Math.round(vw * 0.8), ch = Math.round(vh * 0.5), sx = (vw - cw) / 2, sy = (vh - ch) * 0.4;
-              const sc = Math.min(1, C.SCAN.ANCHO_ANALISIS / cw); cv.width = Math.round(cw * sc); cv.height = Math.round(ch * sc);
-              cx.drawImage(vid, sx, sy, cw, ch, 0, 0, cv.width, cv.height);
-              try {
-                const bmp = new ZXing.BinaryBitmap(new ZXing.HybridBinarizer(new ZXing.HTMLCanvasElementLuminanceSource(cv)));
-                code = reader.decode(bmp).getText();
-              } catch (e) { /* no se encontró código en este cuadro */ }
-            }
-            if (code && loopId === id && scanning) onCode(code);
-          }
-        } catch (e) { console.warn(e); }
-        await sleep(C.SCAN.INTERVALO_MS);
-      }
-    })();
+  /* ---------- Visión: lectura del código + anclaje (js/ar.js) ---------- */
+  let lastCode = '', lastT = 0, cand = '', candN = 0;
+  function visionOn() {
+    if (SL.AR.running) return;
+    SL.AR.start(vid, { onDetect, onTrack }, { ancho: C.SCAN.ANCHO_ANALISIS, intervalo: C.SCAN.INTERVALO_MS });
   }
-  function stopLoop() { scanning = false; loopId++; }
-
-  function onCode(raw) {
-    const k = norm(raw), now = Date.now();
-    if (k === lastCode && now - lastT < 6000) return;
-    lastCode = k; lastT = now;
-    const p = S.byEan[k];
-    if (!p) { toast('Código ' + raw + ': aún no está en el catálogo. Prueba con otro o búscalo por nombre.', 3800); return; }
-    found(p);
+  function onDetect(d) {
+    const now = Date.now(), p = S.byEan[d.key];
+    if (S.view === 'scan') {
+      if (d.key === lastCode && now - lastT < 6000) return;
+      lastCode = d.key; lastT = now;
+      if (!p) { toast('Código ' + d.code + ': aún no está en el catálogo. Prueba con otro o búscalo por nombre.', 3800); return; }
+      found(p);
+    } else if (S.view === 'pv' && S.arMode) {
+      if (p && S.cur && p.id !== S.cur.id) {          // apuntó a otro producto: cambiar la información
+        if (cand === d.key) candN++; else { cand = d.key; candN = 1; }
+        if (candN >= 2) { cand = ''; candN = 0; openProduct(p, true); }
+      } else { cand = ''; candN = 0; }
+    }
   }
   function found(p) {
-    stopLoop();
     if (navigator.vibrate) try { navigator.vibrate(30); } catch (e) {}
     $('#reticle').classList.add('ok');
     const fl = document.createElement('div'); fl.className = 'flash'; $('#scan').appendChild(fl); setTimeout(() => fl.remove(), 600);
-    setTimeout(() => {
-      $('#reticle').classList.remove('ok');
-      if (S.mode === 'slotA' || S.mode === 'slotB') {
-        S.cmp[S.mode === 'slotA' ? 'a' : 'b'] = p; closeScan(true); go('compare');
-      } else { $('#scan').classList.remove('on'); openProduct(p, true); }
-    }, 350);
+    if (S.mode === 'slotA' || S.mode === 'slotB') { S.cmp[S.mode === 'slotA' ? 'a' : 'b'] = p; setTimeout(() => { $('#reticle').classList.remove('ok'); closeScan(true); go('compare'); }, 300); return; }
+    S.view = 'wait';
+    setTimeout(() => { $('#reticle').classList.remove('ok'); $('#scan').classList.remove('on'); openProduct(p, !!stream && SL.AR.hasLock()); }, 300);
   }
 
   /* ---------- Overlay de escaneo ---------- */
   let scanTok = 0;
   async function openScan(mode) {
     S.mode = mode; const tok = ++scanTok;
-    requestTilt();
     const titles = { view: 'Escanear producto', slotA: 'Escanea el primer producto', slotB: 'Escanea el segundo producto' };
     $('#scTitle').textContent = titles[mode] || titles.view;
     const ok = await camStart();
     if (tok !== scanTok) return; // se cerró mientras se activaba la cámara
     if (!ok) { S.pick = mode === 'slotA' ? 'a' : mode === 'slotB' ? 'b' : null; go('search'); return; }
-    $('#pv').classList.remove('on');
-    $('#scan').classList.add('on');
-    startLoop();
+    $('#pv').classList.remove('on', 'ar');
+    $('#scan').classList.add('on'); S.view = 'scan';
+    SL.AR.lock(null); visionOn();
   }
   function closeScan(stopCam) {
-    scanTok++; stopLoop(); $('#scan').classList.remove('on');
+    scanTok++; S.view = null; $('#scan').classList.remove('on');
     if (stopCam) camStop();
   }
   $('#scClose').addEventListener('click', () => { closeScan(true); });
@@ -237,32 +206,76 @@
   const inList = (id) => S.list.find((i) => i.id === id);
 
   function openProduct(p, fromScan) {
-    S.cur = p; S.pvFromScan = !!fromScan;
+    const ar = !!fromScan && !!stream;
+    S.cur = p; S.pvFromScan = !!fromScan; S.arMode = ar; S.view = 'pv';
     categoriesSeen(p);
     $('#pvName').textContent = p.nombre; $('#pvBrand').textContent = p.marca + ' · ' + p.formato;
     const sm = sema(p), pr = unitTxt(p);
-    const card = (k, tit, color, body, delay) => '<button class="glass acard" data-k="' + k + '" style="animation-delay:' + delay + 's"><b style="color:' + color + '">' + tit + '</b><span class="more">›</span>' + body + '</button>';
-    $('#rowT').innerHTML =
-      card('sirve', 'Para qué sirve', 'var(--blue)', esc(p.resumen), 0.05) +
-      card('precio', 'Precio por unidad', 'var(--orange)', '<span class="big">' + esc(pr.split(' / ')[0]) + ' <small>/ ' + esc(p.cantidad.unidad) + '</small></span><br>' + clp(p.precio) + ' · ' + esc(p.formato), 0.12);
-    $('#rowB').innerHTML =
-      card('ingr', 'Ingredientes y semáforo', 'var(--green)', pills(sm, 3) || 'Revisa el envase', 0.19) +
-      card('uso', 'Cómo usar', 'var(--coral)', esc(p.cuando) + ' ▶', 0.26);
+    const card = (k, tit, color, body, delay) => '<button class="glass acard' + (ar ? ' ar' : '') + '" data-k="' + k + '" style="animation-delay:' + delay + 's"><b style="color:' + color + '">' + tit + '</b><span class="more">›</span>' + body + '</button>';
+    const c1 = card('sirve', 'Para qué sirve', 'var(--blue)', esc(p.resumen), 0.05);
+    const c2 = card('precio', 'Precio por unidad', 'var(--orange)', '<span class="big">' + esc(pr.split(' / ')[0]) + ' <small>/ ' + esc(p.cantidad.unidad) + '</small></span><br>' + clp(p.precio) + ' · ' + esc(p.formato), 0.12);
+    const c3 = card('ingr', 'Ingredientes y semáforo', 'var(--green)', pills(sm, 3) || 'Revisa el envase', 0.19);
+    const c4 = card('uso', 'Cómo usar', 'var(--coral)', esc(p.cuando) + ' ▶', 0.26);
+    if (ar) {
+      $('#arCards').innerHTML = c1 + c2 + c3 + c4; $('#rowT').innerHTML = ''; $('#rowB').innerHTML = ''; $('#stage').innerHTML = '';
+      AP.has = false; $('#arLayer').classList.add('wait'); $('#arLayer').classList.remove('lost', 'gone');
+      SL.AR.lock(norm(p.ean));
+    } else {
+      $('#arCards').innerHTML = ''; $('#rowT').innerHTML = c1 + c2; $('#rowB').innerHTML = c3 + c4;
+      $('#stage').innerHTML = '<div class="hero2">' + icBubble(p, 'xl') + '<b>' + esc(p.marca) + '</b><span>' + esc(p.nombre) + '</span></div>';
+    }
     $$('.acard').forEach((b) => b.addEventListener('click', () => openSheet(b.dataset.k)));
     syncAdd(); cupBar();
-    if (S.model) { S.model.dispose(); S.model = null; }
-    $('#pv').classList.add('on');
-    S.model = SL.mountProduct3D($('#stage'), p.modelo);
-    if (!S.model) $('#stage').innerHTML = '<div class="fallback">' + catMeta(p).emoji + '</div>';
+    $('#pv').classList.add('on'); $('#pv').classList.toggle('ar', ar);
   }
   function closePV() {
-    $('#pv').classList.remove('on'); closeSheet();
-    if (S.model) { S.model.dispose(); S.model = null; }
+    $('#pv').classList.remove('on', 'ar'); closeSheet(); S.view = null; S.arMode = false; $('#arCards').innerHTML = '';
   }
   $('#pvBack').addEventListener('click', () => {
     closePV();
     if (S.pvFromScan && stream) { lastCode = norm(S.cur && S.cur.ean); lastT = Date.now(); openScan(S.mode); } else camStop();
   });
+
+  /* ---------- Anclaje: la información sigue al producto ---------- */
+  const AP = { x: 0, y: 0, has: false };
+  function toScreen(x, y) {
+    const W = innerWidth, H = innerHeight, vw = vid.videoWidth, vh = vid.videoHeight, sc = Math.max(W / vw, H / vh);
+    return { x: x * sc + (W - vw * sc) / 2, y: y * sc + (H - vh * sc) / 2, sc };
+  }
+  function onTrack(t) {
+    if (S.view !== 'pv' || !S.arMode || !vid.videoWidth) return;
+    const s = toScreen(t.x, t.y);
+    if (!AP.has) { AP.x = s.x; AP.y = s.y; AP.has = true; $('#arLayer').classList.remove('wait'); }
+    else { AP.x += (s.x - AP.x) * 0.6; AP.y += (s.y - AP.y) * 0.6; }
+    layoutAR(AP.x, AP.y, Math.max(90, Math.min(380, (t.w || 200) * s.sc)), t);
+  }
+  function layoutAR(ax, ay, wS, t) {
+    const W = innerWidth, H = innerHeight, cw = Math.min(158, Math.floor((W - 24) / 2)), gap = 8, topMin = 76, botMax = H - 172;
+    const cards = $$('#arCards .acard'), ln = $('#arSvg line'), dot = $('#arSvg circle');
+    if (cards.length < 4) return;
+    cards.forEach((c) => { c.style.width = cw + 'px'; });
+    const hs = cards.map((c) => c.offsetHeight || 96);
+    const r1 = Math.max(hs[0], hs[1]), r2 = Math.max(hs[2], hs[3]), bh = r1 + r2 + gap, bw = cw * 2 + gap;
+    const boxW = wS * 1.1, boxH = Math.max(56, Math.min(230, wS * 0.62)), g = 18;
+    const roomA = ay - boxH / 2 - g - topMin, roomB = botMax - (ay + boxH / 2 + g);
+    const above = roomA >= bh || (roomB < bh && roomA >= roomB);
+    const bx = Math.max(8, Math.min(W - bw - 8, ax - bw / 2));
+    let by = above ? ay - boxH / 2 - g - bh : ay + boxH / 2 + g;
+    by = Math.max(topMin, Math.min(botMax - bh, by));
+    const pos = [[bx, by], [bx + cw + gap, by], [bx, by + r1 + gap], [bx + cw + gap, by + r1 + gap]];
+    cards.forEach((c, i) => { c.style.transform = 'translate3d(' + pos[i][0].toFixed(1) + 'px,' + pos[i][1].toFixed(1) + 'px,0)'; });
+    // línea guía desde el producto hasta el bloque de información
+    const ex = Math.max(bx + 24, Math.min(bx + bw - 24, ax)), ey = above ? by + bh : by;
+    const sy = above ? ay - boxH / 2 : ay + boxH / 2;
+    ln.setAttribute('x1', ax.toFixed(1)); ln.setAttribute('y1', sy.toFixed(1)); ln.setAttribute('x2', ex.toFixed(1)); ln.setAttribute('y2', ey.toFixed(1));
+    dot.setAttribute('cx', ex.toFixed(1)); dot.setAttribute('cy', ey.toFixed(1));
+    const box = $('#arBox');
+    box.style.width = boxW + 'px'; box.style.height = boxH + 'px';
+    box.style.transform = 'translate3d(' + (ax - boxW / 2).toFixed(1) + 'px,' + (ay - boxH / 2).toFixed(1) + 'px,0)';
+    const L = $('#arLayer'); L.classList.toggle('lost', !t.ok); L.classList.toggle('gone', !!t.lost);
+    if (DEBUG) $('#arDbg').textContent = 'ok:' + t.ok + ' sad:' + t.score.toFixed(1) + ' x:' + ax.toFixed(0) + ' y:' + ay.toFixed(0);
+  }
+
   function syncAdd() {
     const b = $('#pvAdd'), on = !!(S.cur && inList(S.cur.id));
     b.classList.toggle('sel', on); b.textContent = on ? '✓ En mi lista' : '＋ A mi lista';
@@ -392,24 +405,11 @@
     $$('#sheet input[data-k]').forEach((i) => i.addEventListener('change', () => { S.profile[i.dataset.k] = i.checked; sset('perfil', S.profile); if (S.cur && $('#pv').classList.contains('on')) openProduct(S.cur, S.pvFromScan); }));
   });
 
-  /* ---------- Paralaje con el giroscopio (efecto RA) ---------- */
-  let tiltOn = false;
-  function onTilt(e) {
-    const x = Math.max(-1, Math.min(1, (e.gamma || 0) / 25)), y = Math.max(-1, Math.min(1, ((e.beta || 0) - 50) / 30));
-    const pv = $('#pv'); pv.style.setProperty('--tx', x.toFixed(3)); pv.style.setProperty('--ty', y.toFixed(3));
-    if (S.model) S.model.setTilt(x, y);
-  }
-  async function requestTilt() {
-    if (tiltOn || !window.DeviceOrientationEvent) return;
-    try { if (typeof DeviceOrientationEvent.requestPermission === 'function') { const r = await DeviceOrientationEvent.requestPermission(); if (r !== 'granted') return; } } catch (e) { return; }
-    tiltOn = true; window.addEventListener('deviceorientation', onTilt);
-  }
-
   /* ---------- Inicio ---------- */
   (async function init() {
     await loadCatalog();
     badge(); renderHome();
-    if (DEBUG) window.__SL = { S, openProduct, openScan, go, found, onCode };
+    if (DEBUG) window.__SL = { S, openProduct, openScan, go, found, AR: SL.AR, AP };
     const e = qs.get('ean'); if (e && S.byEan[norm(e)]) openProduct(S.byEan[norm(e)], false);
   })();
 })();
