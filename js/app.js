@@ -20,7 +20,6 @@
 
   const S = {
     cat: [], byId: {}, byEan: {},
-    profile: { embarazo: false, fragancias: false, sensible: false },
     hist: sget('historial', []),        // [{id, t}] más reciente primero
     list: sget('lista', []),            // [{id, qty}]
     cmp: { a: null, b: null }, mode: 'view', pick: null,
@@ -29,7 +28,7 @@
 
   function toast(msg, ms) {
     $$('.toast').forEach((t) => t.remove());
-    const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; document.body.appendChild(t);
+    const t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status'); t.setAttribute('aria-live', 'polite'); t.textContent = msg; document.body.appendChild(t);
     setTimeout(() => t.remove(), ms || 3200);
   }
 
@@ -59,9 +58,9 @@
     : '';
   const icBubble = (p, cls) => pimg(p, cls) || '<span class="ic ' + (cls || '') + '" style="--c1:' + catMeta(p).c1 + ';--c2:' + catMeta(p).c2 + '">' + catMeta(p).emoji + '</span>';
 
-  /* Semáforo de ingredientes según el perfil */
+  /* Semáforo de ingredientes (según la ficha del producto) */
   function sema(p, all) {
-    const f = p.flags || {}, pr = S.profile, o = [];
+    const f = p.flags || {}, pr = { embarazo: false, fragancias: false, sensible: false }, o = [];
     if (f.fragancia === false) o.push(['g', 'Sin fragancia declarada']);
     else if (f.fragancia === true) o.push([pr.fragancias ? 'r' : 'n', pr.fragancias ? 'Tiene fragancia (tú las evitas)' : 'Con fragancia']);
     else o.push(['y', 'Fragancia: revisa el envase']);
@@ -197,9 +196,11 @@
   }
   const inList = (id) => S.list.find((i) => i.id === id);
 
-  let model3 = null;
+  let model3 = null, stageTok = 0;
+  const lazyJS = {};
+  const loadJS = (src) => lazyJS[src] || (lazyJS[src] = new Promise((ok, ko) => { const el = document.createElement('script'); el.src = src; el.onload = ok; el.onerror = () => { delete lazyJS[src]; ko(); }; document.head.appendChild(el); }));
   function openProduct(p, fromScan) {
-    if (model3) { model3.destroy(); model3 = null; }
+    stageTok++; if (model3) { model3.destroy(); model3 = null; }
     const ar = !!fromScan && !!stream;
     S.cur = p; S.pvFromScan = !!fromScan; S.arMode = ar; S.view = 'pv';
     $('#pvName').textContent = p.nombre; $('#pvBrand').textContent = p.marca + ' · ' + p.formato;
@@ -210,19 +211,37 @@
     const c3 = card('ingr', 'Ingredientes y semáforo', 'var(--green)', pills(sm, 3) || 'Revisa el envase', 0.65);
     const c4 = card('uso', 'Cómo usar', 'var(--coral)', esc(p.cuando), 0.8);
     if (ar) {
-      $('#arCards').innerHTML = c1 + c2 + c3 + c4; $('#rowT').innerHTML = ''; $('#rowB').innerHTML = ''; $('#stage').innerHTML = '';
+      const arc = (k, tit, color, aval, body, delay) => '<div class="glass acard ar" role="button" tabindex="0" aria-expanded="false" data-k="' + k + '" style="--ac:' + color + ';animation-delay:' + delay + 's"><span class="ahead"><i class="adot"></i><b>' + tit + '</b>' + aval + '</span><span class="abody">' + body + '</span><button type="button" class="ago">Ver detalle ›</button></div>';
+      const dots = sm.slice(0, 3).map((x) => '<i class="' + x[0] + '"></i>').join('');
+      $('#arCards').innerHTML =
+        arc('sirve', 'Para qué sirve', 'var(--blue)', '', esc(p.resumen), 0.35) +
+        arc('precio', 'Precio', 'var(--orange)', '<span class="aval">' + esc(pr.split(' / ')[0]) + '<small> / ' + esc(p.cantidad.unidad) + '</small></span>', '<span class="big">' + esc(pr.split(' / ')[0]) + ' <small>/ ' + esc(p.cantidad.unidad) + '</small></span><br>' + clp(p.precio) + ' · ' + esc(p.formato), 0.5) +
+        arc('ingr', 'Semáforo', 'var(--green)', '<span class="mdots">' + dots + '</span>', pills(sm, 3) || 'Revisa el envase', 0.65) +
+        arc('uso', 'Cómo usar', 'var(--coral)', '', esc(p.cuando), 0.8);
+      AP.dim = null; AP.t = null;
+      $$('#arCards .acard').forEach((c) => {
+        c.addEventListener('click', (e) => { if (e.target.closest('.ago')) openSheet(c.dataset.k); else toggleCard(c); });
+        c.addEventListener('keydown', (e) => { if ((e.key === 'Enter' || e.key === ' ') && e.target === c) { e.preventDefault(); toggleCard(c); } });
+      });
+      if (!arHinted) { arHinted = true; toast('Toca un punto para ver más', 2600); }
+      $('#rowT').innerHTML = ''; $('#rowB').innerHTML = ''; $('#stage').innerHTML = '';
       AP.has = false; $('#arLayer').classList.add('wait'); $('#arLayer').classList.remove('lost', 'gone');
       SL.AR.lock(norm(p.ean));
     } else {
       $('#arCards').innerHTML = ''; $('#rowT').innerHTML = c1 + c2; $('#rowB').innerHTML = c3 + c4;
-      if (!(SL.Model3D && (model3 = SL.Model3D.mount($('#stage'), p)))) $('#stage').innerHTML = '<div class="hero2">' + icBubble(p, 'xl') + '<b>' + esc(p.marca) + '</b><span>' + esc(p.nombre) + '</span></div>';
+      $('#stage').innerHTML = '<div class="hero2">' + icBubble(p, 'xl') + '<b>' + esc(p.marca) + '</b><span>' + esc(p.nombre) + '</span></div>';
+      const tk = ++stageTok;   // el 3D (three.js) se descarga recién aquí, no al abrir la app
+      loadJS('lib/three.min.js').then(() => loadJS('js/model3d.js?v=12')).then(() => {
+        if (tk !== stageTok || S.cur !== p || !$('#pv').classList.contains('on') || S.arMode) return;
+        const m = SL.Model3D && SL.Model3D.mount($('#stage'), p); if (m) model3 = m;
+      }).catch(() => {});
     }
-    $$('.acard').forEach((b) => b.addEventListener('click', () => openSheet(b.dataset.k)));
+    $$('.acard:not(.ar)').forEach((b) => b.addEventListener('click', () => openSheet(b.dataset.k)));
     syncAdd(); cupBar();
     $('#pv').classList.add('on'); $('#pv').classList.toggle('ar', ar);
   }
   function closePV() {
-    if (model3) { model3.destroy(); model3 = null; }
+    stageTok++; if (model3) { model3.destroy(); model3 = null; }
     $('#pv').classList.remove('on', 'ar'); closeSheet(); S.view = null; S.arMode = false; $('#arCards').innerHTML = '';
     if (S.screen === 'history') renderHistory(); else if (S.screen === 'list') renderList();
   }
@@ -232,7 +251,8 @@
   });
 
   /* ---------- Anclaje: la información sigue al producto ---------- */
-  const AP = { x: 0, y: 0, has: false };
+  const AP = { x: 0, y: 0, has: false, dim: null, t: null };
+  let arHinted = false;
   function toScreen(x, y) {
     const W = innerWidth, H = innerHeight, vw = vid.videoWidth, vh = vid.videoHeight, sc = Math.max(W / vw, H / vh);
     return { x: x * sc + (W - vw * sc) / 2, y: y * sc + (H - vh * sc) / 2, sc };
@@ -244,27 +264,53 @@
     else { AP.x += (s.x - AP.x) * 0.6; AP.y += (s.y - AP.y) * 0.6; }
     layoutAR(AP.x, AP.y, Math.max(36, Math.min(380, (t.w || 200) * s.sc)), t);
   }
+  function toggleCard(c) {
+    const open = !c.classList.contains('open');
+    $$('#arCards .acard').forEach((x) => { x.classList.remove('open'); x.setAttribute('aria-expanded', 'false'); });
+    if (open) { c.classList.add('open'); c.setAttribute('aria-expanded', 'true'); }
+    AP.dim = null; if (AP.t) layoutAR(AP.x, AP.y, AP.wS, AP.t);
+  }
+  $('#pv').addEventListener('click', (e) => {   // tocar el video: cerrar la tarjeta abierta
+    if (!S.arMode || e.target.closest('.acard,.btn,.rbtn,.glass,.sheet')) return;
+    const o = $('#arCards .acard.open'); if (o) toggleCard(o);
+  });
+  /* Las tarjetas son puntos compactos repartidos a los lados del producto: el centro queda libre para verlo.
+     Al tocar uno se abre en su lugar. Líneas guía los unen con puntos sobre el producto. */
   function layoutAR(ax, ay, wS, t) {
-    const W = innerWidth, H = innerHeight, cw = Math.min(158, Math.floor((W - 24) / 2)), gap = 8, topMin = 76, botMax = H - 172;
-    const cards = $$('#arCards .acard'), ln = $('#arSvg line'), dot = $('#arSvg circle');
+    const W = innerWidth, H = innerHeight, topMin = 76, botMax = H - 172, m = 10, gap = 16, sp = 8;
+    const cards = $$('#arCards .acard'), svg = $('#arSvg');
     if (cards.length < 4) return;
-    cards.forEach((c) => { c.style.width = cw + 'px'; });
-    const hs = cards.map((c) => c.offsetHeight || 96);
-    const r1 = Math.max(hs[0], hs[1]), r2 = Math.max(hs[2], hs[3]), bh = r1 + r2 + gap, bw = cw * 2 + gap;
-    const boxW = Math.min(W - 16, wS * 1.7), boxH = Math.max(40, Math.min(260, wS * 1.05)), g = 14;
-    const roomA = ay - boxH / 2 - g - topMin, roomB = botMax - (ay + boxH / 2 + g);
-    const above = roomA >= bh || (roomB < bh && roomA >= roomB);
-    const bx = Math.max(8, Math.min(W - bw - 8, ax - bw / 2));
-    let by = above ? ay - boxH / 2 - g - bh : ay + boxH / 2 + g;
-    by = Math.max(topMin, Math.min(botMax - bh, by));
-    const pos = [[bx, by], [bx + cw + gap, by], [bx, by + r1 + gap], [bx + cw + gap, by + r1 + gap]];
-    cards.forEach((c, i) => { c.style.transform = 'translate3d(' + pos[i][0].toFixed(1) + 'px,' + pos[i][1].toFixed(1) + 'px,0)'; });
-    // línea guía desde el producto hasta el bloque de información
-    const ex = Math.max(bx + 24, Math.min(bx + bw - 24, ax)), ey = above ? by + bh : by;
-    const sy = above ? ay - boxH / 2 : ay + boxH / 2;
-    ln.setAttribute('x1', ax.toFixed(1)); ln.setAttribute('y1', sy.toFixed(1)); ln.setAttribute('x2', ex.toFixed(1)); ln.setAttribute('y2', ey.toFixed(1));
-    dot.setAttribute('cx', ex.toFixed(1)); dot.setAttribute('cy', ey.toFixed(1));
-    const box = $('#arBox');
+    AP.wS = wS; AP.t = t;
+    while (svg.querySelectorAll('line').length < 4) { svg.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'line')); svg.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'circle')); }
+    const lns = svg.querySelectorAll('line'), dts = svg.querySelectorAll('circle');
+    if (!AP.dim) AP.dim = cards.map((c) => ({ w: c.offsetWidth, h: c.offsetHeight }));
+    // tamaño estimado del producto a partir del código de barras
+    const hw = Math.max(50, Math.min(W * 0.34, wS * 1.25)), hh = Math.max(64, Math.min(170, wS * 1.45));
+    // sirve (izq, arriba), precio (der, arriba), semáforo (der, abajo), uso (izq, abajo)
+    const side = [-1, 1, 1, -1], want = [-0.75, -0.55, 0.4, 0.7];
+    const pos = [];
+    [-1, 1].forEach((sd) => {
+      const ids = [0, 1, 2, 3].filter((i) => side[i] === sd).sort((i, j) => want[i] - want[j]);
+      let y = null, list = [];
+      ids.forEach((i) => {
+        let cy = ay + want[i] * hh - AP.dim[i].h / 2;
+        if (y !== null) cy = Math.max(cy, y + sp);
+        cy = Math.max(topMin, cy); y = cy + AP.dim[i].h; list.push([i, cy]);
+      });
+      if (list.length && y > botMax) { const sh = y - botMax; list.forEach((q) => { q[1] -= sh; }); list.forEach((q, n) => { if (n === 0) q[1] = Math.max(topMin, q[1]); else q[1] = Math.max(q[1], list[n - 1][1] + AP.dim[list[n - 1][0]].h + sp); }); }
+      list.forEach(([i, cy]) => {
+        const w = AP.dim[i].w, x = sd < 0 ? Math.max(m, ax - hw - gap - w) : Math.min(W - m - w, ax + hw + gap);
+        pos[i] = { x, y: cy, w, h: AP.dim[i].h, sd };
+      });
+    });
+    cards.forEach((c, i) => {
+      const q = pos[i]; c.style.transform = 'translate3d(' + q.x.toFixed(1) + 'px,' + q.y.toFixed(1) + 'px,0)';
+      const cy = q.y + Math.min(q.h, 36) / 2, x1 = q.sd < 0 ? q.x + q.w : q.x;
+      const tx = ax + q.sd * hw * 0.6, ty = Math.max(ay - hh * 0.9, Math.min(ay + hh * 0.9, cy));
+      lns[i].setAttribute('x1', x1.toFixed(1)); lns[i].setAttribute('y1', cy.toFixed(1)); lns[i].setAttribute('x2', tx.toFixed(1)); lns[i].setAttribute('y2', ty.toFixed(1));
+      dts[i].setAttribute('cx', tx.toFixed(1)); dts[i].setAttribute('cy', ty.toFixed(1));
+    });
+    const boxW = Math.max(40, Math.min(W - 16, wS * 1.7)), boxH = Math.max(40, Math.min(260, wS * 1.05)), box = $('#arBox');
     box.style.width = boxW + 'px'; box.style.height = boxH + 'px';
     box.style.transform = 'translate3d(' + (ax - boxW / 2).toFixed(1) + 'px,' + (ay - boxH / 2).toFixed(1) + 'px,0)';
     const L = $('#arLayer'); L.classList.toggle('lost', !t.ok); L.classList.toggle('gone', !!t.lost);
@@ -424,6 +470,7 @@
   $('#openHist').addEventListener('click', () => { S.pick = null; go('history'); });
 
   /* ---------- Inicio ---------- */
+  if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
   (async function init() {
     await loadCatalog();
     badge(); renderHome();

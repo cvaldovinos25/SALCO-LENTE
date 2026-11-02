@@ -7,8 +7,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#007dc3">
 <title>SALCO LENTE | Farmacias Salcobrand</title>
-<meta name="description" content="Escanea cualquier producto y descubre más sobre él.">
+<meta name="description" content="Apunta la cámara a un producto y descubre más sobre él.">
 <link rel="icon" href="img/sb-logo.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="img/sb-logo.png">
 <style>
 :root{
   --blue:#007dc3;--blue-d:#005b94;--sky:#00a9e8;--green:#96c11f;--yellow:#ffd500;--orange:#f29100;--coral:#ff5b3a;
@@ -81,11 +83,7 @@ button{font:inherit;cursor:pointer;color:inherit}
 .hero .btn{background:#fff;color:var(--blue-d);box-shadow:0 14px 26px -12px rgba(0,30,80,.7)}
 .sectitle{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:950;letter-spacing:.1em;text-transform:uppercase;color:var(--blue-d);margin:26px 4px 12px}
 .sectitle::after{content:"";flex:1;height:2.5px;border-radius:9px;background:linear-gradient(90deg,rgba(0,169,232,.45),transparent)}
-.cats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-.cat{display:flex;align-items:center;gap:12px;border:0;text-align:left;padding:14px;border-radius:22px;background:rgba(255,255,255,.85);border:1.5px solid rgba(255,255,255,.95);box-shadow:var(--shadow);font-weight:900;font-size:15.5px;transition:transform .18s cubic-bezier(.2,1.6,.4,1)}
-.cat:active{transform:scale(.96)}
 .ic{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;font-size:23px;background:linear-gradient(135deg,var(--c1,#e3f4ff),var(--c2,#f0fadb));box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 6px 14px -8px rgba(0,60,120,.5);flex:none}
-.cat small{display:block;font-size:12px;color:var(--muted);font-weight:700}
 .how{list-style:none;padding:0;margin:0;display:grid;gap:10px}
 .how li{display:flex;gap:12px;align-items:center;font-weight:800}
 .how small{display:block;color:var(--muted);font-weight:600;font-size:13px}
@@ -217,14 +215,6 @@ body.cam .pv-top .nm{color:#fff;text-shadow:0 1px 10px rgba(0,20,50,.85)}
 .misalco p{margin:0;font-weight:800;font-size:13.5px}
 
 /* historial */
-.tog{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(0,60,120,.08);font-weight:800;font-size:14.5px}
-.tog:last-child{border:0}
-.tog small{display:block;color:var(--muted);font-weight:600;font-size:12.5px}
-.sw{margin-left:auto;position:relative;width:50px;height:30px;flex:none}
-.sw input{opacity:0;position:absolute;inset:0;width:100%;height:100%;margin:0;z-index:2}
-.sw i{position:absolute;inset:0;border-radius:15px;background:#cfd9e4;transition:.2s}
-.sw i::after{content:"";position:absolute;left:3px;top:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.3);transition:.2s}
-.sw input:checked+i{background:var(--grad-cta)}.sw input:checked+i::after{transform:translateX(20px)}
 
 
 /* Capa de realidad aumentada: la información sigue al producto */
@@ -293,9 +283,35 @@ h1,h2,h3,h4,.brand b,.sectitle,.hint b,.nm b,.hero2 b,.sheet h3,.sheet h4,.hero 
 .stage .m3d:active{cursor:grabbing}
 .m3dhint{position:absolute;left:50%;top:4px;transform:translateX(-50%);font-family:var(--font-t);font-weight:700;font-size:12px;color:var(--blue-d);background:rgba(255,255,255,.8);border-radius:999px;padding:5px 12px;transition:opacity .4s;pointer-events:none;white-space:nowrap}
 .m3dhint.off{opacity:0}
+.acard b{font-size:10.5px}
+:focus-visible{outline:3px solid var(--sky);outline-offset:2px;border-radius:8px}
+
+/* ===== RA: puntos compactos a los lados del producto (el centro queda libre) ===== */
+body.cam .pv::before{background:linear-gradient(180deg,rgba(0,40,90,.3),transparent 24%,transparent 62%,rgba(6,24,50,.42))}
+.camLayer::after{background:radial-gradient(130% 90% at 50% 45%,transparent 55%,rgba(0,20,50,.3))}
+.acard.ar{width:auto;max-width:212px;padding:7px 12px 7px 11px;border-radius:999px;cursor:pointer;background:rgba(255,255,255,.88);pointer-events:auto;transition:background .2s,box-shadow .2s;-webkit-user-select:none;user-select:none}
+.acard.ar::before{display:none}
+.acard.ar .more{display:none}
+.acard.ar .ahead{display:flex;align-items:center;gap:7px;white-space:nowrap}
+.acard.ar .ahead b{margin:0;padding:0;font-size:10.5px;letter-spacing:.1em}
+.acard.ar .adot{flex:none;width:9px;height:9px;border-radius:50%;background:var(--ac);box-shadow:0 0 0 3px rgba(255,255,255,.9),0 0 0 4.5px var(--ac)}
+.acard.ar .aval{font-weight:700;font-size:13.5px;color:#0b2a4a;margin-left:2px}
+.acard.ar .aval small{font-size:10.5px;font-weight:600;color:#6a8199}
+.acard.ar .mdots{display:inline-flex;gap:3px;margin-left:2px}
+.acard.ar .mdots i{width:9px;height:9px;border-radius:50%;background:#9bb0c4}
+.acard.ar .mdots i.g{background:#7fb11a}.acard.ar .mdots i.y{background:#f2b300}.acard.ar .mdots i.r{background:#e0523a}
+.acard.ar .abody{display:none;margin-top:8px;white-space:normal;font-size:12.5px;line-height:1.35}
+.acard.ar .ago{display:none;margin-top:9px;border:0;background:none;padding:2px 0;font:inherit;font-weight:800;font-size:12.5px;color:var(--ac);cursor:pointer}
+.acard.ar.open{width:204px;border-radius:16px;padding:11px 13px 11px 14px;background:rgba(255,255,255,.96);box-shadow:0 14px 30px -10px rgba(0,35,80,.6)}
+.acard.ar.open::before{display:block}
+.acard.ar.open .abody,.acard.ar.open .ago{display:block}
+.acard.ar.open .ahead{white-space:normal}
+.acard.ar.open .aval,.acard.ar.open .mdots{display:none}
+.arLayer.lost .acard.ar{opacity:.6}
 </style>
 </head>
 <body>
+<noscript><p style="padding:20px;font-family:sans-serif">Salco Lente necesita JavaScript para funcionar.</p></noscript>
 <div class="bg" aria-hidden="true"><i></i><i></i><i></i></div>
 
 <header class="top">
@@ -312,7 +328,7 @@ h1,h2,h3,h4,.brand b,.sectitle,.hint b,.nm b,.hero2 b,.sheet h3,.sheet h4,.hero 
     <div class="hero">
       <span class="kicker">📷 Herramienta con Realidad Aumentada</span>
       <h1>APUNTA, DESCUBRE Y <em>DECIDE</em></h1>
-      <p>Escanéa el código en barra de cualquier producto y descubre más información sobre él.</p>
+      <p>Escanea el código de barras de cualquier producto y descubre más información sobre él.</p>
       <div class="go"><button class="btn" id="homeScan">Escanear un producto 📷</button></div>
     </div>
     <div class="sectitle">CÓMO FUNCIONA</div>
@@ -343,10 +359,10 @@ h1,h2,h3,h4,.brand b,.sectitle,.hint b,.nm b,.hero2 b,.sheet h3,.sheet h4,.hero 
   <section class="screen" id="s-history"></section>
 </main>
 
-<nav class="nav"><div class="nav-in">
+<nav class="nav" aria-label="Navegación principal"><div class="nav-in">
   <button class="nb on" data-go="home"><span>🏠</span>Inicio</button>
   <button class="nb" data-go="search"><span>🔎</span>Buscar</button>
-  <button class="nb mid" id="navScan"><div class="fab">📷</div>Escanear</button>
+  <button class="nb mid" id="navScan" aria-label="Escanear un producto"><div class="fab">📷</div>Escanear</button>
   <button class="nb" data-go="compare"><span>⚖️</span>Comparar</button>
   <button class="nb" data-go="list"><span>🛒</span>Mi lista<b class="badge hidden" id="badge">0</b></button>
 </div></nav>
@@ -355,7 +371,7 @@ h1,h2,h3,h4,.brand b,.sectitle,.hint b,.nm b,.hero2 b,.sheet h3,.sheet h4,.hero 
 <div class="camLayer" id="camLayer"><video id="vid" playsinline muted autoplay></video></div>
 
 <!-- Escaneo -->
-<div class="ov" id="scan">
+<div class="ov" id="scan" role="dialog" aria-modal="true" aria-label="Escanear producto">
   <div class="reticle" id="reticle">
     <svg viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" stroke="#fff" stroke-width="1.6" vector-effect="non-scaling-stroke"><path d="M0 22V8Q0 0 8 0H22M78 0H92Q100 0 100 8V22M100 78V92Q100 100 92 100H78M22 100H8Q0 100 0 92V78" stroke-width="5" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>
     <div class="laser"></div>
@@ -369,7 +385,7 @@ h1,h2,h3,h4,.brand b,.sectitle,.hint b,.nm b,.hero2 b,.sheet h3,.sheet h4,.hero 
 </div>
 
 <!-- Vista de producto -->
-<div class="ov pv" id="pv">
+<div class="ov pv" id="pv" role="dialog" aria-modal="true" aria-label="Información del producto">
   <div class="pv-in">
     <div class="pv-top">
       <button class="rbtn" id="pvBack">← Volver</button>
@@ -387,22 +403,20 @@ h1,h2,h3,h4,.brand b,.sectitle,.hint b,.nm b,.hero2 b,.sheet h3,.sheet h4,.hero 
     </div>
   </div>
   <div class="arLayer wait" id="arLayer">
-    <svg id="arSvg" width="100%" height="100%"><line/><circle r="6"/></svg>
+    <svg id="arSvg" width="100%" height="100%"></svg>
     <div class="arBox" id="arBox"><i></i><i></i><i></i><i></i></div>
     <div id="arCards"></div>
-    <div class="glass arMsg" id="arMsg">📍 Vuelve a apuntar al producto para ver su información</div>
+    <div class="glass arMsg" id="arMsg">📍 Apunta al producto para ver la información</div>
     <div class="arDbg" id="arDbg"></div>
   </div>
 </div>
 
-<div class="sheet-bg" id="sheetBg"><div class="sheet" id="sheet"></div></div>
+<div class="sheet-bg" id="sheetBg"><div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Detalle"></div></div>
 
 <script src="lib/zxing.min.js"></script>
 <script src="lib/qrcode.js"></script>
-<script src="lib/three.min.js"></script>
-<script src="js/model3d.js?v=10"></script>
-<script src="js/config.js?v=10"></script>
-<script src="js/ar.js?v=10"></script>
-<script src="js/app.js?v=10"></script>
+<script src="js/config.js?v=12"></script>
+<script src="js/ar.js?v=12"></script>
+<script src="js/app.js?v=12"></script>
 </body>
 </html>
