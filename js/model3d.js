@@ -65,10 +65,10 @@
         o una caja (envases rectangulares), a la altura y ancho de la foto.
      3) La foto se proyecta sobre el frente; la parte de atrás lleva el color medio.
      Requiere que el servidor de la imagen permita leerla (CORS) o que esté en el mismo sitio. */
-  function fromImage(THREE, im, m) {
+  function fromImage(THREE, im, m, imB) {
     const IW = im.naturalWidth || im.width, IH = im.naturalHeight || im.height, rc = m.recorte || [0, 0, 1, 1];
     const sx = rc[0] * IW, sy = rc[1] * IH, sw = (rc[2] - rc[0]) * IW, sh = (rc[3] - rc[1]) * IH;
-    const MAXS = 1024, k = Math.min(1, MAXS / Math.max(sw, sh));
+    const MAXS = imB ? 1600 : 1024, k = Math.min(1, MAXS / Math.max(sw, sh));
     const cw = Math.max(8, Math.round(sw * k)), ch = Math.max(8, Math.round(sh * k));
     const cv = document.createElement('canvas'); cv.width = cw; cv.height = ch;
     const ctx = cv.getContext('2d', { willReadFrequently: true });
@@ -78,9 +78,9 @@
     const px = (x, y) => { const i = (y * cw + x) * 4; return [d[i], d[i + 1], d[i + 2], d[i + 3]]; };
     const avg3 = (x, y0, dx) => { let r = 0, g = 0, b = 0, n = 0; for (let q = -2; q <= 2; q++) { const yy = Math.max(0, Math.min(ch - 1, y0 + q)); for (let t = 0; t < 3; t++) { const c = px(Math.max(0, Math.min(cw - 1, x + dx * t)), yy); if (c[3] > 40) { r += c[0]; g += c[1]; b += c[2]; n++; } } } return n ? [r / n, g / n, b / n] : [255, 255, 255]; };
     const bgL = [], bgR = []; for (let y = 0; y < ch; y++) { bgL.push(avg3(0, y, 1)); bgR.push(avg3(cw - 1, y, -1)); }
-    const TH = 40;
+    const TH = 40, alphaMode = d[3] < 40 && d[(cw - 1) * 4 + 3] < 40;   // PNG recortado: el producto es lo opaco
     const isFg = (x, y) => {
-      const i = (y * cw + x) * 4; if (d[i + 3] < 40) return false;
+      const i = (y * cw + x) * 4; if (d[i + 3] < 40) return false; if (alphaMode) return d[i + 3] >= 128;
       const t = x / (cw - 1), l = bgL[y], r = bgR[y];
       const e = Math.abs(d[i] - (l[0] + (r[0] - l[0]) * t)) + Math.abs(d[i + 1] - (l[1] + (r[1] - l[1]) * t)) + Math.abs(d[i + 2] - (l[2] + (r[2] - l[2]) * t));
       return e > TH;
@@ -122,7 +122,7 @@
     let sm = rad;
     for (let pass = 0; pass < 2; pass++) {
       const t = new Float32Array(N);
-      for (let i = 0; i < N; i++) { let a = 0, w = 0; for (let j = -3; j <= 3; j++) { const q = i + j; if (q < 0 || q >= N) continue; const wt = Math.exp(-(j * j) / 4.5) * (Math.abs(sm[q] - sm[i]) > 0.22 ? 0.25 : 1); a += sm[q] * wt; w += wt; } t[i] = a / w; }
+      for (let i = 0; i < N; i++) { let a = 0, w = 0; for (let j = -3; j <= 3; j++) { const q = i + j; if (q < 0 || q >= N) continue; const wt = Math.exp(-(j * j) / 4.5) * (Math.abs(sm[q] - sm[i]) > 0.22 ? 0.25 : 1); a += sm[q] * wt; w += wt; } t[i] = (i < 5 || i > N - 6) ? sm[i] : a / w; }
       sm = t;
     }
     sm = Float32Array.from(sm, (v) => Math.min(1.5, Math.max(0.03, v)));
@@ -154,12 +154,38 @@
       bx2.fillStyle = 'rgb(' + Math.round(r / n * 0.97) + ',' + Math.round(g2 / n * 0.97) + ',' + Math.round(b2 / n * 0.97) + ')'; bx2.fillRect(0, y, 1, 1);
     }
     const btex = new THREE.CanvasTexture(bc); btex.encoding = THREE.sRGBEncoding; btex.magFilter = btex.minFilter = THREE.LinearFilter; btex.generateMipmaps = false;
+    let tex2 = null;   // foto del reverso (mismo recorte y tamaño que el frente)
+    if (imB) {
+      const c2 = document.createElement('canvas'); c2.width = cw; c2.height = ch; c2.getContext('2d').drawImage(imB, sx, sy, sw, sh, 0, 0, cw, ch);
+      tex2 = new THREE.CanvasTexture(c2); tex2.encoding = THREE.sRGBEncoding; tex2.anisotropy = 16;
+    }
+    const capUV = m.vidrioDesde != null ? 1 - (top + m.vidrioDesde * Hp) / ch : -1;   // arriba de esta altura: tapa de goma (mate)
     const mat = new THREE.MeshPhysicalMaterial({ map: tex, roughness: .36, metalness: .03, clearcoat: .45, clearcoatRoughness: .28, envMapIntensity: .55, side: THREE.DoubleSide });
     mat.onBeforeCompile = (sh) => {
       sh.uniforms.uBackTex = { value: btex }; sh.uniforms.uR = { value: rmax };
-      sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying float vObjZ;').replace('#include <begin_vertex>', '#include <begin_vertex>\nvObjZ = position.z;');
-      sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying float vObjZ;\nuniform sampler2D uBackTex;\nuniform float uR;')
-        .replace('#include <map_fragment>', 'vec4 sampledDiffuseColor = texture2D( map, vUv );\nvec4 backC = texture2D( uBackTex, vec2(0.5, vUv.y) );\nfloat fr = smoothstep(-0.3, 0.38, vObjZ / uR);\nsampledDiffuseColor.rgb = mix(backC.rgb, sampledDiffuseColor.rgb, fr);\ndiffuseColor *= sampledDiffuseColor;');
+      sh.uniforms.uBack = { value: tex2 || btex }; sh.uniforms.uHasBack = { value: tex2 ? 1 : 0 }; sh.uniforms.uCx = { value: cx0 / cw }; sh.uniforms.uInvSc = { value: 1 / (sc * cw) }; sh.uniforms.uCap = { value: capUV }; sh.uniforms.uBake = { value: tex2 ? 0.5 : 0 };
+      sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying float vObjZ;\nvarying vec2 vObjP;').replace('#include <begin_vertex>', '#include <begin_vertex>\nvObjZ = position.z;\nvObjP = position.xz;');
+      sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying float vObjZ;\nvarying vec2 vObjP;\nuniform sampler2D uBackTex;\nuniform sampler2D uBack;\nuniform float uR, uHasBack, uCx, uCap, uBake, uInvSc;')
+        .replace('#include <map_fragment>', [
+          'vec4 sampledDiffuseColor = texture2D( map, vUv );',
+          'if ( uHasBack > 0.5 ) {',
+          '  float rr = max( length( vObjP ), 0.0001 ), xx = clamp( vObjP.x, -0.88 * rr, 0.88 * rr );',   // en los costados no se estira el borde de la foto
+          '  float fr2 = smoothstep(-0.2, 0.2, vObjZ / rr);',
+          '  sampledDiffuseColor = texture2D( map, vec2( uCx + xx * uInvSc, vUv.y ) );',
+          '  vec4 bk = texture2D( uBack, vec2( uCx - xx * uInvSc, vUv.y ) );',
+          '  sampledDiffuseColor.rgb = mix(bk.rgb, sampledDiffuseColor.rgb, fr2);',
+          '} else {',
+          '  vec4 backC = texture2D( uBackTex, vec2(0.5, vUv.y) );',
+          '  float fr = smoothstep(-0.3, 0.38, vObjZ / uR);',
+          '  sampledDiffuseColor.rgb = mix(backC.rgb, sampledDiffuseColor.rgb, fr);',
+          '}',
+          'sampledDiffuseColor.a = 1.0;',
+          'diffuseColor *= sampledDiffuseColor;',
+          'diffuseColor.rgb *= 1.0 - uBake * 0.6;',
+          'if ( uHasBack > 0.5 ) { float rim = pow( 1.0 - abs( dot( normalize( vNormal ), normalize( vViewPosition ) ) ), 2.2 ); diffuseColor.rgb *= 1.0 - 0.3 * rim; }'].join('\n'))
+        .replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\nif ( uCap > 0.0 && vUv.y > uCap ) roughnessFactor = max( roughnessFactor, 0.72 );')
+        .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance += sampledDiffuseColor.rgb * uBake;')
+        .replace('#include <lights_physical_fragment>', '#include <lights_physical_fragment>\n#ifdef USE_CLEARCOAT\nif ( uCap > 0.0 && vUv.y > uCap ) material.clearcoat = 0.0;\n#endif');
     };
     const mesh = new THREE.Mesh(geo, mat);
     if (tipo === 'tubo') mesh.scale.z = 0.42;
@@ -253,18 +279,17 @@
     } catch (e) { /* sin entorno: se usan solo las luces */ }
     const model = build(THREE, p); const pivot = new THREE.Group(); pivot.add(model); scene.add(pivot);
     let pop = 1;
-    if (p.imagen) {
-      const im = new Image(); im.crossOrigin = 'anonymous'; im.referrerPolicy = 'no-referrer';
-      im.onload = () => {
+    const vistas = p.modelo && p.modelo.vistas, srcs = vistas ? [vistas.frente, vistas.reverso] : (p.imagen ? [p.imagen] : []);
+    if (srcs.length) {
+      const load = (src) => new Promise((ok, ko) => { const im = new Image(); im.crossOrigin = 'anonymous'; im.referrerPolicy = 'no-referrer'; im.onload = () => ok(im); im.onerror = () => ko(src); im.src = src; });
+      Promise.all(srcs.map(load)).then((ims) => {
         if (dead) return;
         try {
-          const g2 = fromImage(THREE, im, Object.assign({ tipo: 'frasco' }, p.modelo || {}));
-          if (g2) { pivot.remove(model); model.traverse((o) => { if (o.geometry) o.geometry.dispose(); if (o.material) { (Array.isArray(o.material) ? o.material : [o.material]).forEach((mm) => { if (mm.map) mm.map.dispose(); mm.dispose(); }); } }); pivot.add(g2); pop = 0.82; }
-          else console.info('Salco Lente: no se pudo separar el producto del fondo en', p.imagen);
+          const g2 = fromImage(THREE, ims[0], Object.assign({ tipo: 'frasco' }, p.modelo || {}), ims[1] || null);
+          if (g2) { pivot.remove(model); model.traverse((o) => { if (o.geometry) o.geometry.dispose(); if (o.material) { (Array.isArray(o.material) ? o.material : [o.material]).forEach((mm) => { if (mm.map) mm.map.dispose(); mm.dispose(); }); } }); pivot.add(g2); pop = .7; }
+          else console.info('Salco Lente: no se pudo separar el producto del fondo en', srcs[0]);
         } catch (e) { console.info('Salco Lente: modelo desde la foto no disponible', e); }
-      };
-      im.onerror = () => console.info('Salco Lente: la imagen no se pudo cargar para el 3D', p.imagen);
-      im.src = p.imagen;
+      }).catch((src) => console.info('Salco Lente: la imagen no se pudo cargar para el 3D', src));
     }
     // sombra suave en el piso
     const sc = document.createElement('canvas'); sc.width = sc.height = 128; const sx = sc.getContext('2d');
@@ -304,6 +329,7 @@
     // entrada suave
     cv.style.opacity = 0; requestAnimationFrame(() => { cv.style.transition = 'opacity .6s'; cv.style.opacity = 1; });
     return {
+      rotate(a, b) { ry = a; if (b != null) rx = b; idle = -1e6; vy = vx = 0; },
       destroy() {
         dead = true; cancelAnimationFrame(raf); if (ro) ro.disconnect();
         scene.traverse((o) => { if (o.geometry) o.geometry.dispose(); if (o.material) { (Array.isArray(o.material) ? o.material : [o.material]).forEach((mm) => { if (mm.map) mm.map.dispose(); mm.dispose(); }); } });

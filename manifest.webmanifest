@@ -1,0 +1,16 @@
+{
+  "name": "Salco Lente | Farmacias Salcobrand",
+  "short_name": "Salco Lente",
+  "description": "Apunta la cámara a un producto y descubre más información sobre él.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f1f8ff",
+  "theme_color": "#007dc3",
+  "lang": "es",
+  "icons": [
+    { "src": "img/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "img/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

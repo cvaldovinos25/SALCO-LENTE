@@ -46,7 +46,12 @@
       "modelo": {
         "tipo": "ampolla",
         "color": "#f3d58a",
-        "acento": "#4f8a3c"
+        "acento": "#4f8a3c",
+        "vistas": {
+          "frente": "img/productos/centella-frente.png",
+          "reverso": "img/productos/centella-reverso.png"
+        },
+        "vidrioDesde": 0.366
       }
     },
     {
@@ -92,12 +97,10 @@
         "tipo": "frasco",
         "color": "#ffffff",
         "acento": "#2f8f4e",
-        "recorte": [
-          0.575,
-          0.115,
-          1,
-          0.985
-        ]
+        "vistas": {
+          "frente": "img/productos/cluny-frente.png",
+          "reverso": "img/productos/cluny-reverso.png"
+        }
       }
     },
     {
@@ -140,7 +143,12 @@
       "modelo": {
         "tipo": "ampolla",
         "color": "#dff0ff",
-        "acento": "#005b94"
+        "acento": "#005b94",
+        "vistas": {
+          "frente": "img/productos/nivea-frente.png",
+          "reverso": "img/productos/nivea-reverso.png"
+        },
+        "vidrioDesde": 0.15
       }
     },
     {

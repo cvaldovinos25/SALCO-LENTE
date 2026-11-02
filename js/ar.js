@@ -96,7 +96,13 @@
     bs *= 0.9;
     for (const sc of SCALES) for (let dy = -2; dy <= 2; dy += 2) for (let dx = -2; dx <= 2; dx += 2) tryAt(rx + dx, ry + dy, sc);
     if (bsc === 1) bs = base;
-    return { x: bx, y: by, sc: bsc, score: bs / n };
+    let fx = bx, fy = by;
+    if (bsc === 1) {   // afinado por debajo del píxel: parábola sobre la diferencia en los vecinos (evita saltos de 1 px)
+      const s0 = sad(f, bx, by, 1, 1e12), par = (m, p) => { const d = m - 2 * s0 + p; return d > 1 ? Math.max(-0.5, Math.min(0.5, (m - p) / (2 * d))) : 0; };
+      if (inside(f, bx - 1, by, 1) && inside(f, bx + 1, by, 1)) fx += par(sad(f, bx - 1, by, 1, 1e12), sad(f, bx + 1, by, 1, 1e12));
+      if (inside(f, bx, by - 1, 1) && inside(f, bx, by + 1, 1)) fy += par(sad(f, bx, by - 1, 1, 1e12), sad(f, bx, by + 1, 1, 1e12));
+    }
+    return { x: fx, y: fy, sc: bsc, score: bs / n };
   }
 
   /* ---------- Anclar con una lectura del código ---------- */

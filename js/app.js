@@ -58,7 +58,7 @@
     : '';
   const icBubble = (p, cls) => pimg(p, cls) || '<span class="ic ' + (cls || '') + '" style="--c1:' + catMeta(p).c1 + ';--c2:' + catMeta(p).c2 + '">' + catMeta(p).emoji + '</span>';
 
-  /* Semáforo de ingredientes (según la ficha del producto) */
+  /* Advertencias de ingredientes (según la ficha del producto) */
   function sema(p, all) {
     const f = p.flags || {}, pr = { embarazo: false, fragancias: false, sensible: false }, o = [];
     if (f.fragancia === false) o.push(['g', 'Sin fragancia declarada']);
@@ -208,7 +208,7 @@
     const card = (k, tit, color, body, delay) => '<button class="glass acard' + (ar ? ' ar' : '') + '" data-k="' + k + '" style="--ac:' + color + ';animation-delay:' + delay + 's"><b>' + tit + '</b><span class="more" aria-hidden="true"></span>' + body + '</button>';
     const c1 = card('sirve', 'Para qué sirve', 'var(--blue)', esc(p.resumen), 0.35);
     const c2 = card('precio', 'Precio por unidad', 'var(--orange)', '<span class="big">' + esc(pr.split(' / ')[0]) + ' <small>/ ' + esc(p.cantidad.unidad) + '</small></span><br>' + clp(p.precio) + ' · ' + esc(p.formato), 0.5);
-    const c3 = card('ingr', 'Ingredientes y semáforo', 'var(--green)', pills(sm, 3) || 'Revisa el envase', 0.65);
+    const c3 = card('ingr', 'Ingredientes y advertencias', 'var(--green)', pills(sm, 3) || 'Revisa el envase', 0.65);
     const c4 = card('uso', 'Cómo usar', 'var(--coral)', esc(p.cuando), 0.8);
     if (ar) {
       const arc = (k, tit, color, aval, body, delay) => '<div class="glass acard ar" role="button" tabindex="0" aria-expanded="false" data-k="' + k + '" style="--ac:' + color + ';animation-delay:' + delay + 's"><span class="ahead"><i class="adot"></i><b>' + tit + '</b>' + aval + '</span><span class="abody">' + body + '</span><button type="button" class="ago">Ver detalle ›</button></div>';
@@ -216,9 +216,9 @@
       $('#arCards').innerHTML =
         arc('sirve', 'Para qué sirve', 'var(--blue)', '', esc(p.resumen), 0.35) +
         arc('precio', 'Precio', 'var(--orange)', '<span class="aval">' + esc(pr.split(' / ')[0]) + '<small> / ' + esc(p.cantidad.unidad) + '</small></span>', '<span class="big">' + esc(pr.split(' / ')[0]) + ' <small>/ ' + esc(p.cantidad.unidad) + '</small></span><br>' + clp(p.precio) + ' · ' + esc(p.formato), 0.5) +
-        arc('ingr', 'Semáforo', 'var(--green)', '<span class="mdots">' + dots + '</span>', pills(sm, 3) || 'Revisa el envase', 0.65) +
+        arc('ingr', 'Advertencias', 'var(--green)', '<span class="mdots">' + dots + '</span>', pills(sm, 3) || 'Revisa el envase', 0.65) +
         arc('uso', 'Cómo usar', 'var(--coral)', '', esc(p.cuando), 0.8);
-      AP.dim = null; AP.t = null;
+      AP.dim = null; AP.t = null; AP.cur = []; AP.tgt = []; AP.ln = [];
       $$('#arCards .acard').forEach((c) => {
         c.addEventListener('click', (e) => { if (e.target.closest('.ago')) openSheet(c.dataset.k); else toggleCard(c); });
         c.addEventListener('keydown', (e) => { if ((e.key === 'Enter' || e.key === ' ') && e.target === c) { e.preventDefault(); toggleCard(c); } });
@@ -231,7 +231,7 @@
       $('#arCards').innerHTML = ''; $('#rowT').innerHTML = c1 + c2; $('#rowB').innerHTML = c3 + c4;
       $('#stage').innerHTML = '<div class="hero2">' + icBubble(p, 'xl') + '<b>' + esc(p.marca) + '</b><span>' + esc(p.nombre) + '</span></div>';
       const tk = ++stageTok;   // el 3D (three.js) se descarga recién aquí, no al abrir la app
-      loadJS('lib/three.min.js').then(() => loadJS('js/model3d.js?v=12')).then(() => {
+      loadJS('lib/three.min.js').then(() => loadJS('js/model3d.js?v=17')).then(() => {
         if (tk !== stageTok || S.cur !== p || !$('#pv').classList.contains('on') || S.arMode) return;
         const m = SL.Model3D && SL.Model3D.mount($('#stage'), p); if (m) model3 = m;
       }).catch(() => {});
@@ -251,7 +251,19 @@
   });
 
   /* ---------- Anclaje: la información sigue al producto ---------- */
-  const AP = { x: 0, y: 0, has: false, dim: null, t: null };
+  const AP = { x: 0, y: 0, has: false, dim: null, t: null, wF: 0, cur: [], tgt: [], ln: [], raf: 0, last: 0 };
+  /* Filtro "One Euro": suaviza mucho cuando el producto está quieto (sin temblor) y casi nada cuando se mueve (sin retraso). */
+  function oneEuro(minc, beta, dc) {
+    let xp = null, dxp = 0, tp = 0;
+    const al = (fc, dt) => 1 / (1 + 1 / (2 * Math.PI * fc) / dt);
+    return { reset() { xp = null; }, f(x, t) {
+      if (xp === null) { xp = x; tp = t; dxp = 0; return x; }
+      const dt = Math.max(0.001, (t - tp) / 1000); tp = t;
+      dxp += al(dc, dt) * ((x - xp) / dt - dxp);
+      xp += al(minc + beta * Math.abs(dxp), dt) * (x - xp); return xp;
+    } };
+  }
+  const fX = oneEuro(0.9, 0.02, 1), fY = oneEuro(0.9, 0.02, 1);
   let arHinted = false;
   function toScreen(x, y) {
     const W = innerWidth, H = innerHeight, vw = vid.videoWidth, vh = vid.videoHeight, sc = Math.max(W / vw, H / vh);
@@ -259,10 +271,30 @@
   }
   function onTrack(t) {
     if (S.view !== 'pv' || !S.arMode || !vid.videoWidth) return;
-    const s = toScreen(t.x, t.y);
-    if (!AP.has) { AP.x = s.x; AP.y = s.y; AP.has = true; $('#arLayer').classList.remove('wait'); }
-    else { AP.x += (s.x - AP.x) * 0.6; AP.y += (s.y - AP.y) * 0.6; }
-    layoutAR(AP.x, AP.y, Math.max(36, Math.min(380, (t.w || 200) * s.sc)), t);
+    const s = toScreen(t.x, t.y), now = t.t || performance.now();
+    if (!AP.has) { fX.reset(); fY.reset(); AP.x = fX.f(s.x, now); AP.y = fY.f(s.y, now); AP.has = true; AP.wF = 0; $('#arLayer').classList.remove('wait'); }
+    else if (t.ok) { AP.x = fX.f(s.x, now); AP.y = fY.f(s.y, now); }   // con seguimiento dudoso se conserva la última posición buena
+    const raw = Math.max(36, Math.min(380, (t.w || 200) * s.sc));
+    if (!AP.wF) AP.wF = raw; else if (Math.abs(raw - AP.wF) > AP.wF * 0.07) AP.wF += (raw - AP.wF) * 0.12;   // el tamaño solo cambia si cambia de verdad
+    layoutAR(AP.x, AP.y, AP.wF, t);
+  }
+  /* Las tarjetas "flotan": van hacia su lugar con una inercia corta, así los cambios de orden o de tamaño no dan saltos.
+     Los puntos sobre el producto, en cambio, quedan pegados a él. */
+  function arTick(now) {
+    if (S.view !== 'pv' || !S.arMode) { AP.raf = 0; return; }
+    AP.raf = requestAnimationFrame(arTick);
+    const dt = Math.min(0.1, Math.max(0.001, (now - (AP.last || now)) / 1000)); AP.last = now;
+    const k = 1 - Math.exp(-dt * 16), cards = $$('#arCards .acard'), lns = $('#arSvg').querySelectorAll('line');
+    cards.forEach((c, i) => {
+      const g = AP.tgt[i]; if (!g) return;
+      const q = AP.cur[i] || (AP.cur[i] = { x: g.x, y: g.y });
+      q.x += (g.x - q.x) * k; q.y += (g.y - q.y) * k;
+      if (Math.abs(g.x - q.x) < 0.2) q.x = g.x; if (Math.abs(g.y - q.y) < 0.2) q.y = g.y;
+      c.style.transform = 'translate3d(' + Math.round(q.x) + 'px,' + Math.round(q.y) + 'px,0)';
+      const l = AP.ln[i]; if (!l || !lns[i]) return;
+      lns[i].setAttribute('x1', (l.sd < 0 ? q.x + g.w : q.x).toFixed(1)); lns[i].setAttribute('y1', (q.y + Math.min(g.h, 36) / 2).toFixed(1));
+      lns[i].setAttribute('x2', l.tx.toFixed(1)); lns[i].setAttribute('y2', l.ty.toFixed(1));
+    });
   }
   function toggleCard(c) {
     const open = !c.classList.contains('open');
@@ -286,7 +318,7 @@
     if (!AP.dim) AP.dim = cards.map((c) => ({ w: c.offsetWidth, h: c.offsetHeight }));
     // tamaño estimado del producto a partir del código de barras
     const hw = Math.max(50, Math.min(W * 0.34, wS * 1.25)), hh = Math.max(64, Math.min(170, wS * 1.45));
-    // sirve (izq, arriba), precio (der, arriba), semáforo (der, abajo), uso (izq, abajo)
+    // sirve (izq, arriba), precio (der, arriba), advertencias (der, abajo), uso (izq, abajo)
     const side = [-1, 1, 1, -1], want = [-0.75, -0.55, 0.4, 0.7];
     const pos = [];
     [-1, 1].forEach((sd) => {
@@ -304,12 +336,12 @@
       });
     });
     cards.forEach((c, i) => {
-      const q = pos[i]; c.style.transform = 'translate3d(' + q.x.toFixed(1) + 'px,' + q.y.toFixed(1) + 'px,0)';
-      const cy = q.y + Math.min(q.h, 36) / 2, x1 = q.sd < 0 ? q.x + q.w : q.x;
+      const q = pos[i], cy = q.y + Math.min(q.h, 36) / 2;
       const tx = ax + q.sd * hw * 0.6, ty = Math.max(ay - hh * 0.9, Math.min(ay + hh * 0.9, cy));
-      lns[i].setAttribute('x1', x1.toFixed(1)); lns[i].setAttribute('y1', cy.toFixed(1)); lns[i].setAttribute('x2', tx.toFixed(1)); lns[i].setAttribute('y2', ty.toFixed(1));
+      AP.tgt[i] = { x: q.x, y: q.y, w: q.w, h: q.h }; AP.ln[i] = { sd: q.sd, tx, ty };
       dts[i].setAttribute('cx', tx.toFixed(1)); dts[i].setAttribute('cy', ty.toFixed(1));
     });
+    if (!AP.raf) { AP.last = 0; AP.raf = requestAnimationFrame(arTick); }
     const boxW = Math.max(40, Math.min(W - 16, wS * 1.7)), boxH = Math.max(40, Math.min(260, wS * 1.05)), box = $('#arBox');
     box.style.width = boxW + 'px'; box.style.height = boxH + 'px';
     box.style.transform = 'translate3d(' + (ax - boxW / 2).toFixed(1) + 'px,' + (ay - boxH / 2).toFixed(1) + 'px,0)';
@@ -346,7 +378,7 @@
     if (k === 'sirve') {
       h += '<h3>Para qué sirve</h3><p style="font-weight:600">' + esc(p.resumen) + '</p><h4>Enfoque</h4><p style="font-weight:700">' + esc(p.foco.charAt(0).toUpperCase() + p.foco.slice(1)) + '.</p>' + adv + aviso;
     } else if (k === 'ingr') {
-      h += '<h3>Ingredientes y semáforo</h3><div>' + pills(sema(p, true)) + '</div><h4>Ingredientes clave</h4><ul>' + (p.ingredientes || []).map((i) => '<li>' + esc(i) + '</li>').join('') + '</ul>' +
+      h += '<h3>Ingredientes y advertencias</h3><div>' + pills(sema(p, true)) + '</div><h4>Ingredientes clave</h4><ul>' + (p.ingredientes || []).map((i) => '<li>' + esc(i) + '</li>').join('') + '</ul>' +
         adv + aviso;
     } else if (k === 'precio') {
       h += '<h3>Precio por unidad</h3><p class="big">' + clp(p.precio) + ' <small>· ' + esc(p.formato) + '</small></p><p style="font-weight:800;margin-top:4px">' + esc(unitTxt(p)) + '</p>';

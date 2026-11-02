@@ -3,7 +3,7 @@
 Experiencia web con **realidad aumentada** para ayudar a decidir una compra en Farmacias Salcobrand. La persona apunta la cámara al **código de barras** de un producto (de cualquier categoría) y la app superpone tarjetas flotantes con:
 
 - **Para qué sirve** y cómo se usa (con pasos).
-- **Semáforo de ingredientes** (fragancia, alcohol, embarazo o lactancia, piel sensible), según la ficha del producto.
+- **Advertencias de ingredientes** (fragancia, alcohol, embarazo o lactancia, piel sensible), según la ficha del producto.
 - **Precio por unidad** (por ml, g, cápsula, pañal…) y **alternativas** más baratas o parecidas.
 - Las tarjetas **siguen al producto** y se mantienen ancladas a él mientras se mueve el celular o el envase.
 
@@ -75,7 +75,7 @@ Al abrir un producto desde la búsqueda, el historial o la lista, se muestra un 
 
 1. Se lee el código de barras (cada ~140 ms) y se obtiene su posición en la imagen.
 2. Esa zona (el código y el envase que lo rodea, en proporción al tamaño del código) se guarda como plantilla y se sigue cuadro a cuadro por comparación de imagen (template matching sobre una versión reducida y suavizada), probando también pequeños cambios de tamaño: así la información sigue al producto aunque lo acerques o lo alejes, y se puede leer sin tener el código pegado a la cámara. La lectura usa la cámara en alta resolución (hasta 1920 px) y alterna cuadro completo y recorte central para detectar códigos más pequeños.
-3. Las tarjetas se ubican alrededor de esa posición, con una línea guía y un marco sobre el producto. Cada vez que el código se lee de nuevo, la posición se corrige para evitar deriva.
+3. La información se muestra como **puntos compactos a los lados del producto** (Para qué sirve, Precio, Advertencias, Cómo usar), unidos por líneas guía a puntos sobre el envase, para que el producto se vea a través de la cámara. Al tocar un punto se abre en su lugar (con "Ver detalle" para la hoja completa) y al tocar el video se cierra. Cada vez que el código se lee de nuevo, la posición se corrige para evitar deriva.
 4. Si se pierde el seguimiento (movimiento muy brusco, tapar el envase o sacarlo de cuadro), las tarjetas se atenúan y aparece "Apunta de nuevo al código para reubicar la información".
 
 **Límites honestos**: es seguimiento **2D en la imagen**, no hay pose 3D real ni WebXR, así que no hay perspectiva ni oclusión: las tarjetas siguen al producto cuando se mueve o el celular se desplaza, pero no "se pegan" en una cara del envase al girarlo. En pruebas con video simulado el error medio fue ~14 px (sobre 1280 px) con seguimiento continuo. **Falta probar en celulares reales** con envases reales (brillos, curvatura, poca luz).
@@ -87,6 +87,10 @@ La cámara se ve de fondo y la información se mantiene en el espacio sobre el p
 ## Tipografía
 
 Los títulos usan **Avenir Bold** (`Avenir Next`/`Avenir` si el dispositivo la tiene, como iPhone y Mac). Avenir es una fuente con licencia y no se puede incluir en el sitio: en Android y Windows se usa Nunito Bold (Google Fonts) como reemplazo. Para usar Avenir en todos los dispositivos hay que comprar la licencia web y cargarla con `@font-face` en `index.html`.
+
+## Sin conexión e instalación
+
+`sw.js` (service worker) y `manifest.webmanifest` permiten abrir la app sin conexión (con el catálogo y las librerías ya guardados) y agregarla a la pantalla de inicio. Páginas, scripts y catálogo se piden primero a la red, así que los cambios se ven al publicar; al hacer cambios grandes, sube el número de `CACHE` en `sw.js`. `three.js` y el 3D se descargan solo al abrir un producto (no al abrir la app). Las imágenes enlazadas de otros sitios no se guardan sin conexión: conviene tenerlas en `img/productos/`.
 
 ## Lectura de códigos de barras
 
@@ -101,7 +105,7 @@ Usa el lector nativo del navegador (`BarcodeDetector`, en Chrome Android) y, si 
 ## Aspectos legales y de salud (revisar antes del lanzamiento)
 
 - Medicamentos: solo información de ficha, sin recomendar ni comparar eficacia. Revisión del área técnica (químico farmacéutico) y legal.
-- Semáforo y avisos de embarazo, alergias, etc.: son orientativos y dependen de la calidad de los datos cargados.
+- Las advertencias y avisos de embarazo, alergias, etc.: son orientativos y dependen de la calidad de los datos cargados.
 
 ## Pendientes y límites
 
