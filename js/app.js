@@ -231,7 +231,7 @@
       $('#arCards').innerHTML = ''; $('#rowT').innerHTML = c1 + c2; $('#rowB').innerHTML = c3 + c4;
       $('#stage').innerHTML = '<div class="hero2">' + icBubble(p, 'xl') + '<b>' + esc(p.marca) + '</b><span>' + esc(p.nombre) + '</span></div>';
       const tk = ++stageTok;   // el 3D (three.js) se descarga recién aquí, no al abrir la app
-      loadJS('lib/three.min.js').then(() => loadJS('js/model3d.js?v=17')).then(() => {
+      loadJS('lib/three.min.js').then(() => loadJS('js/model3d.js?v=19')).then(() => {
         if (tk !== stageTok || S.cur !== p || !$('#pv').classList.contains('on') || S.arMode) return;
         const m = SL.Model3D && SL.Model3D.mount($('#stage'), p); if (m) model3 = m;
       }).catch(() => {});
