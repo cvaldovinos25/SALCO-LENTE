@@ -98,11 +98,11 @@ Usa el lector nativo del navegador (`BarcodeDetector`, en Chrome Android) y, si 
 
 ## Encuesta de satisfacción (anónima, conectada a Google Sheets)
 
-- **Cuándo aparece:** una burbuja en la esquina inferior derecha del **inicio** a los 2 minutos de uso. Se oculta sola a los 20 segundos y, si la persona sigue usando la herramienta, vuelve 5 minutos después (hasta 3 veces por visita). Los tiempos se cambian en `js/config.js` (`SL.CONFIG.ENCUESTA`). Cuenta solo el tiempo con la página visible.
+- **Cuándo aparece:** una burbuja siempre visible en la esquina inferior derecha del **inicio**. Los primeros 2 minutos de uso muestra solo el icono de globo de diálogo; al cumplirlos se despliega junto a él el texto "¿Qué te pareció?". El tiempo se cambia en `js/config.js` (`SL.CONFIG.ENCUESTA.PRIMERA_S`). Cuenta solo el tiempo con la página visible.
 - **Qué pregunta:** "¿Qué tal te pareció esta herramienta?", nota del 1 (inútil) al 5 (muy útil) y un cuadro de comentarios opcional.
 - **Anónima:** solo se envían la nota, el comentario, los segundos de uso y la versión de la app. No se envía ni se guarda correo, IP ni datos del dispositivo. Tras responder no se vuelve a ofrecer por 30 días.
 - **Conexión con Google Sheets:** sigue los pasos del encabezado de `tools/google-sheets-encuesta.gs` (crear la hoja, pegar el script, implementarlo como aplicación web y pegar la URL `/exec` en `SL.CONFIG.ENCUESTA.URL`). Mientras la URL esté vacía, las respuestas quedan guardadas en el celular y se envían cuando se configure.
-- **Probarla rápido:** abre el sitio con `?encuesta=ahora` (la burbuja sale a los 3 segundos y se repite cada 10).
+- **Probarla rápido:** abre el sitio con `?encuesta=ahora` (el texto se despliega a los 5 segundos).
 
 ## Privacidad
 

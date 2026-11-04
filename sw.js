@@ -3,8 +3,8 @@
    - Librerías e imágenes propias: primero la copia guardada (cargan al instante).
    - Imágenes de otros sitios (p. ej. static.salcobrand.cl) no se tocan.
    Al publicar cambios grandes, sube el número de CACHE. */
-const CACHE = 'salco-lente-v22';
-const CORE = ['./', 'index.html', 'manifest.webmanifest', 'js/config.js?v=22', 'js/ar.js?v=22', 'js/app.js?v=22', 'js/encuesta.js?v=22', 'data/productos.json',
+const CACHE = 'salco-lente-v23';
+const CORE = ['./', 'index.html', 'manifest.webmanifest', 'js/config.js?v=23', 'js/ar.js?v=23', 'js/app.js?v=23', 'js/encuesta.js?v=23', 'data/productos.json',
   'lib/zxing.min.js', 'lib/qrcode.js', 'img/sb-logo.png', 'img/mi-salcobrand.png', 'img/icon-192.png'];
 
 self.addEventListener('install', (e) => {

@@ -259,16 +259,14 @@ body.cam .pv-top .nm{color:#fff;text-shadow:0 1px 10px rgba(0,20,50,.85)}
 /* ===== Escáner: animación y fluidez (v20) ===== */
 
 /* ===== Encuesta de satisfacción ===== */
-.svBubble{position:fixed;right:14px;bottom:calc(108px + env(safe-area-inset-bottom));z-index:35;display:flex;align-items:center;gap:10px;max-width:min(78vw,290px);padding:10px 34px 12px 10px;border:0;border-radius:22px 22px 6px 22px;text-align:left;color:var(--ink);background:#fff;box-shadow:0 16px 32px -14px rgba(0,50,110,.65),0 0 0 1.5px rgba(0,125,195,.18);transform-origin:100% 100%;animation:svIn .6s cubic-bezier(.2,.9,.3,1) both;overflow:hidden;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.svBubble{position:fixed;right:14px;bottom:calc(108px + env(safe-area-inset-bottom));z-index:35;display:flex;align-items:center;padding:6px;border:0;border-radius:999px;color:var(--ink);background:#fff;box-shadow:0 14px 28px -12px rgba(0,50,110,.65),0 0 0 1.5px rgba(0,125,195,.18);transform-origin:100% 100%;animation:svIn .6s cubic-bezier(.2,.9,.3,1) both;overflow:hidden;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .svBubble[hidden]{display:none}
-.svBubble.out{animation:svOut .35s ease-in both;pointer-events:none}
-.svBubble .ic{flex:none;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,#0a86cc,#005b94);animation:svWiggle 3.2s 1s ease-in-out infinite}
-.svBubble .ic svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.svBubble .ic{flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,#0a86cc,#005b94);animation:svWiggle 3.2s 1s ease-in-out infinite}
+.svBubble .ic svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.svBubble .tx{display:block;max-width:0;opacity:0;overflow:hidden;white-space:nowrap;transition:max-width .7s cubic-bezier(.2,.9,.3,1),opacity .5s .15s ease,padding .7s cubic-bezier(.2,.9,.3,1)}
+.svBubble.open .tx{max-width:190px;opacity:1;padding:0 14px 0 10px}
 .svBubble b{display:block;font-size:14px;font-weight:800;line-height:1.2;font-family:var(--font-t)}
-.svBubble small{display:block;margin-top:1px;font-size:12px;font-weight:600;color:var(--muted)}
-.svBubble .x{position:absolute;top:5px;right:6px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:12px;color:#7b8ea3}
-.svBubble .x:active{background:rgba(0,0,0,.06)}
-.svBubble .bar{position:absolute;left:0;bottom:0;height:3px;width:100%;background:linear-gradient(90deg,var(--sky),var(--green));transform-origin:0 50%;transform:scaleX(var(--left,1));transition:transform 1s linear}
+.svBubble:active{transform:scale(.97)}
 @keyframes svIn{from{opacity:0;transform:translateY(18px) scale(.7)}to{opacity:1;transform:none}}
 @keyframes svOut{to{opacity:0;transform:translateY(10px) scale(.85)}}
 @keyframes svWiggle{0%,86%,100%{transform:none}90%{transform:rotate(-12deg) scale(1.06)}94%{transform:rotate(10deg) scale(1.06)}}
@@ -523,9 +521,9 @@ body.cam .pv::before{background:linear-gradient(180deg,rgba(0,40,90,.3),transpar
 
 <script src="lib/zxing.min.js"></script>
 <script src="lib/qrcode.js"></script>
-<script src="js/config.js?v=22"></script>
-<script src="js/ar.js?v=22"></script>
-<script src="js/app.js?v=22"></script>
-<script src="js/encuesta.js?v=22"></script>
+<script src="js/config.js?v=23"></script>
+<script src="js/ar.js?v=23"></script>
+<script src="js/app.js?v=23"></script>
+<script src="js/encuesta.js?v=23"></script>
 </body>
 </html>
