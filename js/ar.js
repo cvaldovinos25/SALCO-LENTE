@@ -220,6 +220,31 @@
     }
   }
 
+  /* ---------- Calidad de la imagen (para avisar por qué no se lee el código) ---------- */
+  let qc = null, qx = null;
+  AR.quality = function () {
+    if (!vid || !vid.videoWidth || vid.readyState < 2) return null;
+    const W = 200, H = Math.max(60, Math.round(W * vid.videoHeight / vid.videoWidth));
+    if (!qc) { qc = document.createElement('canvas'); qx = qc.getContext('2d', { willReadFrequently: true }); }
+    if (qc.width !== W || qc.height !== H) { qc.width = W; qc.height = H; }
+    qx.drawImage(vid, 0, 0, W, H);
+    const d = qx.getImageData(0, 0, W, H).data;
+    const x0 = Math.round(W * 0.1), x1 = Math.round(W * 0.9), y0 = Math.round(H * 0.25), y1 = Math.round(H * 0.75);
+    const hist = new Uint32Array(256); let n = 0, sum = 0, sat = 0, gx = 0, gn = 0;
+    for (let y = y0; y < y1; y++) {
+      let prev = -1;
+      for (let x = x0; x < x1; x++) {
+        const i = (y * W + x) * 4, l = (d[i] * 77 + d[i + 1] * 150 + d[i + 2] * 29) >> 8;
+        hist[l]++; n++; sum += l; if (l >= 253) sat++;
+        if (prev >= 0) { gx += Math.abs(l - prev); gn++; }
+        prev = l;
+      }
+    }
+    const pct = (p) => { let a = 0; const t = n * p; for (let v = 0; v < 256; v++) { a += hist[v]; if (a >= t) return v; } return 255; };
+    const p5 = pct(0.05), p95 = pct(0.95), con = p95 - p5;
+    return { L: sum / n, p95, con, sat: sat / n, sharp: (gx / gn) / Math.max(con, 1) };
+  };
+
   /* ---------- API ---------- */
   AR.start = function (video, callbacks, config) {
     AR.stop(); vid = video; cb = callbacks || {}; cfg = config || {}; AR.running = true;

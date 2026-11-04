@@ -14,6 +14,16 @@ SL.CONFIG = {
     largo: 'Antes de pagar, indica tu código Mi Salcobrand en caja para aprovechar tus beneficios.'
   },
 
+  /* Encuesta de satisfacción anónima (se guarda en Google Sheets; ver tools/google-sheets-encuesta.gs y el README) */
+  ENCUESTA: {
+    URL: '',                    // pega acá la URL de la "aplicación web" de Apps Script (termina en /exec). Vacío = no se envía, queda guardada en el celular
+    PRIMERA_S: 120,             // la burbuja aparece tras 2 minutos de uso
+    VISIBLE_S: 20,              // y se oculta sola a los 20 segundos
+    REPETIR_S: 300,             // si sigue usando la herramienta, vuelve a aparecer 5 minutos después
+    MAX_APARICIONES: 3,         // tope por visita, para no molestar
+    SILENCIO_DIAS: 30           // tras responder, no se vuelve a ofrecer por este tiempo
+  },
+
   /* Lectura de códigos de barras */
   SCAN: { INTERVALO_MS: 140, ANCHO_ANALISIS: 1280 },
 

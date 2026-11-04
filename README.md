@@ -96,11 +96,20 @@ Los títulos usan **Avenir Bold** (`Avenir Next`/`Avenir` si el dispositivo la t
 
 Usa el lector nativo del navegador (`BarcodeDetector`, en Chrome Android) y, si no existe (por ejemplo Safari en iPhone), la librería ZXing incluida. Si no se logra leer, la persona puede **escribir el código** o **buscar por nombre**. Probado con un código EAN-13 simulado en navegador de escritorio; falta probar en celulares reales con envases reales (brillos, curvatura y poca luz afectan la lectura).
 
+## Encuesta de satisfacción (anónima, conectada a Google Sheets)
+
+- **Cuándo aparece:** una burbuja en la esquina inferior derecha del **inicio** a los 2 minutos de uso. Se oculta sola a los 20 segundos y, si la persona sigue usando la herramienta, vuelve 5 minutos después (hasta 3 veces por visita). Los tiempos se cambian en `js/config.js` (`SL.CONFIG.ENCUESTA`). Cuenta solo el tiempo con la página visible.
+- **Qué pregunta:** "¿Qué tal te pareció esta herramienta?", nota del 1 (inútil) al 5 (muy útil) y un cuadro de comentarios opcional.
+- **Anónima:** solo se envían la nota, el comentario, los segundos de uso y la versión de la app. No se envía ni se guarda correo, IP ni datos del dispositivo. Tras responder no se vuelve a ofrecer por 30 días.
+- **Conexión con Google Sheets:** sigue los pasos del encabezado de `tools/google-sheets-encuesta.gs` (crear la hoja, pegar el script, implementarlo como aplicación web y pegar la URL `/exec` en `SL.CONFIG.ENCUESTA.URL`). Mientras la URL esté vacía, las respuestas quedan guardadas en el celular y se envían cuando se configure.
+- **Probarla rápido:** abre el sitio con `?encuesta=ahora` (la burbuja sale a los 3 segundos y se repite cada 10).
+
 ## Privacidad
 
 - Las imágenes de la cámara **no se guardan ni se envían**: se procesan en el celular.
 - El historial y la lista se guardan solo en el celular (almacenamiento local del navegador).
 - No hay analítica ni cookies. Las librerías se sirven desde el mismo sitio.
+- La encuesta de satisfacción es anónima y solo se envía si la persona la responde (ver sección anterior).
 
 ## Aspectos legales y de salud (revisar antes del lanzamiento)
 

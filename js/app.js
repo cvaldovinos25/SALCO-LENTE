@@ -80,6 +80,7 @@
     $$('.screen').forEach((s) => s.classList.toggle('on', s.id === 's-' + name));
     $$('.nb[data-go]').forEach((b) => b.classList.toggle('on', b.dataset.go === name));
     window.scrollTo(0, 0);
+    document.dispatchEvent(new CustomEvent('sl:screen', { detail: name }));
     if (name === 'home') renderHome(); else if (name === 'search') renderSearch(); else if (name === 'compare') renderCompare(); else if (name === 'list') renderList(); else if (name === 'history') renderHistory();
   }
   $$('.nb[data-go]').forEach((b) => b.addEventListener('click', () => { S.pick = null; go(b.dataset.go); }));
@@ -140,6 +141,7 @@
   function onDetect(d) {
     const now = Date.now(), p = S.byEan[d.key];
     if (S.view === 'scan') {
+      hintT0 = now; hintShow(null);
       if (d.key === lastCode && now - lastT < 6000) return;
       lastCode = d.key; lastT = now;
       if (!p) { toast('Código ' + d.code + ': aún no está en el catálogo. Prueba con otro o búscalo por nombre.', 3800); return; }
@@ -157,9 +159,47 @@
     $('#reticle').classList.add('ok');
     const fl = document.createElement('div'); fl.className = 'flash'; $('#scan').appendChild(fl); setTimeout(() => fl.remove(), 600);
     if (S.mode === 'slotA' || S.mode === 'slotB') { S.cmp[S.mode === 'slotA' ? 'a' : 'b'] = p; setTimeout(() => { $('#reticle').classList.remove('ok'); closeScan(true); go('compare'); }, 300); return; }
-    S.view = 'wait';
+    S.view = 'wait'; hintOff();
     setTimeout(() => { $('#reticle').classList.remove('ok'); $('#scan').classList.remove('on'); openProduct(p, !!stream && SL.AR.hasLock()); }, 300);
   }
+
+  /* ---------- Ayuda cuando no logra leer el código ---------- */
+  // Mide la imagen cada medio segundo (luz, nitidez, brillo) y, si pasan unos segundos sin leer nada,
+  // sugiere qué hacer. Los umbrales son aproximados: los avisos están redactados como sugerencia.
+  const HINT_DEF = { m: 'Apunta al código de barras', s: 'Acércate hasta que se vea nítido. Lo reconoceremos en segundos.' };
+  let hintT0 = 0, hintTimer = 0, hintKey = '', hintSince = 0, hintSamples = [];
+  function hintShow(h) {
+    const key = h ? h.k : '';
+    const box = $('#scMsg').parentNode;
+    if (key === hintKey) return;
+    hintKey = key; hintSince = Date.now();
+    $('#scMsg').textContent = h ? h.m : HINT_DEF.m; $('#scSub').textContent = h ? h.s : HINT_DEF.s;
+    box.classList.toggle('warn', !!h);
+    $('#manual').classList.toggle('attn', !!h && h.k === 'manual');
+  }
+  function hintPick(q, secs) {
+    if (q.L < 70 && q.p95 < 150) return { k: 'luz', m: 'Hay poca luz', s: 'Busca un lugar más iluminado o enciende la linterna del celular.' };
+    if (q.sat > 0.35) return { k: 'brillo', m: 'Hay reflejos', s: 'Inclina un poco el producto o el celular para evitar el brillo.' };
+    if (q.con >= 100 && q.sharp < 0.03) return { k: 'cerca', m: 'Se ve borroso', s: 'Aléjate un poco (unos 15 cm) y espera a que la cámara enfoque.' };
+    if (q.con < 60) return { k: 'lejos', m: 'No veo el código', s: 'Centra las barras en el marco y acércate un poco.' };
+    if (secs >= 8 && secs % 8 >= 4) return { k: 'acerca', m: 'Acércate un poco', s: 'El código debe ocupar buena parte del marco.' };
+    return { k: 'firme', m: 'Casi lo tengo', s: 'Mantén el código horizontal, firme y centrado en el marco.' };
+  }
+  function hintTick() {
+    if (S.view !== 'scan' || !stream) { hintShow(null); return; }
+    const q = SL.AR.quality && SL.AR.quality(); if (!q) return;
+    hintSamples.push(q); if (hintSamples.length > 4) hintSamples.shift();
+    const avg = (k) => hintSamples.reduce((a, s) => a + s[k], 0) / hintSamples.length;
+    const secs = Math.floor((Date.now() - hintT0) / 1000);
+    if (secs < 3) { hintShow(null); return; }   // antes de 10 s no se ofrece la entrada manual ni la búsqueda
+    if (secs >= 10) { $('#scan .sc-bot').classList.add('more'); hintShow({ k: 'manual', m: 'Estamos teniendo problemas para leer este código', s: 'Ingrésalo manualmente o busca el producto por su nombre.' }); return; }
+    const h = hintPick({ L: avg('L'), p95: avg('p95'), con: avg('con'), sat: avg('sat'), sharp: avg('sharp') }, secs);
+    // evita que el texto cambie de golpe: mantiene cada aviso al menos 2,5 s
+    if (hintKey && hintKey !== 'manual' && Date.now() - hintSince < 2500 && h.k !== 'luz') return;
+    hintShow(h);
+  }
+  function hintOn() { $('#scan .sc-bot').classList.remove('more'); hintT0 = Date.now(); hintKey = '#'; hintShow(null); hintSamples = []; clearInterval(hintTimer); hintTimer = setInterval(hintTick, 500); }
+  function hintOff() { clearInterval(hintTimer); hintTimer = 0; hintShow(null); }
 
   /* ---------- Overlay de escaneo ---------- */
   let scanTok = 0;
@@ -172,10 +212,10 @@
     if (!ok) { S.pick = mode === 'slotA' ? 'a' : mode === 'slotB' ? 'b' : null; go('search'); return; }
     $('#pv').classList.remove('on', 'ar');
     $('#scan').classList.add('on'); S.view = 'scan';
-    SL.AR.lock(null); visionOn();
+    SL.AR.lock(null); visionOn(); hintOn();
   }
   function closeScan(stopCam) {
-    scanTok++; S.view = null; $('#scan').classList.remove('on');
+    scanTok++; S.view = null; $('#scan').classList.remove('on'); hintOff();
     if (stopCam) camStop();
   }
   $('#scClose').addEventListener('click', () => { closeScan(true); });
@@ -231,7 +271,7 @@
       $('#arCards').innerHTML = ''; $('#rowT').innerHTML = c1 + c2; $('#rowB').innerHTML = c3 + c4;
       $('#stage').innerHTML = '<div class="hero2">' + icBubble(p, 'xl') + '<b>' + esc(p.marca) + '</b><span>' + esc(p.nombre) + '</span></div>';
       const tk = ++stageTok;   // el 3D (three.js) se descarga recién aquí, no al abrir la app
-      loadJS('lib/three.min.js').then(() => loadJS('js/model3d.js?v=19')).then(() => {
+      loadJS('lib/three.min.js').then(() => loadJS('js/model3d.js?v=22')).then(() => {
         if (tk !== stageTok || S.cur !== p || !$('#pv').classList.contains('on') || S.arMode) return;
         const m = SL.Model3D && SL.Model3D.mount($('#stage'), p); if (m) model3 = m;
       }).catch(() => {});
@@ -506,6 +546,8 @@
   (async function init() {
     await loadCatalog();
     badge(); renderHome();
+    SL.app = { go, onHome: () => S.screen === 'home' && !S.view && !document.body.classList.contains('cam') && !$('#pv').classList.contains('on'), screen: () => S.screen };
+    document.dispatchEvent(new CustomEvent('sl:ready'));
     if (DEBUG) window.__SL = { S, openProduct, openScan, go, found, AR: SL.AR, AP };
     const e = qs.get('ean'); if (e && S.byEan[norm(e)]) openProduct(S.byEan[norm(e)], false);
   })();
