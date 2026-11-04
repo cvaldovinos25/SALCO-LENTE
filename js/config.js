@@ -16,7 +16,7 @@ SL.CONFIG = {
 
   /* Encuesta de satisfacción anónima (se guarda en Google Sheets; ver tools/google-sheets-encuesta.gs y el README) */
   ENCUESTA: {
-    URL: '',                    // pega acá la URL de la "aplicación web" de Apps Script (termina en /exec). Vacío = no se envía, queda guardada en el celular
+    URL: 'https://script.google.com/macros/s/AKfycbyHgbdM1Hb8QsvdBZx5iIB10iRlKrqEbS5l_TE89JuPSwEAlIn6YQGs0MsRPXWMcA/exec',                    // pega acá la URL de la "aplicación web" de Apps Script (termina en /exec). Vacío = no se envía, queda guardada en el celular
     PRIMERA_S: 120              // la burbuja siempre está en el inicio; a los 2 minutos de uso se despliega el texto "¿Qué te pareció?"
   },
 
