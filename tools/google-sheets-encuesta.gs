@@ -29,7 +29,7 @@ function doPost(e) {
     if (/^[=+\-@]/.test(c)) c = "'" + c;                       // evita que un comentario se interprete como fórmula
     var u = Math.max(0, Math.min(86400, Math.round(Number(d.u) || 0)));
     var v = String(d.v == null ? '' : d.v).slice(0, 10);
-    var f = String(d.f == null ? '' : d.f).slice(0, 200);       // funciones usadas: escáner, comparación, etc.
+    var f = String(d.f == null ? '' : d.f).slice(0, 700);       // recorrido por la app: Escáner → Mi lista → Comparación...
     if (/^[=+\-@]/.test(f)) f = "'" + f;
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var sh = ss.getSheetByName(HOJA);
@@ -42,7 +42,7 @@ function doPost(e) {
     }
     if (sh.getRange(1, 6).getValue() === '') {                  // hojas creadas antes de esta columna: agrega el encabezado
       sh.getRange(1, 6).setValue(ENCABEZADOS[5]).setFontWeight('bold').setBackground('#007dc3').setFontColor('#ffffff');
-      sh.setColumnWidth(6, 320);
+      sh.setColumnWidth(6, 420);
     }
     var fecha = Utilities.formatDate(new Date(), 'America/Santiago', 'yyyy-MM-dd HH:mm:ss');
     sh.appendRow([fecha, r, c, u, v, f]);

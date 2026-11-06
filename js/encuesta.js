@@ -23,8 +23,8 @@
     if (test) { cfg.PRIMERA_S = 5; }
     const st = { respondida: false, funciones: [], uso: 0, next: cfg.PRIMERA_S, shown: 0, left: 0, bubble: null, rating: 0, inSurvey: false, sent: false };
     
-    // funciones de la herramienta que la persona usó (solo nombres, en orden de primer uso)
-    document.addEventListener('sl:uso', (e) => { if (e.detail && st.funciones.indexOf(e.detail) < 0) st.funciones.push(e.detail); });
+    // recorrido por la herramienta, en orden y con repeticiones (se omiten solo las repeticiones seguidas): Escáner → Mi lista → Comparación → Escáner...
+    document.addEventListener('sl:uso', (e) => { const f = st.funciones; if (e.detail && f[f.length - 1] !== e.detail && f.length < 40) f.push(e.detail); });
 
     /* ---------- Envío a Google Sheets (con cola si no hay conexión) ---------- */
     async function post(p) {
@@ -96,7 +96,7 @@
       if (!st.rating || st.sent) return;
       st.sent = true; st.respondida = true; sync(); $('#svSend').disabled = true; $('#svSend').textContent = 'Enviando…';
       // solo datos de la respuesta: sin identificadores ni datos del dispositivo
-      await enviar({ r: st.rating, c: $('#svTxt').value.trim().slice(0, 500), u: st.uso, v: VER, f: st.funciones.join(', ') });
+      await enviar({ r: st.rating, c: $('#svTxt').value.trim().slice(0, 500), u: st.uso, v: VER, f: st.funciones.join(' → ') });
       $('#svForm').hidden = true; $('#svDone').hidden = false;
     });
 
