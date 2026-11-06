@@ -16,7 +16,7 @@
  * Es anónima: no se guarda ningún dato de quien responde (ni correo, ni IP, ni dispositivo).
  */
 var HOJA = 'Respuestas';
-var ENCABEZADOS = ['Fecha y hora', 'Calificación (1 a 5)', 'Comentario', 'Segundos de uso', 'Versión de la app'];
+var ENCABEZADOS = ['Fecha y hora', 'Calificación (1 a 5)', 'Comentario', 'Segundos de uso', 'Versión de la app', 'Funciones usadas'];
 
 function doPost(e) {
   var lock = LockService.getScriptLock();
@@ -29,6 +29,8 @@ function doPost(e) {
     if (/^[=+\-@]/.test(c)) c = "'" + c;                       // evita que un comentario se interprete como fórmula
     var u = Math.max(0, Math.min(86400, Math.round(Number(d.u) || 0)));
     var v = String(d.v == null ? '' : d.v).slice(0, 10);
+    var f = String(d.f == null ? '' : d.f).slice(0, 200);       // funciones usadas: escáner, comparación, etc.
+    if (/^[=+\-@]/.test(f)) f = "'" + f;
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var sh = ss.getSheetByName(HOJA);
     if (!sh) {
@@ -38,8 +40,12 @@ function doPost(e) {
       sh.setFrozenRows(1);
       sh.setColumnWidth(3, 420);
     }
+    if (sh.getRange(1, 6).getValue() === '') {                  // hojas creadas antes de esta columna: agrega el encabezado
+      sh.getRange(1, 6).setValue(ENCABEZADOS[5]).setFontWeight('bold').setBackground('#007dc3').setFontColor('#ffffff');
+      sh.setColumnWidth(6, 320);
+    }
     var fecha = Utilities.formatDate(new Date(), 'America/Santiago', 'yyyy-MM-dd HH:mm:ss');
-    sh.appendRow([fecha, r, c, u, v]);
+    sh.appendRow([fecha, r, c, u, v, f]);
     return salida({ ok: true });
   } catch (err) {
     return salida({ ok: false, error: String(err) });

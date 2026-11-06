@@ -74,6 +74,9 @@
   }
   const pills = (arr, n) => arr.slice(0, n || 99).map((x) => '<span class="pill ' + x[0] + '">' + esc(x[1]) + '</span>').join('');
 
+  /* ---------- Registro de funciones usadas (para la encuesta anónima; solo nombres de funciones, nada del producto ni de la persona) ---------- */
+  const uso = (k) => document.dispatchEvent(new CustomEvent('sl:uso', { detail: k }));
+
   /* ---------- Navegación ---------- */
   function go(name) {
     S.screen = name;
@@ -103,11 +106,12 @@
       '<button class="pit" data-id="' + esc(p.id) + '">' + icBubble(p) + '<span><b>' + esc(p.marca) + ' ' + esc(p.nombre) + '</b><span class="s">' + esc(p.formato) + ' · ' + esc(catMeta(p).nombre) + '</span></span><span class="p">' + clp(p.precio) + '<small>' + unitTxt(p) + '</small></span></button>').join('') : '<div class="empty">No encontramos productos con esa búsqueda.</div>');
     $$('#plist .pit').forEach((b) => b.addEventListener('click', () => choose(S.byId[b.dataset.id])));
   }
-  $('#q').addEventListener('input', (e) => { qtext = e.target.value; renderSearch(); });
+  $('#q').addEventListener('input', (e) => { qtext = e.target.value; if (qtext.trim()) uso('Búsqueda por nombre'); renderSearch(); });
 
   /* Elegir un producto desde la lista: ver o comparar */
   function choose(p) {
     if (!p) return;
+    uso('Búsqueda por nombre');
     if (S.pick) { S.cmp[S.pick] = p; S.pick = null; go('compare'); return; }
     openProduct(p, false);
   }
@@ -154,6 +158,7 @@
     }
   }
   function found(p) {
+    uso(S.man ? 'Ingreso manual del código' : 'Escáner');
     addHist(p);
     if (navigator.vibrate) try { navigator.vibrate(30); } catch (e) {}
     $('#reticle').classList.add('ok');
@@ -224,7 +229,7 @@
     e.preventDefault();
     const v = $('#manualIn').value.trim(); if (!v) return;
     const p = S.byEan[norm(v)];
-    if (p) { $('#manualIn').value = ''; found(p); } else toast('No encontramos ese código en el catálogo.');
+    if (p) { $('#manualIn').value = ''; S.man = true; found(p); S.man = false; } else toast('No encontramos ese código en el catálogo.');
   });
 
   /* ---------- Vista de producto (RA) ---------- */
@@ -338,6 +343,7 @@
   }
   function toggleCard(c) {
     const open = !c.classList.contains('open');
+    if (open) uso('Tarjetas de realidad aumentada');
     $$('#arCards .acard').forEach((x) => { x.classList.remove('open'); x.setAttribute('aria-expanded', 'false'); });
     if (open) { c.classList.add('open'); c.setAttribute('aria-expanded', 'true'); }
     AP.dim = null; if (AP.t) layoutAR(AP.x, AP.y, AP.wS, AP.t);
@@ -396,7 +402,7 @@
   $('#pvAdd').addEventListener('click', () => {
     const p = S.cur; if (!p) return;
     const it = inList(p.id);
-    if (it) S.list = S.list.filter((i) => i.id !== p.id); else S.list.push({ id: p.id, qty: 1 });
+    if (it) S.list = S.list.filter((i) => i.id !== p.id); else { S.list.push({ id: p.id, qty: 1 }); uso('Mi lista'); }
     sset('lista', S.list); syncAdd(); badge();
     if (!it) toast('Agregado a tu lista ✓', 1500);
   });
@@ -442,6 +448,7 @@
   /* ---------- Comparar ---------- */
   function renderCompare() {
     const a = S.cmp.a, b = S.cmp.b, el = $('#s-compare');
+    if (a && b) uso('Comparación');
     let h = '<h2 style="font-size:28px;font-weight:950;margin-bottom:12px">Comparar ⚖️</h2>';
     const col = (p, slot) => p
       ? '<div class="card cmpP"><div class="mini">' + (p.imagen ? '<img src="' + esc(p.imagen) + '" alt="" referrerpolicy="no-referrer">' : catMeta(p).emoji) + '</div><b>' + esc(p.marca) + '</b><small>' + esc(p.nombre) + '</small><button class="btn sm alt" data-slot="' + slot + '">Cambiar</button></div>'

@@ -1,6 +1,6 @@
 {
   "_nota": "DATOS DE EJEMPLO. Reemplazar por el catálogo real de Salcobrand (EAN, precios, fichas). Los EAN de ejemplo son válidos pero ficticios. Ver README.",
-  "actualizado": "2026-10-27",
+  "actualizado": "2026-11-06",
   "productos": [
     {
       "id": "centella",
@@ -610,6 +610,166 @@
         "tipo": "bomba",
         "color": "#eadcff",
         "acento": "#7a4fd6"
+      }
+    },
+    {
+      "id": "sandtan",
+      "ean": "8888841043705",
+      "categoria": "skincare",
+      "marca": "Sandtan",
+      "nombre": "Protector solar familiar FPS 50",
+      "formato": "60 ml",
+      "cantidad": {
+        "valor": 60,
+        "unidad": "ml"
+      },
+      "precio": 999,
+      "foco": "proteger del sol y calmar la piel",
+      "resumen": "Fórmula de textura ligera y fácil aplicación, dermatológicamente testeada. Filtros solares de muy alta protección UV y extracto de avena que ayuda a calmar y suavizar la piel. Para niños y adultos.",
+      "cuando": "Antes de la exposición al sol y cada 2 horas",
+      "pasos": [
+        "Aplica sobre la piel seca una cantidad suficiente para cubrir toda la zona expuesta al sol",
+        "Repite cada 2 horas, sobre todo después de transpirar, mojarte o secarte",
+        "En niños, aplícalo con supervisión de un adulto"
+      ],
+      "ingredientes": [
+        "Aqua",
+        "Ethylhexyl Methoxycinnamate",
+        "Ethylhexyl Salicylate",
+        "C12-15 Alkyl Benzoate",
+        "Extracto de avena (Avena Sativa)",
+        "Xylitol",
+        "Parfum",
+        "Goma xantana",
+        "Methylparaben",
+        "DMDM Hydantoin"
+      ],
+      "flags": {
+        "fragancia": true,
+        "alcohol": false,
+        "embarazo": "consultar",
+        "sensible": "revisar",
+        "alergenos": []
+      },
+      "advertencias": [
+        "Solo uso externo. Evita el contacto con ojos y mucosas.",
+        "No lo uses para estimular la exposición al sol.",
+        "No exponer a niños menores de 6 meses al sol.",
+        "Si observas alguna reacción desfavorable, suspende su uso y consulta a tu médico.",
+        "Contiene fragancia y conservantes (parabenos): prueba en una zona pequeña si tienes piel sensible."
+      ],
+      "alternativas": [
+        "fps-a",
+        "fps-b"
+      ],
+      "verificado": false,
+      "modelo": {
+        "tipo": "tubo",
+        "color": "#ffb81c",
+        "acento": "#f26a00"
+      }
+    },
+    {
+      "id": "ferranem",
+      "ean": "7800041042853",
+      "categoria": "salud",
+      "marca": "Ferranem",
+      "nombre": "Ferranem 30 cápsulas prolongadas",
+      "formato": "30 cáps.",
+      "cantidad": {
+        "valor": 30,
+        "unidad": "cáps"
+      },
+      "precio": 16199,
+      "foco": "prevención y tratamiento de anemias",
+      "resumen": "Medicamento indicado para la prevención y tratamiento de anemias. Cápsulas con microgránulos de liberación prolongada, de uso oral. Laboratorio Chemopharma. Venta con receta médica.",
+      "cuando": "Según indicación de tu médico (habitualmente 1 al día)",
+      "pasos": [
+        "Sigue la indicación de tu médico: se recomienda 1 al día, con opción de aumentar la dosis si el médico lo estima",
+        "Lee el envase y el folleto",
+        "Consulta a un químico farmacéutico o a tu médico ante cualquier duda"
+      ],
+      "ingredientes": [
+        "Sulfato ferroso 540 mg",
+        "Cianocobalamina (vitamina B12) 1000 mcg",
+        "Ácido fólico 3000 mcg",
+        "Ácido ascórbico (vitamina C) 100 mg"
+      ],
+      "flags": {
+        "fragancia": false,
+        "alcohol": false,
+        "embarazo": "consultar",
+        "sensible": "ok",
+        "alergenos": []
+      },
+      "advertencias": [
+        "Venta con receta médica.",
+        "Almacenar a no más de 25 °C, en un lugar seco y fuera del alcance de los niños.",
+        "Información referencial, no reemplaza el folleto ni la orientación de un químico farmacéutico o médico."
+      ],
+      "alternativas": [],
+      "verificado": false,
+      "modelo": {
+        "tipo": "caja",
+        "color": "#5a2ca0",
+        "acento": "#ffe600"
+      }
+    },
+    {
+      "id": "oleo-petrizzio",
+      "ean": "7804907924727",
+      "categoria": "higiene",
+      "marca": "Petrizzio",
+      "nombre": "Óleo anti-frizz argán",
+      "formato": "100 ml",
+      "cantidad": {
+        "valor": 100,
+        "unidad": "ml"
+      },
+      "precio": 6099,
+      "foco": "controlar el frizz y el volumen",
+      "resumen": "Óleo antifrizz de toque seco que controla el volumen. Con aceite de argán, palta y macadamia: el cabello recupera hidratación y nutrición sin dejar residuo graso. Fórmula vegana, sin parabenos, colorantes ni alcohol.",
+      "cuando": "En cabello húmedo o seco, antes del peinado",
+      "pasos": [
+        "Aplica 1 o 2 dosis según el volumen de cabello",
+        "Espárcelo de manera uniforme, desde la mitad hacia las puntas",
+        "No requiere enjuague: deja secar de forma natural. Puedes usarlo a diario"
+      ],
+      "ingredientes": [
+        "Cyclopentasiloxane",
+        "Dimethiconol",
+        "Cyclohexasiloxane",
+        "C15-19 Alkane",
+        "Dimethicone",
+        "Aceite de girasol (Helianthus Annuus)",
+        "Aceite de coco (Cocos Nucifera)",
+        "Aceite de linaza (Linum Usitatissimum)",
+        "Aceite de palta (Persea Gratissima)",
+        "Aceite de argán (Argania Spinosa)",
+        "Extracto de romero",
+        "Parfum",
+        "Tocopheryl Acetate",
+        "Aceite de macadamia (Macadamia Ternifolia)"
+      ],
+      "flags": {
+        "fragancia": true,
+        "alcohol": false,
+        "embarazo": "ok",
+        "sensible": "revisar",
+        "alergenos": []
+      },
+      "advertencias": [
+        "Evita el contacto con los ojos. Si ocurre, enjuaga con abundante agua.",
+        "Mantener cerrado en un lugar fresco y seco, fuera del alcance de los niños."
+      ],
+      "alternativas": [
+        "shampoo"
+      ],
+      "verificado": false,
+      "modelo": {
+        "tipo": "frasco",
+        "color": "#c98a2b",
+        "acento": "#1f9d8c"
       }
     }
   ]

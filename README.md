@@ -11,6 +11,8 @@ Además: **comparar dos productos** lado a lado, un **historial** de lo escanead
 
 > Es una herramienta **informativa**. No diagnostica ni recomienda medicamentos. Los medicamentos se muestran solo con la información de su ficha.
 
+Sitio (GitHub Pages): `https://cvaldovinos25.github.io/SALCO-LENTE/`
+
 ## Estructura
 
 ```
@@ -98,7 +100,7 @@ Usa el lector nativo del navegador (`BarcodeDetector`, en Chrome Android) y, si 
 
 - **Cuándo aparece:** una burbuja siempre visible en la esquina inferior derecha del **inicio**. Los primeros 2 minutos de uso muestra solo el icono de globo de diálogo; al cumplirlos se despliega junto a él el texto "¿Qué te pareció?". El tiempo se cambia en `js/config.js` (`SL.CONFIG.ENCUESTA.PRIMERA_S`). Cuenta solo el tiempo con la página visible.
 - **Qué pregunta:** "¿Qué tal te pareció esta herramienta?", nota del 1 (inútil) al 5 (muy útil) y un cuadro de comentarios opcional.
-- **Anónima:** solo se envían la nota, el comentario, los segundos de uso y la versión de la app. No se envía ni se guarda correo, IP ni datos del dispositivo. Tras responder no se vuelve a ofrecer por 30 días.
+- **Anónima:** solo se envían la nota, el comentario, los segundos de uso, la versión de la app y los nombres de las funciones usadas (Escáner, Ingreso manual del código, Búsqueda por nombre, Comparación, Mi lista, Tarjetas de realidad aumentada), que quedan en la columna "Funciones usadas". No se envía ni se guarda correo, IP ni datos del dispositivo. Tras responder no se vuelve a ofrecer por 30 días.
 - **Conexión con Google Sheets:** sigue los pasos del encabezado de `tools/google-sheets-encuesta.gs` (crear la hoja, pegar el script, implementarlo como aplicación web y pegar la URL `/exec` en `SL.CONFIG.ENCUESTA.URL`). Mientras la URL esté vacía, las respuestas quedan guardadas en el celular y se envían cuando se configure.
 - **Probarla rápido:** abre el sitio con `?encuesta=ahora` (el texto se despliega a los 5 segundos).
 

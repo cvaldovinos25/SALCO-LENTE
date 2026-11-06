@@ -5,7 +5,8 @@
      Durante los primeros 2 minutos de uso muestra solo el icono; al cumplirlos se despliega el texto "¿Qué te pareció?".
    - Al tocarla abre la pantalla de la encuesta (nota de 1 a 5 + comentario opcional).
    - Se envía a una hoja de Google Sheets mediante un Apps Script (tools/google-sheets-encuesta.gs).
-   - Anónima: solo se envían la nota, el comentario, los segundos de uso y la versión de la app.
+   - Anónima: solo se envían la nota, el comentario, los segundos de uso, la versión de la app
+     y los nombres de las funciones usadas (escáner, comparación, búsqueda...).
      No se envía ni se guarda ningún identificador, correo, IP ni dato del dispositivo.
    Para probar sin esperar: abrir la página con ?encuesta=ahora (el texto aparece a los 5 s).
    ============================================================ */
@@ -20,8 +21,11 @@
   function boot() {
     const cfg = Object.assign({ URL: '', PRIMERA_S: 120, VISIBLE_S: 20, REPETIR_S: 300, MAX_APARICIONES: 3, SILENCIO_DIAS: 30 }, (SL.CONFIG && SL.CONFIG.ENCUESTA) || {});
     if (test) { cfg.PRIMERA_S = 5; }
-    const st = { uso: 0, next: cfg.PRIMERA_S, shown: 0, left: 0, bubble: null, rating: 0, inSurvey: false, sent: false };
+    const st = { funciones: [], uso: 0, next: cfg.PRIMERA_S, shown: 0, left: 0, bubble: null, rating: 0, inSurvey: false, sent: false };
     
+    // funciones de la herramienta que la persona usó (solo nombres, en orden de primer uso)
+    document.addEventListener('sl:uso', (e) => { if (e.detail && st.funciones.indexOf(e.detail) < 0) st.funciones.push(e.detail); });
+
     /* ---------- Envío a Google Sheets (con cola si no hay conexión) ---------- */
     async function post(p) {
       if (!cfg.URL) throw new Error('sin-url');
@@ -92,7 +96,7 @@
       if (!st.rating || st.sent) return;
       st.sent = true; $('#svSend').disabled = true; $('#svSend').textContent = 'Enviando…';
       // solo datos de la respuesta: sin identificadores ni datos del dispositivo
-      await enviar({ r: st.rating, c: $('#svTxt').value.trim().slice(0, 500), u: st.uso, v: VER });
+      await enviar({ r: st.rating, c: $('#svTxt').value.trim().slice(0, 500), u: st.uso, v: VER, f: st.funciones.join(', ') });
       lset('sl_enc_ok', String(Date.now()));
       $('#svForm').hidden = true; $('#svDone').hidden = false;
     });
