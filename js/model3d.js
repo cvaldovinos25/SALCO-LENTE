@@ -193,6 +193,23 @@
     return g;
   }
 
+  /* Caja con fotos reales por cara: m.caras = { frente, lado, reverso?, medidas: {w, h, d} }.
+     frente (+z) y reverso (-z): w x h. lado (+x y -x): d x h. Tapa y base: color liso. */
+  function boxFromFaces(THREE, ims, m) {
+    const c = m.caras, med = c.medidas || { w: 1.35, h: 1, d: 0.5 }, H = 1.9, W = H * med.w / med.h, D = H * med.d / med.h;
+    const mk = (im) => {
+      let t;
+      if (im) { t = new THREE.Texture(im); t.anisotropy = 16; }
+      else { const cv = document.createElement('canvas'); cv.width = cv.height = 4; const cx = cv.getContext('2d'); cx.fillStyle = m.color; cx.fillRect(0, 0, 4, 4); t = new THREE.CanvasTexture(cv); }   // cara lisa: mismo material que las fotos para que la luz sea igual
+      t.encoding = THREE.sRGBEncoding; t.needsUpdate = true;
+      return new THREE.MeshPhysicalMaterial({ map: t, roughness: .4, metalness: .02, clearcoat: .3, clearcoatRoughness: .25, envMapIntensity: .5 });
+    };
+    const plain = mk(null);   // tapa, base y reverso sin foto
+    const mats = [mk(ims.lado), mk(ims.lado), plain, plain, mk(ims.frente), ims.reverso ? mk(ims.reverso) : plain];
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(W, H, D), mats);
+    const g = new THREE.Group(); g.add(mesh); g.userData.fitW = W; return g;
+  }
+
   function build(THREE, p) {
     const m = Object.assign({ tipo: 'frasco', color: '#8fd3ff', acento: '#007dc3' }, p.modelo || {});
     const g = new THREE.Group();
@@ -279,13 +296,16 @@
     } catch (e) { /* sin entorno: se usan solo las luces */ }
     const model = build(THREE, p); const pivot = new THREE.Group(); pivot.add(model); scene.add(pivot);
     let pop = 1;
-    const vistas = p.modelo && p.modelo.vistas, srcs = vistas ? [vistas.frente, vistas.reverso] : (p.imagen ? [p.imagen] : []);
+    const vistas = p.modelo && p.modelo.vistas, caras = p.modelo && p.modelo.caras;
+    const srcs = caras ? [caras.frente, caras.lado, caras.reverso].filter(Boolean) : vistas ? [vistas.frente, vistas.reverso] : (p.imagen ? [p.imagen] : []);
     if (srcs.length) {
       const load = (src) => new Promise((ok, ko) => { const im = new Image(); im.crossOrigin = 'anonymous'; im.referrerPolicy = 'no-referrer'; im.onload = () => ok(im); im.onerror = () => ko(src); im.src = src; });
       Promise.all(srcs.map(load)).then((ims) => {
         if (dead) return;
         try {
-          const g2 = fromImage(THREE, ims[0], Object.assign({ tipo: 'frasco' }, p.modelo || {}), ims[1] || null);
+          const g2 = caras ? boxFromFaces(THREE, { frente: ims[0], lado: ims[1], reverso: caras.reverso ? ims[2] : null }, p.modelo)
+            : fromImage(THREE, ims[0], Object.assign({ tipo: 'frasco' }, p.modelo || {}), ims[1] || null);
+          if (g2 && g2.userData.fitW) { fitK = Math.max(1, g2.userData.fitW / 1.7); baseZ = (w / h < .7 ? 6.6 : 5.7) * fitK; }
           if (g2) { pivot.remove(model); model.traverse((o) => { if (o.geometry) o.geometry.dispose(); if (o.material) { (Array.isArray(o.material) ? o.material : [o.material]).forEach((mm) => { if (mm.map) mm.map.dispose(); mm.dispose(); }); } }); pivot.add(g2); pop = .7; }
           else console.info('Salco Lente: no se pudo separar el producto del fondo en', srcs[0]);
         } catch (e) { console.info('Salco Lente: modelo desde la foto no disponible', e); }
@@ -297,11 +317,11 @@
     const sh = new THREE.Mesh(new THREE.PlaneGeometry(2.8, 2.8), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(sc), transparent: true, depthWrite: false }));
     sh.rotation.x = -Math.PI / 2; sh.position.y = -1.55; scene.add(sh);
 
-    let dead0 = 0, rx = -.12, ry = -.5, vx = 0, vy = 0, drag = false, lx = 0, ly = 0, idle = 0, raf = 0, dead = false, w = 0, h = 0, baseZ = 5.7;
+    let dead0 = 0, rx = -.12, ry = -.5, vx = 0, vy = 0, drag = false, lx = 0, ly = 0, idle = 0, raf = 0, dead = false, w = 0, h = 0, baseZ = 5.7, fitK = 1;
     const resize = () => {
       const r = el.getBoundingClientRect(); const nw = Math.max(1, Math.round(r.width)), nh = Math.max(1, Math.round(r.height));
       if (nw === w && nh === h) return; w = nw; h = nh; renderer.setSize(w, h, false); cv.style.width = w + 'px'; cv.style.height = h + 'px';
-      cam.aspect = w / h; baseZ = w / h < .7 ? 6.6 : 5.7; cam.updateProjectionMatrix();
+      cam.aspect = w / h; baseZ = (w / h < .7 ? 6.6 : 5.7) * fitK; cam.updateProjectionMatrix();
     };
     const down = (e) => { drag = true; lx = e.clientX; ly = e.clientY; vx = vy = 0; idle = 0; hint.classList.add('off'); try { cv.setPointerCapture(e.pointerId); } catch (x) {} };
     const move = (e) => { if (!drag) return; const dx = e.clientX - lx, dy = e.clientY - ly; lx = e.clientX; ly = e.clientY; vy = dx * .012; vx = dy * .008; ry += vy; rx = Math.max(-.8, Math.min(.8, rx + vx)); };
