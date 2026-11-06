@@ -11,8 +11,6 @@ Además: **comparar dos productos** lado a lado, un **historial** de lo escanead
 
 > Es una herramienta **informativa**. No diagnostica ni recomienda medicamentos. Los medicamentos se muestran solo con la información de su ficha.
 
-Sitio (GitHub Pages): `https://cvaldovinos25.github.io/SALCO-LENTE/`
-
 ## Estructura
 
 ```
