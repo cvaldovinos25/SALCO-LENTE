@@ -10,6 +10,7 @@ SL.CONFIG = {
   /* Recordatorio de Mi Salcobrand (se muestra en la vista de producto y en Mi lista) */
   MI_SALCO: {
     activo: true,
+    pct: 10,   // % de descuento Mi Salcobrand que se aplica a TODOS los productos de la lista. Un producto con "precioMi" en el catálogo usa ese precio en vez del %. Pon 0 para desactivarlo
     corto: 'No olvides usar tu código Mi Salcobrand en caja.',
     largo: 'Antes de pagar, indica tu código Mi Salcobrand en caja para aprovechar tus beneficios.'
   },

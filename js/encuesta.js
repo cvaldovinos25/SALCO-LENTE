@@ -21,7 +21,7 @@
   function boot() {
     const cfg = Object.assign({ URL: '', PRIMERA_S: 120, VISIBLE_S: 20, REPETIR_S: 300, MAX_APARICIONES: 3, SILENCIO_DIAS: 30 }, (SL.CONFIG && SL.CONFIG.ENCUESTA) || {});
     if (test) { cfg.PRIMERA_S = 5; }
-    const st = { funciones: [], uso: 0, next: cfg.PRIMERA_S, shown: 0, left: 0, bubble: null, rating: 0, inSurvey: false, sent: false };
+    const st = { respondida: false, funciones: [], uso: 0, next: cfg.PRIMERA_S, shown: 0, left: 0, bubble: null, rating: 0, inSurvey: false, sent: false };
     
     // funciones de la herramienta que la persona usó (solo nombres, en orden de primer uso)
     document.addEventListener('sl:uso', (e) => { if (e.detail && st.funciones.indexOf(e.detail) < 0) st.funciones.push(e.detail); });
@@ -59,7 +59,7 @@
     }
     function sync() {
       const b = st.bubble || (st.bubble = makeBubble());
-      const on = SL.app.onHome() && !st.inSurvey;
+      const on = SL.app.onHome() && !st.inSurvey && !st.respondida;   // respondida: no vuelve a aparecer mientras la página siga abierta (al reabrirla con el QR, vuelve)
       if (on && b.hidden) { b.classList.remove('out'); b.hidden = false; }
       else if (!on && !b.hidden) { b.hidden = true; }
       b.classList.toggle('open', st.uso >= cfg.PRIMERA_S);
@@ -94,10 +94,9 @@
     $('#svHome').addEventListener('click', () => SL.app.go('home'));
     $('#svSend').addEventListener('click', async () => {
       if (!st.rating || st.sent) return;
-      st.sent = true; $('#svSend').disabled = true; $('#svSend').textContent = 'Enviando…';
+      st.sent = true; st.respondida = true; sync(); $('#svSend').disabled = true; $('#svSend').textContent = 'Enviando…';
       // solo datos de la respuesta: sin identificadores ni datos del dispositivo
       await enviar({ r: st.rating, c: $('#svTxt').value.trim().slice(0, 500), u: st.uso, v: VER, f: st.funciones.join(', ') });
-      lset('sl_enc_ok', String(Date.now()));
       $('#svForm').hidden = true; $('#svDone').hidden = false;
     });
 

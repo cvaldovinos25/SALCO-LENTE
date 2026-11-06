@@ -451,7 +451,7 @@
     if (a && b) uso('Comparación');
     let h = '<h2 style="font-size:28px;font-weight:950;margin-bottom:12px">Comparar ⚖️</h2>';
     const col = (p, slot) => p
-      ? '<div class="card cmpP"><div class="mini">' + (p.imagen ? '<img src="' + esc(p.imagen) + '" alt="" referrerpolicy="no-referrer">' : catMeta(p).emoji) + '</div><b>' + esc(p.marca) + '</b><small>' + esc(p.nombre) + '</small><button class="btn sm alt" data-slot="' + slot + '">Cambiar</button></div>'
+      ? '<div class="card cmpP"><div class="mini">' + (p.imagen ? '<img src="' + esc(p.imagen) + '" alt="" referrerpolicy="no-referrer">' : catMeta(p).emoji) + '</div><b>' + esc(p.marca) + '</b><small>' + esc(p.nombre) + '</small><button class="btn sm alt" data-slot="' + slot + '">Escanear otro</button><button class="btn sm ghost" data-pick="' + slot + '">Buscar otro</button><button class="btn sm ghost" data-clear="' + slot + '" style="color:#c0392b;margin-top:2px">✕ Quitar</button></div>'
       : '<div class="card cmpP"><div class="mini">➕</div><b>Elige un producto</b><button class="btn sm" data-slot="' + slot + '">Escanear</button><button class="btn sm ghost" data-pick="' + slot + '">Buscar por nombre</button></div>';
     h += '<div class="cmpH">' + col(a, 'a') + col(b, 'b') + '</div>';
     if (a && b) {
@@ -480,6 +480,7 @@
     el.innerHTML = h;
     $$('#s-compare [data-slot]').forEach((b2) => b2.addEventListener('click', () => openScan(b2.dataset.slot === 'a' ? 'slotA' : 'slotB')));
     $$('#s-compare [data-pick]').forEach((b2) => b2.addEventListener('click', () => { S.pick = b2.dataset.pick; go('search'); }));
+    $$('#s-compare [data-clear]').forEach((b2) => b2.addEventListener('click', () => { S.cmp[b2.dataset.clear] = null; renderCompare(); }));
     $$('#s-compare [data-open]').forEach((b2) => b2.addEventListener('click', () => openProduct(S.cmp[b2.dataset.open], false)));
   }
 
@@ -489,8 +490,13 @@
     let h = '<h2 style="font-size:28px;font-weight:950;margin-bottom:12px">Mi lista 🛒</h2>';
     if (!items.length) h += '<div class="card empty">Aún no has agregado productos.<br>Escanea uno y toca “A mi lista”.<div style="margin-top:14px"><button class="btn" id="lEmpty">Escanear 📷</button></div></div>';
     else {
-      // Precio con Mi Salcobrand: campo opcional "precioMi" en el catálogo (si falta o no es menor, no hay descuento)
-      const pMi = (p) => (C.MI_SALCO.activo && p.precioMi > 0 && p.precioMi < p.precio ? p.precioMi : p.precio);
+      // Precio con Mi Salcobrand: si el producto trae "precioMi" se usa ese; si no, se aplica el % general de config.js (MI_SALCO.pct)
+      const pMi = (p) => {
+        if (!C.MI_SALCO.activo) return p.precio;
+        if (p.precioMi > 0 && p.precioMi < p.precio) return p.precioMi;
+        const pc = +C.MI_SALCO.pct || 0;
+        return pc > 0 ? Math.round(p.precio * (1 - pc / 100)) : p.precio;
+      };
       h += items.map((i) => {
         const dto = pMi(i.p) < i.p.precio;
         const pr = dto ? '<s style="font-weight:700;font-size:12px;color:var(--muted);display:block;line-height:1.1">' + clp(i.p.precio * i.qty) + '</s><span style="color:#0a8f3c">' + clp(pMi(i.p) * i.qty) + '</span>' : clp(i.p.precio * i.qty);
@@ -503,7 +509,7 @@
         h += '<div class="card" style="font-size:15px;font-weight:800"><div style="display:flex;justify-content:space-between"><span>Total sin descuento</span><span>' + clp(total) + '</span></div>' +
           '<div style="display:flex;justify-content:space-between;margin-top:6px;color:#0a8f3c"><span>Descuento Mi Salcobrand</span><span>− ' + clp(desc) + '</span></div>' +
           '<div style="display:flex;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1.5px solid rgba(0,60,120,.12);font-weight:950;font-size:19px"><span>Total real</span><span>' + clp(real) + '</span></div>' +
-          '<p class="legal" style="margin-top:8px;font-weight:600">Ahorras ' + Math.round(desc / total * 100) + '% usando tu código Mi Salcobrand en caja. Solo los productos con precio Mi Salcobrand suman descuento.</p></div>';
+          '<p class="legal" style="margin-top:8px;font-weight:600">Ahorras ' + Math.round(desc / total * 100) + '% en toda tu compra usando tu código Mi Salcobrand en caja. Descuento referencial: confirma el valor final en caja.</p></div>';
       } else h += '<div class="card" style="display:flex;justify-content:space-between;font-weight:950;font-size:17px"><span>Total referencial</span><span>' + clp(total) + '</span></div>';
       h += '<div class="card qrbox" style="margin-top:12px"><small class="k" style="font-size:12px;font-weight:900;letter-spacing:.1em;color:var(--muted)">MUESTRA ESTE QR EN CAJA</small><div class="qr" id="qrBox"></div><p class="legal" style="margin-top:8px">Los precios son referenciales: confirma el valor vigente en caja.</p></div>';
     }
