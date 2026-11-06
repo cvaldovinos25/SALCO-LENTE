@@ -674,7 +674,7 @@
       "ean": "7800041042853",
       "categoria": "salud",
       "marca": "Ferranem",
-      "nombre": "Ferranem 30 cápsulas prolongadas",
+      "nombre": "cápsulas prolongadas",
       "formato": "30 cáps.",
       "cantidad": {
         "valor": 30,
@@ -713,7 +713,8 @@
         "tipo": "caja",
         "color": "#5a2ca0",
         "acento": "#ffe600"
-      }
+      },
+      "precioMi": 14255
     },
     {
       "id": "oleo-petrizzio",
@@ -770,7 +771,8 @@
         "tipo": "frasco",
         "color": "#c98a2b",
         "acento": "#1f9d8c"
-      }
+      },
+      "precioMi": 4490
     }
   ]
 }

@@ -489,9 +489,22 @@
     let h = '<h2 style="font-size:28px;font-weight:950;margin-bottom:12px">Mi lista 🛒</h2>';
     if (!items.length) h += '<div class="card empty">Aún no has agregado productos.<br>Escanea uno y toca “A mi lista”.<div style="margin-top:14px"><button class="btn" id="lEmpty">Escanear 📷</button></div></div>';
     else {
-      h += items.map((i) => '<div class="card lit">' + icBubble(i.p) + '<div><b>' + esc(i.p.marca + ' ' + i.p.nombre) + '</b><span class="s">' + esc(i.p.formato) + '</span></div><div class="p">' + clp(i.p.precio * i.qty) + '</div><button class="x" data-rm="' + esc(i.p.id) + '" aria-label="Quitar">✕</button></div>').join('');
+      // Precio con Mi Salcobrand: campo opcional "precioMi" en el catálogo (si falta o no es menor, no hay descuento)
+      const pMi = (p) => (C.MI_SALCO.activo && p.precioMi > 0 && p.precioMi < p.precio ? p.precioMi : p.precio);
+      h += items.map((i) => {
+        const dto = pMi(i.p) < i.p.precio;
+        const pr = dto ? '<s style="font-weight:700;font-size:12px;color:var(--muted);display:block;line-height:1.1">' + clp(i.p.precio * i.qty) + '</s><span style="color:#0a8f3c">' + clp(pMi(i.p) * i.qty) + '</span>' : clp(i.p.precio * i.qty);
+        return '<div class="card lit">' + icBubble(i.p) + '<div><b>' + esc(i.p.marca + ' ' + i.p.nombre) + '</b><span class="s">' + esc(i.p.formato) + (dto ? ' · con Mi Salcobrand' : '') + '</span></div><div class="p">' + pr + '</div><button class="x" data-rm="' + esc(i.p.id) + '" aria-label="Quitar">✕</button></div>';
+      }).join('');
       const total = items.reduce((s, i) => s + i.p.precio * i.qty, 0);
-      h += '<div class="card" style="display:flex;justify-content:space-between;font-weight:950;font-size:17px"><span>Total referencial</span><span>' + clp(total) + '</span></div>';
+      const real = items.reduce((s, i) => s + pMi(i.p) * i.qty, 0);
+      const desc = total - real;
+      if (desc > 0) {
+        h += '<div class="card" style="font-size:15px;font-weight:800"><div style="display:flex;justify-content:space-between"><span>Total sin descuento</span><span>' + clp(total) + '</span></div>' +
+          '<div style="display:flex;justify-content:space-between;margin-top:6px;color:#0a8f3c"><span>Descuento Mi Salcobrand</span><span>− ' + clp(desc) + '</span></div>' +
+          '<div style="display:flex;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1.5px solid rgba(0,60,120,.12);font-weight:950;font-size:19px"><span>Total real</span><span>' + clp(real) + '</span></div>' +
+          '<p class="legal" style="margin-top:8px;font-weight:600">Ahorras ' + Math.round(desc / total * 100) + '% usando tu código Mi Salcobrand en caja. Solo los productos con precio Mi Salcobrand suman descuento.</p></div>';
+      } else h += '<div class="card" style="display:flex;justify-content:space-between;font-weight:950;font-size:17px"><span>Total referencial</span><span>' + clp(total) + '</span></div>';
       h += '<div class="card qrbox" style="margin-top:12px"><small class="k" style="font-size:12px;font-weight:900;letter-spacing:.1em;color:var(--muted)">MUESTRA ESTE QR EN CAJA</small><div class="qr" id="qrBox"></div><p class="legal" style="margin-top:8px">Los precios son referenciales: confirma el valor vigente en caja.</p></div>';
     }
     if (C.MI_SALCO.activo) h += '<div class="card misalco"><img src="img/mi-salcobrand.png" alt="Mi Salcobrand"><p>' + esc(C.MI_SALCO.largo) + '</p></div>';
