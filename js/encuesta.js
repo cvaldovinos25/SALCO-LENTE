@@ -21,10 +21,30 @@
   function boot() {
     const cfg = Object.assign({ URL: '', PRIMERA_S: 120 }, (SL.CONFIG && SL.CONFIG.ENCUESTA) || {});
     if (test) { cfg.PRIMERA_S = 5; }
-    const st = { respondida: false, funciones: [], uso: 0, bubble: null, rating: 0, inSurvey: false, sent: false };
+    const st = { respondida: false, funciones: [], prods: [], cats: [], tarj: {}, uso: 0, bubble: null, rating: 0, inSurvey: false, sent: false };
 
     // recorrido por la herramienta, en orden y con repeticiones (se omiten solo las repeticiones seguidas): Escáner → Mi lista → Comparación → Escáner...
     document.addEventListener('sl:uso', (e) => { const f = st.funciones; if (e.detail && f[f.length - 1] !== e.detail && f.length < 40) f.push(e.detail); });
+
+    // productos y categorías vistos (únicos, en orden) y tarjetas abiertas por producto
+    document.addEventListener('sl:vista', (e) => {
+      const d = e.detail || {};
+      if (d.nombre && st.prods.indexOf(d.nombre) < 0 && st.prods.length < 30) st.prods.push(d.nombre);
+      if (d.cat && st.cats.indexOf(d.cat) < 0) st.cats.push(d.cat);
+    });
+    document.addEventListener('sl:tarjeta', (e) => {
+      const d = e.detail || {}; if (!d.nombre || !d.tarjeta) return;
+      const l = st.tarj[d.nombre] || (st.tarj[d.nombre] = []);
+      if (l.indexOf(d.tarjeta) < 0) l.push(d.tarjeta);
+    });
+    // visita nueva si pasaron más de 30 min desde el último uso; si no, sigue la misma
+    const visita = (() => {
+      const now = Date.now(); let n = parseInt(lget('sl_visitas'), 10) || 0, t = parseInt(lget('sl_visita_t'), 10) || 0;
+      if (!n || now - t > 30 * 60 * 1000) n++;
+      lset('sl_visitas', String(n)); lset('sl_visita_t', String(now));
+      document.addEventListener('visibilitychange', () => lset('sl_visita_t', String(Date.now())));
+      return n;
+    })();
 
     /* ---------- Envío a Google Sheets (con cola si no hay conexión) ---------- */
     async function post(p) {
@@ -96,7 +116,8 @@
       if (!st.rating || st.sent) return;
       st.sent = true; st.respondida = true; sync(); $('#svSend').disabled = true; $('#svSend').textContent = 'Enviando…';
       // solo datos de la respuesta: sin identificadores ni datos del dispositivo
-      await enviar({ r: st.rating, c: $('#svTxt').value.trim().slice(0, 500), u: st.uso, v: VER, f: st.funciones.join(' → ') });
+      await enviar({ r: st.rating, c: $('#svTxt').value.trim().slice(0, 500), u: st.uso, v: VER, f: st.funciones.join(' → '), p: st.prods.join(' | '), k: st.cats.join(' | '),
+        t: Object.keys(st.tarj).map((n) => n + ': ' + st.tarj[n].join(', ')).join(' | '), s: visita });
       $('#svForm').hidden = true; $('#svDone').hidden = false;
     });
 

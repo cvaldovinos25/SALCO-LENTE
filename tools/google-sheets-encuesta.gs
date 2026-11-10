@@ -16,7 +16,7 @@
  * Es anónima: no se guarda ningún dato de quien responde (ni correo, ni IP, ni dispositivo).
  */
 var HOJA = 'Respuestas';
-var ENCABEZADOS = ['Fecha y hora', 'Calificación (1 a 5)', 'Comentario', 'Segundos de uso', 'Versión de la app', 'Funciones usadas'];
+var ENCABEZADOS = ['Fecha y hora', 'Calificación (1 a 5)', 'Comentario', 'Segundos de uso', 'Versión de la app', 'Funciones usadas', 'Productos vistos', 'Categorías vistas', 'Tarjetas abiertas por producto', 'Visita'];
 
 function doPost(e) {
   var lock = LockService.getScriptLock();
@@ -31,6 +31,13 @@ function doPost(e) {
     var v = String(d.v == null ? '' : d.v).slice(0, 10);
     var f = String(d.f == null ? '' : d.f).slice(0, 700);       // recorrido por la app: Escáner → Mi lista → Comparación...
     if (/^[=+\-@]/.test(f)) f = "'" + f;
+    var p = String(d.p == null ? '' : d.p).slice(0, 500);
+    var k = String(d.k == null ? '' : d.k).slice(0, 200);
+    var t = String(d.t == null ? '' : d.t).slice(0, 900);
+    var s = Math.max(1, Math.min(100000, Math.round(Number(d.s) || 1)));
+    var visita = s === 1 ? 'Primera visita' : 'Repetición n°' + s;
+    var txt = [p, k, t].map(function (x) { return /^[=+\-@]/.test(x) ? "'" + x : x; });
+    p = txt[0]; k = txt[1]; t = txt[2];
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var sh = ss.getSheetByName(HOJA);
     if (!sh) {
@@ -40,12 +47,12 @@ function doPost(e) {
       sh.setFrozenRows(1);
       sh.setColumnWidth(3, 420);
     }
-    if (sh.getRange(1, 6).getValue() === '') {                  // hojas creadas antes de esta columna: agrega el encabezado
-      sh.getRange(1, 6).setValue(ENCABEZADOS[5]).setFontWeight('bold').setBackground('#007dc3').setFontColor('#ffffff');
-      sh.setColumnWidth(6, 420);
+    for (var i = 0; i < ENCABEZADOS.length; i++) {              // hojas creadas antes: agrega los encabezados que falten
+      var h = sh.getRange(1, i + 1);
+      if (h.getValue() === '') { h.setValue(ENCABEZADOS[i]).setFontWeight('bold').setBackground('#007dc3').setFontColor('#ffffff'); if (i >= 5) sh.setColumnWidth(i + 1, 320); }
     }
     var fecha = Utilities.formatDate(new Date(), 'America/Santiago', 'yyyy-MM-dd HH:mm:ss');
-    sh.appendRow([fecha, r, c, u, v, f]);
+    sh.appendRow([fecha, r, c, u, v, f, p, k, t, visita]);
     return salida({ ok: true });
   } catch (err) {
     return salida({ ok: false, error: String(err) });

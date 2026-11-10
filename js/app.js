@@ -84,6 +84,9 @@
   const pills = (arr, n) => arr.slice(0, n || 99).map((x) => '<span class="pill ' + x[0] + '">' + esc(x[1]) + '</span>').join('');
 
   /* ---------- Registro de funciones usadas (para la encuesta anónima; solo nombres de funciones, nada del producto ni de la persona) ---------- */
+  const TARJ = { sirve: 'Para qué sirve', precio: 'Precio', ingr: 'Ingredientes y advertencias', uso: 'Cómo usar' };
+  const vista = (p) => document.dispatchEvent(new CustomEvent('sl:vista', { detail: { nombre: p.marca + ' ' + p.nombre, cat: catMeta(p).nombre } }));
+  const tarjeta = (k) => { const p = S.cur; if (p && TARJ[k]) document.dispatchEvent(new CustomEvent('sl:tarjeta', { detail: { nombre: p.marca + ' ' + p.nombre, tarjeta: TARJ[k] } })); };
   const uso = (k) => document.dispatchEvent(new CustomEvent('sl:uso', { detail: k }));
 
   /* ---------- Navegación ---------- */
@@ -258,7 +261,7 @@
   function openProduct(p, fromScan) {
     stageTok++; if (model3) { model3.destroy(); model3 = null; }
     const ar = !!fromScan && !!stream;
-    S.cur = p; S.pvFromScan = !!fromScan; S.arMode = ar; S.view = 'pv';
+    vista(p); S.cur = p; S.pvFromScan = !!fromScan; S.arMode = ar; S.view = 'pv';
     $('#pvImg').innerHTML = icBubble(p); $('#pvName').textContent = p.nombre; $('#pvBrand').textContent = p.marca + ' · ' + p.formato;
     const sm = sema(p), pr = unitTxt(p);
     const card = (k, tit, color, body, delay) => '<button class="glass acard' + (ar ? ' ar' : '') + '" data-k="' + k + '" style="--ac:' + color + ';animation-delay:' + delay + 's"><b>' + tit + '</b><span class="more" aria-hidden="true"></span>' + body + '</button>';
@@ -354,7 +357,7 @@
   }
   function toggleCard(c) {
     const open = !c.classList.contains('open');
-    if (open) uso('Tarjetas de realidad aumentada');
+    if (open) { uso('Tarjetas de realidad aumentada'); tarjeta(c.dataset.k); }
     $$('#arCards .acard').forEach((x) => { x.classList.remove('open'); x.setAttribute('aria-expanded', 'false'); });
     if (open) { c.classList.add('open'); c.setAttribute('aria-expanded', 'true'); }
     AP.dim = null; if (AP.t) layoutAR(AP.x, AP.y, AP.wS, AP.t);
@@ -446,6 +449,7 @@
   /* ---------- Hoja de detalle ---------- */
   function openSheet(k) {
     const p = S.cur; if (!p) return;
+    tarjeta(k);
     let h = '<div class="grip"></div>';
     const adv = (p.advertencias || []).map((a) => '<div class="note">' + esc(a) + '</div>').join('');
     const aviso = '<p class="legal sheet-end">' + esc(p.categoria === 'salud' ? C.TEXTO.AVISO_SALUD : C.TEXTO.AVISO) + '</p>';
