@@ -1,8 +1,6 @@
 <!doctype html>
 <html lang="es">
 <head>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700&display=swap" rel="stylesheet">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#007dc3">
@@ -11,388 +9,12 @@
 <link rel="icon" href="img/sb-logo.png">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="img/sb-logo.png">
-<style>
-:root{
-  --blue:#007dc3;--blue-d:#005b94;--sky:#00a9e8;--green:#96c11f;--yellow:#ffd500;--orange:#f29100;--coral:#ff5b3a;
-  --ink:#0b2540;--muted:#5a6f85;--bg:#f1f8ff;--r:26px;
-  --shadow:0 18px 40px -20px rgba(0,70,140,.45);
-  --grad-main:linear-gradient(135deg,#005fb0 0%,#007dc3 40%,#00a9e8 80%,#35d6c4 100%);
-  --grad-cta:linear-gradient(135deg,#005fb0,#007dc3 45%,#00a9e8);
-  --grad-fun:linear-gradient(90deg,#007dc3,#00a9e8 40%,#96c11f 80%,#c8e23c);
-  --font-t:"Avenir Next","Avenir","Avenir Next LT Pro","Nunito","Segoe UI",system-ui,sans-serif;
-  --font:ui-rounded,"SF Pro Rounded","Nunito","Segoe UI Variable",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html{color-scheme:light}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--font);-webkit-font-smoothing:antialiased;min-height:100vh;min-height:100dvh;overflow-x:hidden}
-h1,h2,h3,h4,.brand b,.sectitle,.hint b,.nm b,.hero2 b,.sheet h3,.sheet h4{font-family:var(--font-t);font-weight:700}
-h1,h2,h3{margin:0;line-height:1.1;letter-spacing:-.025em}
-p{margin:0}
-button{font:inherit;cursor:pointer;color:inherit}
-.hidden{display:none!important}
-
-/* Fondo */
-.bg{position:fixed;inset:0;z-index:-2;overflow:hidden;background:
-  radial-gradient(900px 600px at 110% -10%,#bfeaff 0%,transparent 60%),
-  radial-gradient(700px 500px at -20% 30%,#e6f7c8 0%,transparent 60%),
-  radial-gradient(700px 500px at 110% 85%,#fff1b8 0%,transparent 60%),#f1f8ff}
-.bg i{position:absolute;border-radius:50%;filter:blur(46px);opacity:.55;animation:drift 18s ease-in-out infinite alternate}
-.bg i:nth-child(1){width:300px;height:300px;left:-90px;top:10%;background:#7fdcff}
-.bg i:nth-child(2){width:260px;height:260px;right:-80px;top:44%;background:#d4ee6a;animation-duration:22s;animation-delay:-6s}
-.bg i:nth-child(3){width:240px;height:240px;left:20%;bottom:-90px;background:#ffe36b;animation-duration:26s;animation-delay:-12s}
-@keyframes drift{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(40px,-60px,0) scale(1.18)}}
-
-/* Barra superior */
-.top{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.74);backdrop-filter:saturate(1.8) blur(18px);-webkit-backdrop-filter:saturate(1.8) blur(18px);padding-top:env(safe-area-inset-top)}
-.top::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:linear-gradient(90deg,var(--sky),var(--green),var(--yellow),var(--orange),var(--coral),var(--sky));background-size:200% 100%;animation:slide 8s linear infinite}
-@keyframes slide{to{background-position:200% 0}}
-.top-in{max-width:560px;margin:auto;display:flex;align-items:center;gap:12px;padding:10px 16px 11px}
-.top img{width:44px;height:auto;display:block;filter:drop-shadow(0 4px 8px rgba(0,125,195,.35))}
-.brand{display:flex;flex-direction:column;line-height:1.02}
-.brand b{font-size:19px;font-weight:900;letter-spacing:-.03em;background:linear-gradient(90deg,var(--blue-d),var(--blue) 60%,var(--sky));-webkit-background-clip:text;background-clip:text;color:transparent}
-.brand small{font-size:11px;font-weight:800;color:var(--muted);letter-spacing:.14em;text-transform:uppercase}
-.hrow{display:flex;gap:8px;align-items:stretch;margin-bottom:10px}.hrow .pit{flex:1;min-width:0}.hadd{flex:0 0 auto;width:58px;border-radius:22px;background:linear-gradient(135deg,#0090d8,#00a9e8);color:#fff;font-size:12px;font-weight:900;box-shadow:0 10px 20px -12px rgba(0,100,180,.8);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}.hadd.sel{background:linear-gradient(135deg,#7fb11a,#96c11f)}.hadd span{font-size:20px;line-height:1}.htime{display:block;font-size:11px;font-weight:700;color:var(--muted);margin-top:1px}
-.pbtn{margin-left:auto;display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:999px;border:1px solid rgba(0,125,195,.2);background:linear-gradient(135deg,#e0f4ff,#effad8);color:var(--blue-d);font-size:12.5px;font-weight:800}
-
-.wrap{max-width:560px;margin:auto;padding:18px 16px calc(110px + env(safe-area-inset-bottom))}
-.screen{display:none}
-.screen.on{display:block;animation:in .45s cubic-bezier(.2,.9,.3,1) both}
-@keyframes in{from{opacity:0;transform:translateY(16px) scale(.985)}to{opacity:1;transform:none}}
-
-/* Tarjetas y botones */
-.card{position:relative;background:rgba(255,255,255,.82);backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px) saturate(1.4);border:1.5px solid rgba(255,255,255,.95);border-radius:var(--r);box-shadow:var(--shadow);padding:18px}
-.btn{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border:0;border-radius:999px;padding:16px 20px;font-weight:900;font-size:16.5px;color:#fff;background:var(--grad-cta);box-shadow:0 16px 28px -12px rgba(0,125,195,.8),inset 0 1px 0 rgba(255,255,255,.45);transition:transform .18s cubic-bezier(.2,1.6,.4,1),opacity .2s}
-.btn::after{content:"";position:absolute;top:0;bottom:0;width:60%;left:-80%;background:linear-gradient(110deg,transparent 20%,rgba(255,255,255,.55) 50%,transparent 80%);transform:skewX(-18deg);animation:shine 3.6s ease-in-out infinite}
-@keyframes shine{0%,55%{left:-80%}100%{left:140%}}
-.btn:active{transform:scale(.96)}
-.btn[disabled]{opacity:.5}
-.btn.alt{background:rgba(255,255,255,.9);color:var(--blue-d);box-shadow:inset 0 0 0 2.5px var(--blue),0 8px 18px -12px rgba(0,125,195,.6)}
-.btn.alt::after,.btn.ghost::after{display:none}
-.btn.ghost{background:transparent;color:var(--blue-d);box-shadow:none;font-weight:800;font-size:15px;padding:12px}
-.btn.sm{padding:11px 16px;font-size:14px;width:auto}
-.btn+.btn{margin-top:10px}
-
-/* Inicio */
-.hero{position:relative;overflow:hidden;isolation:isolate;border-radius:32px;color:#fff;padding:26px 22px;background:var(--grad-main);box-shadow:0 28px 50px -22px rgba(0,80,160,.8),inset 0 1px 0 rgba(255,255,255,.4)}
-.hero::before{content:"";position:absolute;inset:-40% -20% auto auto;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(255,225,60,.65),transparent 62%);z-index:-1;animation:drift 12s ease-in-out infinite alternate}
-.kicker{display:inline-flex;gap:6px;align-items:center;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:800;letter-spacing:.04em}
-.hero h1{font-size:38px;font-weight:950;margin:14px 0 10px}
-.hero h1 em{font-style:normal;background:linear-gradient(90deg,#fff 0%,#ffe36b 55%,#c8e23c);-webkit-background-clip:text;background-clip:text;color:transparent}
-.hero p{font-size:16.5px;font-weight:600;opacity:.96;max-width:420px}
-.hero .go{margin-top:20px}
-.hero .btn{background:#fff;color:var(--blue-d);box-shadow:0 14px 26px -12px rgba(0,30,80,.7)}
-.sectitle{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:950;letter-spacing:.1em;text-transform:uppercase;color:var(--blue-d);margin:26px 4px 12px}
-.sectitle::after{content:"";flex:1;height:2.5px;border-radius:9px;background:linear-gradient(90deg,rgba(0,169,232,.45),transparent)}
-.ic{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;font-size:23px;background:linear-gradient(135deg,var(--c1,#e3f4ff),var(--c2,#f0fadb));box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 6px 14px -8px rgba(0,60,120,.5);flex:none}
-.how{list-style:none;padding:0;margin:0;display:grid;gap:10px}
-.how li{display:flex;gap:12px;align-items:center;font-weight:800}
-.how small{display:block;color:var(--muted);font-weight:600;font-size:13px}
-.legal{font-size:12.5px;color:var(--muted);line-height:1.5;margin-top:22px;padding:0 4px;font-weight:500}
-.foot{text-align:center;color:var(--muted);font-size:12px;margin-top:18px;font-weight:600}
-
-/* Buscar */
-.srch{width:100%;border:1.5px solid rgba(0,125,195,.25);border-radius:999px;padding:14px 18px;font:inherit;font-weight:700;background:rgba(255,255,255,.92);outline:none}
-.srch:focus{border-color:var(--sky);box-shadow:0 0 0 4px rgba(0,169,232,.18)}
-.chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 14px}
-.chp{border:1.5px solid rgba(0,125,195,.22);background:rgba(255,255,255,.85);border-radius:999px;padding:8px 13px;font-weight:800;font-size:13.5px;color:var(--blue-d)}
-.chp.on{background:var(--grad-cta);color:#fff;border-color:transparent}
-.plist{display:grid;gap:10px}
-.pit{display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:22px;background:rgba(255,255,255,.88);border:1.5px solid rgba(255,255,255,.95);box-shadow:0 12px 24px -18px rgba(0,60,120,.6);text-align:left;width:100%}
-.pit b{font-size:14.5px;font-weight:900;display:block;line-height:1.2}
-.pit .s{font-size:12.5px;color:var(--muted);font-weight:700}
-.pit .p{margin-left:auto;text-align:right;font-weight:950;font-size:14.5px;white-space:nowrap}
-.pit .p small{display:block;font-size:11px;color:var(--muted);font-weight:700}
-.empty{text-align:center;color:var(--muted);font-weight:700;padding:30px 10px}
-
-/* Navegación inferior */
-.nav{position:fixed;left:0;right:0;bottom:0;z-index:30;padding:0 14px calc(10px + env(safe-area-inset-bottom));pointer-events:none}
-.nav-in{pointer-events:auto;max-width:520px;margin:auto;display:grid;grid-template-columns:1fr 1fr 1.15fr 1fr 1fr;align-items:end;background:linear-gradient(180deg,#0a86cc,#007dc3);backdrop-filter:blur(18px) saturate(1.5);-webkit-backdrop-filter:blur(18px) saturate(1.5);border:1.5px solid rgba(255,255,255,.3);border-radius:28px;box-shadow:0 18px 40px -14px rgba(0,60,120,.75);padding:8px 6px}
-.nb{position:relative;border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0 8px;font-size:11px;font-weight:700;letter-spacing:.01em;color:rgba(255,255,255,.72)}
-.nb span{display:block;width:24px;height:24px;line-height:1}
-.nb svg{width:24px;height:24px;display:block;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-.nb.on{color:#fff}
-.nb.on::after{content:"";position:absolute;bottom:1px;left:50%;width:16px;height:3px;margin-left:-8px;border-radius:2px;background:#fff}
-.nb .badge{position:absolute;top:0;right:calc(50% - 22px);min-width:18px;height:18px;border-radius:9px;background:var(--coral);color:#fff;font-size:11px;font-weight:900;display:grid;place-items:center;padding:0 5px}
-.nb.mid .fab{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;line-height:1;color:#fff;background:linear-gradient(135deg,#0a6aa8,#004f82);box-shadow:0 0 0 3px #fff,0 8px 16px -6px rgba(0,40,90,.6)}
-.nb.mid .fab svg{width:24px;height:24px}
-.nb.mid{padding-top:0}
-.nb.mid{color:#fff}.nb.mid.on::after{display:none}
-
-/* Cámara */
-.camLayer{position:fixed;inset:0;z-index:40;background:#04101e;display:none}
-body.cam .camLayer{display:block}
-.camLayer video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.camLayer::after{content:"";position:absolute;inset:0;background:radial-gradient(120% 80% at 50% 45%,transparent 40%,rgba(0,20,50,.5));pointer-events:none}
-.ov{position:fixed;inset:0;z-index:50;display:none}
-.ov.on{display:block}
-.sc-top{position:absolute;left:0;right:0;top:0;display:flex;align-items:center;gap:10px;padding:calc(12px + env(safe-area-inset-top)) 14px 12px;background:linear-gradient(rgba(0,20,50,.6),transparent);color:#fff}
-.sc-top .t{font-weight:900;font-size:16px;text-shadow:0 1px 8px rgba(0,0,0,.5)}
-.rbtn{white-space:nowrap;flex:none;border:0;border-radius:999px;padding:9px 14px;font-weight:800;font-size:14px;background:rgba(255,255,255,.9);color:var(--blue-d)}
-.reticle{position:absolute;left:50%;top:44%;width:min(76vw,330px);height:min(46vw,200px);transform:translate(-50%,-50%);border-radius:26px;box-shadow:0 0 0 2000px rgba(0,20,50,.38)}
-.reticle svg{position:absolute;inset:-6px;width:calc(100% + 12px);height:calc(100% + 12px)}
-.reticle .laser{position:absolute;left:8%;right:8%;top:10%;height:3px;border-radius:3px;background:linear-gradient(90deg,transparent,var(--green),#fff,var(--green),transparent);box-shadow:0 0 18px 4px rgba(150,193,31,.8);animation:laser 2.2s ease-in-out infinite alternate}
-@keyframes laser{to{top:88%}}
-.reticle.ok{animation:okp .5s}
-@keyframes okp{50%{transform:translate(-50%,-50%) scale(1.06)}}
-.sc-bot{position:absolute;left:14px;right:14px;bottom:calc(20px + env(safe-area-inset-bottom));display:grid;gap:10px}
-.glass{background:rgba(255,255,255,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1.5px solid rgba(255,255,255,.95);border-radius:20px;box-shadow:0 14px 28px -14px rgba(0,30,70,.6)}
-.hint{padding:14px 16px;text-align:center}
-.hint b{display:block;font-size:17px;font-weight:900}
-.hint span{font-size:13px;color:var(--muted);font-weight:600}
-.hint{transition:background .25s,box-shadow .25s}
-.hint.warn{background:rgba(255,246,214,.96);box-shadow:inset 0 0 0 2px var(--yellow),0 14px 28px -14px rgba(0,30,70,.6)}
-.hint.warn b{color:#7a5200}
-.manual.attn input{animation:attn 1.2s ease-in-out infinite}
-@keyframes attn{0%,100%{box-shadow:0 0 0 0 rgba(255,213,0,.0)}50%{box-shadow:0 0 0 5px rgba(255,213,0,.75)}}
-.manual{display:flex;gap:8px}
-.manual input{flex:1;min-width:0;border:0;border-radius:999px;padding:13px 16px;font:inherit;font-weight:800;background:rgba(255,255,255,.95);outline:none}
-.toast{position:fixed;left:50%;top:calc(80px + env(safe-area-inset-top));transform:translateX(-50%);z-index:90;max-width:88vw;background:rgba(11,37,64,.92);color:#fff;border-radius:16px;padding:12px 16px;font-weight:700;font-size:14px;box-shadow:0 14px 30px -10px rgba(0,0,0,.5);animation:in .3s both}
-.flash{position:absolute;inset:0;background:#fff;pointer-events:none;animation:fl .5s ease-out forwards}
-@keyframes fl{from{opacity:.85}to{opacity:0}}
-
-/* Vista de producto (RA) */
-.pv{background:linear-gradient(160deg,#cfe9ff,#eaf6e0 55%,#fff3c4)}
-body.cam .pv{background:none}
-.pv::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,60,120,.4),rgba(0,125,195,.1) 40%,rgba(6,24,50,.55));opacity:0}
-body.cam .pv::before{opacity:1}
-.pv-in{position:absolute;inset:0;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr) auto auto;gap:10px;padding:calc(10px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom))}
-.pv-top{display:flex;align-items:center;gap:10px}
-.pv-top .nm{min-width:0;flex:1;color:var(--ink);text-shadow:none}
-body.cam .pv-top .nm{color:#fff;text-shadow:0 1px 10px rgba(0,20,50,.85)}
-.nm b{display:block;font-size:17px;font-weight:950;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.nm small{font-size:12px;font-weight:800;opacity:.9}
-.row2{display:grid;grid-template-columns:1.15fr 1fr;gap:10px;}
-.acard{position:relative;text-align:left;border:0;padding:11px 13px;font-size:12.5px;font-weight:700;line-height:1.3;color:var(--ink);animation:in .5s both}
-.acard b{display:block;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:900;margin-bottom:3px}
-.acard .more{position:absolute;right:11px;top:6px;font-size:20px;line-height:1;color:var(--blue);font-weight:900}
-.acard::after{content:"";position:absolute;width:12px;height:12px;border-radius:50%;background:#fff;box-shadow:0 0 0 4px rgba(255,255,255,.35),0 0 0 2px var(--sky);animation:pulse 2s infinite}
-.row2.t .acard::after{bottom:-7px;left:50%}
-.row2.b .acard::after{top:-7px;left:50%}
-@keyframes pulse{50%{box-shadow:0 0 0 8px rgba(255,255,255,0),0 0 0 2px var(--sky)}}
-.stage{position:relative;min-height:0}
-.stage .fallback{position:absolute;inset:0;display:grid;place-items:center;font-size:110px}
-.big{font-size:21px;font-weight:950;letter-spacing:-.02em}
-.big small{font-size:12px;font-weight:800;color:var(--muted)}
-.pill{display:inline-block;border-radius:999px;padding:3px 9px;font-size:11px;font-weight:900;margin:2px 3px 2px 0}
-.pill.g{background:#e3f6c4;color:#2f5a05}.pill.y{background:#fff0b0;color:#6b5000}.pill.r{background:#ffd9d1;color:#8a2a12}.pill.n{background:#e6eef7;color:#33516e}
-.pv-act{display:flex;gap:10px}
-.pv-act .btn{padding:14px 10px;font-size:15px}
-.pv-act .btn.sel{background:linear-gradient(135deg,#6a9a00,#96c11f)}
-.cupon{display:flex;align-items:center;gap:10px;padding:8px 14px;font-size:12.5px;font-weight:800}
-.cupon img{height:26px;width:auto;flex:0 0 auto;border-radius:8px}
-
-/* Hoja inferior */
-.sheet-bg{position:fixed;inset:0;z-index:70;background:rgba(0,20,50,.45);display:none}
-.sheet-bg.on{display:block}
-.sheet{position:absolute;left:0;right:0;bottom:0;max-height:82vh;overflow:auto;background:#fff;border-radius:30px 30px 0 0;padding:10px 18px calc(24px + env(safe-area-inset-bottom));animation:up .35s cubic-bezier(.2,.9,.3,1)}
-@keyframes up{from{transform:translateY(100%)}}
-.sheet .grip{width:44px;height:5px;border-radius:3px;background:#d3dde8;margin:0 auto 14px}
-.sheet h3{font-size:22px;font-weight:950;margin-bottom:10px}
-.sheet h4{margin:16px 0 6px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:900}
-.sheet ul,.sheet ol{margin:6px 0;padding-left:20px;font-weight:600}
-.sheet li{margin:4px 0}
-.alt{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:16px;background:#f3f8fd;margin:8px 0;width:100%;border:0;text-align:left}
-.alt b{font-size:14px;display:block;font-weight:900}
-.alt .s{font-size:12px;color:var(--muted);font-weight:700}
-.alt .p{margin-left:auto;text-align:right;font-weight:900;font-size:13.5px;white-space:nowrap}
-.note{padding:11px 13px;border-radius:14px;background:#fff6d6;color:#6b5000;font-weight:700;font-size:13.5px;margin:8px 0}
-
-/* Comparar */
-.cmpH{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.cmpP{padding:14px;text-align:center}
-.cmpP .mini{height:84px;display:grid;place-items:center;font-size:54px}
-.cmpP b{display:block;font-weight:900;font-size:14.5px;line-height:1.15}
-.cmpP small{color:var(--muted);font-weight:700;font-size:12px}
-.cmpP .btn{margin-top:8px}
-.cmpP .btn.ghost{display:block;width:100%;margin-top:2px;text-align:center}
-.cm{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px 0;border-bottom:1px solid rgba(0,60,120,.1);font-size:13.5px;font-weight:800}
-.cm:last-child{border:0}
-.cm small{grid-column:1/3;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:900;margin-bottom:-6px}
-.tip{display:flex;gap:10px;align-items:flex-start;margin-top:12px;padding:13px 14px;font-size:13.5px;font-weight:700}
-
-/* Lista */
-.lit{display:flex;align-items:center;gap:12px;padding:11px 14px;margin-bottom:10px}
-.lit b{display:block;font-size:14px;font-weight:900;line-height:1.2}
-.lit .s{font-size:12px;color:var(--muted);font-weight:700}
-.lit .p{margin-left:auto;font-weight:900;font-size:14px;text-align:right;white-space:nowrap}
-.lit .x{border:0;background:#eef3f8;border-radius:50%;width:30px;height:30px;font-weight:900;color:var(--muted)}
-.qrbox{text-align:center;padding:16px}
-.qrbox .qr{width:170px;height:170px;margin:8px auto 0;background:#fff;border-radius:14px;padding:8px}
-.qrbox .qr svg{width:100%;height:100%;display:block}
-.misalco{margin-top:12px;padding:14px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
-.misalco img{height:44px;width:auto;border-radius:12px}
-.misalco p{margin:0;font-weight:800;font-size:13.5px}
-
-/* historial */
-
-
-/* Capa de realidad aumentada: la información sigue al producto */
-.arLayer{position:absolute;inset:0;pointer-events:none;display:none;overflow:hidden}
-.pv.ar .arLayer{display:block}
-.pv.ar .row2,.pv.ar .stage{display:none}
-.pv.ar .pv-in{display:flex;flex-direction:column;justify-content:space-between}
-.pv.ar .pv-in>div:last-child{margin-top:auto}
-.arLayer.wait{opacity:0}
-.arLayer{transition:opacity .25s}
-.arLayer.lost #arCards,.arLayer.lost #arSvg,.arLayer.lost .arBox{opacity:.55}
-.arLayer.gone #arCards,.arLayer.gone #arSvg,.arLayer.gone .arBox{opacity:.3}
-#arSvg{position:absolute;inset:0}
-#arSvg line{stroke:rgba(255,255,255,.95);stroke-width:2.5;stroke-linecap:round;filter:drop-shadow(0 0 4px rgba(0,125,195,.9))}
-#arSvg circle{fill:#fff;stroke:var(--sky);stroke-width:3;filter:drop-shadow(0 0 5px rgba(0,125,195,.9))}
-.arBox{position:absolute;left:0;top:0;will-change:transform}
-.arBox i{position:absolute;width:22px;height:22px;border:4px solid #fff;filter:drop-shadow(0 0 6px rgba(0,125,195,.9))}
-.arBox i:nth-child(1){left:0;top:0;border-right:0;border-bottom:0;border-radius:10px 0 0 0}
-.arBox i:nth-child(2){right:0;top:0;border-left:0;border-bottom:0;border-radius:0 10px 0 0}
-.arBox i:nth-child(3){left:0;bottom:0;border-right:0;border-top:0;border-radius:0 0 0 10px}
-.arBox i:nth-child(4){right:0;bottom:0;border-left:0;border-top:0;border-radius:0 0 10px 0}
-.acard.ar{position:absolute;left:0;top:0;width:150px;pointer-events:auto;will-change:transform;background:rgba(255,255,255,.9);padding:10px 12px}
-.acard.ar::after{display:none}
-.acard.ar{animation:fadein .5s both}
-@keyframes fadein{from{opacity:0}to{opacity:1}}
-.arMsg{position:absolute;left:50%;top:40%;transform:translateX(-50%);padding:10px 14px;font-weight:800;font-size:13.5px;text-align:center;width:min(86vw,320px);opacity:0;transition:opacity .25s}
-.arLayer.gone .arMsg{opacity:1}
-.arDbg{position:absolute;left:8px;bottom:150px;font:11px monospace;color:#fff;background:rgba(0,0,0,.5);padding:3px 6px;border-radius:6px}
-.hero2{display:grid;place-items:center;gap:6px;text-align:center;height:100%;align-content:center}
-.hero2 b{font-size:20px;font-weight:950}.hero2 span{font-size:14px;color:var(--muted);font-weight:700;max-width:260px}
-.ic.xl{width:96px;height:96px;font-size:50px;border-radius:30px}
-
-@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
-/* ===== Escáner: animación y fluidez (v20) ===== */
-
-/* ===== Encuesta de satisfacción ===== */
-.svBubble{position:fixed;right:14px;bottom:calc(108px + env(safe-area-inset-bottom));z-index:35;display:flex;align-items:center;padding:6px;border:0;border-radius:999px;color:#fff;background:linear-gradient(135deg,#ff9a1f,#ff4f3d);box-shadow:0 14px 30px -10px rgba(255,80,40,.8),0 0 0 3px #fff;transform-origin:100% 100%;animation:svIn .6s cubic-bezier(.2,.9,.3,1) both,svBounce 4.5s 1.6s ease-in-out infinite;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.svBubble::before,.svBubble::after{content:"";position:absolute;inset:0;border-radius:inherit;border:3px solid #ff7a2a;opacity:0;pointer-events:none;animation:svRing 2.4s ease-out infinite}
-.svBubble::after{animation-delay:1.2s}
-.svBubble[hidden]{display:none}
-.svBubble .ic{position:relative;flex:none;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;color:#007dc3;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.18)}
-.svBubble .ic svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.svBubble .ic::after{content:"";position:absolute;top:-1px;right:-1px;width:13px;height:13px;border-radius:50%;background:#ffe600;box-shadow:0 0 0 2.5px #ff6a2f;animation:svDot 1.6s ease-in-out infinite}
-.svBubble .tx{display:block;max-width:0;opacity:0;overflow:hidden;white-space:nowrap;transition:max-width .7s cubic-bezier(.2,.9,.3,1),opacity .5s .15s ease,padding .7s cubic-bezier(.2,.9,.3,1)}
-.svBubble.open .tx{max-width:200px;opacity:1;padding:0 16px 0 11px}
-.svBubble b{display:block;font-size:15px;font-weight:900;line-height:1.2;font-family:var(--font-t);text-shadow:0 1px 2px rgba(120,20,0,.25)}
-.svBubble:active{transform:scale(.96)}
-@keyframes svRing{0%{opacity:.75;transform:scale(1)}100%{opacity:0;transform:scale(1.55,1.9)}}
-@keyframes svBounce{0%,82%,100%{transform:none}86%{transform:translateY(-9px) scale(1.05)}90%{transform:translateY(0)}93%{transform:translateY(-4px)}96%{transform:none}}
-@keyframes svDot{0%,100%{transform:scale(1)}50%{transform:scale(1.3)}}
-@keyframes svIn{from{opacity:0;transform:translateY(18px) scale(.7)}to{opacity:1;transform:none}}
-@keyframes svOut{to{opacity:0;transform:translateY(10px) scale(.85)}}
-@keyframes svWiggle{0%,86%,100%{transform:none}90%{transform:rotate(-12deg) scale(1.06)}94%{transform:rotate(10deg) scale(1.06)}}
-.svBack{margin-bottom:14px}
-.svCard{background:rgba(255,255,255,.94);border-radius:26px;padding:22px 18px 20px;box-shadow:0 18px 36px -20px rgba(0,50,110,.45);border:1.5px solid rgba(255,255,255,.95)}
-.svT{font-size:25px;line-height:1.15;margin:8px 0 6px;font-family:var(--font-t);font-weight:800}
-.svSub{margin:0 0 18px;color:var(--muted);font-weight:600;font-size:14px}
-.svScale{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
-.svScale button{aspect-ratio:1;border:0;border-radius:18px;font:inherit;font-size:22px;font-weight:900;color:var(--blue-d);background:#eaf3fb;box-shadow:inset 0 0 0 2px rgba(0,125,195,.14);transition:transform .18s cubic-bezier(.2,.9,.3,1),background .2s,color .2s,box-shadow .2s}
-.svScale button:active{transform:scale(.92)}
-.svScale button[aria-checked="true"]{color:#fff;background:linear-gradient(135deg,#0a86cc,#005b94);box-shadow:0 10px 18px -8px rgba(0,91,148,.8);transform:translateY(-3px) scale(1.06)}
-.svEnds{display:flex;justify-content:space-between;margin:8px 2px 18px;font-size:12px;font-weight:800;color:var(--muted)}
-.svLb{display:block;font-weight:800;font-size:14px;margin-bottom:6px}
-.svLb small{color:var(--muted);font-weight:600}
-#svTxt{width:100%;border:0;border-radius:18px;padding:13px 14px;font:inherit;font-weight:600;font-size:15px;line-height:1.4;resize:none;background:#f3f8fc;box-shadow:inset 0 0 0 2px rgba(0,125,195,.14);outline:none;color:var(--ink);transition:box-shadow .2s}
-#svTxt:focus{box-shadow:inset 0 0 0 2px var(--blue)}
-.svCnt{text-align:right;font-size:11.5px;font-weight:700;color:var(--muted);margin:4px 4px 14px}
-#svSend[disabled]{opacity:.45;filter:saturate(.6);pointer-events:none}
-.svPriv{margin:12px 0 0;text-align:center;font-size:12.5px;font-weight:600;color:var(--muted)}
-.svDone{text-align:center;padding:10px 0 4px;animation:svIn .5s cubic-bezier(.2,.9,.3,1) both}
-.svDone[hidden]{display:none}
-.svOk{width:74px;height:74px;margin:6px auto 8px;border-radius:50%;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,#a9d62c,#6aa312);box-shadow:0 14px 24px -12px rgba(106,163,18,.9)}
-.svOk svg{width:38px;height:38px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:30;stroke-dashoffset:30;animation:svTick .5s .25s ease-out forwards}
-@keyframes svTick{to{stroke-dashoffset:0}}
-@media (prefers-reduced-motion:reduce){.svBubble,.svBubble::before,.svBubble::after,.svBubble .ic::after,.svDone,.svOk svg{animation:none!important}.svBubble::before,.svBubble::after{display:none}.svOk svg{stroke-dashoffset:0}}
-
-.reticle{container-type:size;will-change:transform}
-.reticle svg{transform-origin:center;transition:stroke .25s;animation:breathe 2.6s ease-in-out infinite}
-@keyframes breathe{0%,100%{transform:scale(1);opacity:.92}50%{transform:scale(1.022);opacity:1}}
-.reticle .laser{top:10%;animation:laser 2s cubic-bezier(.45,.05,.55,.95) infinite alternate;will-change:translate,opacity}
-@supports (height:1cqh){
-  .reticle .laser{animation-name:laser2}
-  @keyframes laser2{0%{translate:0 0;opacity:.35}12%{opacity:1}88%{opacity:1}100%{translate:0 78cqh;opacity:.35}}
-}
-.reticle.ok svg{stroke:var(--green);animation:none}
-.reticle.ok .laser{animation-play-state:paused;opacity:0;transition:opacity .2s}
-.reticle.ok{animation:okp .45s cubic-bezier(.2,.9,.3,1)}
-@keyframes okp{40%{transform:translate(-50%,-50%) scale(1.07)}}
-#scan.on .reticle{animation:reticleIn .55s cubic-bezier(.2,.9,.3,1) both}
-@keyframes reticleIn{from{opacity:0;transform:translate(-50%,-50%) scale(1.16)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
-#scan.on .sc-bot .hint{animation:revealUp .5s .1s cubic-bezier(.2,.9,.3,1) both}
-.sc-bot .manual,.sc-bot #scList{display:none}
-.sc-bot.more .manual,.sc-bot.more #scList{display:flex;animation:revealUp .55s cubic-bezier(.2,.9,.3,1) both}
-.sc-bot.more #scList{animation-delay:.08s}
-@keyframes revealUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-.hint b,.hint span{transition:opacity .2s}
-/* fluidez general: solo opacidad y transform (sin desenfoques animados), respuesta al tocar */
-@keyframes cardIn{0%{opacity:0;translate:0 14px;scale:.94}100%{opacity:1;translate:0 0;scale:1}}
-.bg i{will-change:transform}
-.btn,.rbtn,.nb,.chip{transition:transform .16s cubic-bezier(.2,.9,.3,1),background .2s,box-shadow .2s}
-.btn:active,.rbtn:active{transform:scale(.97)}
-.nb:active{transform:scale(.92)}
-.nb.on svg{animation:navPop .38s cubic-bezier(.2,.9,.3,1)}
-@keyframes navPop{0%{transform:translateY(3px) scale(.86)}60%{transform:translateY(-2px) scale(1.08)}100%{transform:none}}
-.screen.on{animation-duration:.38s}
-@media (prefers-reduced-motion:reduce){.sc-bot.more .manual,.sc-bot.more #scList{animation:none!important}}
-h1,h2,h3,h4,.brand b,.sectitle,.hint b,.nm b,.hero2 b,.sheet h3,.sheet h4,.hero h1,.acard b,.big,.pit b,.alt b,.lit b,.cmpP b,.sc-top .t,.kicker,.cm small,.misalco p,.empty b{font-family:var(--font-t)!important;font-weight:700!important}
-
-/* ===== Tarjetas de información: estilo sobrio y profesional ===== */
-.acard{--ac:var(--blue);border-radius:14px;padding:11px 13px 11px 15px;font-size:12px;font-weight:600;line-height:1.35;letter-spacing:.005em;color:#16314d;background:rgba(255,255,255,.93);border:1px solid rgba(255,255,255,.7);box-shadow:0 1px 0 rgba(255,255,255,.8) inset,0 10px 24px -10px rgba(0,35,80,.55),0 2px 6px -2px rgba(0,35,80,.25);overflow:hidden;transition:box-shadow .2s,background .2s}
-.acard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3.5px;background:var(--ac);border-radius:14px 0 0 14px}
-.acard b{font-family:var(--font-t);font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--ac);margin-bottom:5px;padding-right:16px}
-.acard .more{position:absolute;right:11px;top:10px;width:7px;height:7px;border-top:2px solid #9bb0c4;border-right:2px solid #9bb0c4;transform:rotate(45deg);font-size:0;transition:transform .2s,border-color .2s}
-.acard:active{background:#fff}.acard:active .more{border-color:var(--ac);transform:rotate(45deg) translate(2px,-2px)}
-.acard .big{font-family:var(--font-t);font-size:19px;font-weight:700;letter-spacing:-.01em;color:#0b2a4a}
-.acard .big small{font-size:11px;font-weight:600;color:#6a8199}
-.acard .pill{border-radius:7px;font-size:10.5px;font-weight:700;padding:3px 8px;margin:2px 3px 0 0}
-.acard.ar{padding:11px 13px 11px 15px;background:rgba(255,255,255,.93)}
-.acard::after{display:none}
-.acard{animation:cardIn .7s cubic-bezier(.2,.8,.2,1) both}
-.acard.ar{animation:cardIn .7s cubic-bezier(.2,.8,.2,1) both}
-@keyframes cardIn{0%{opacity:0;translate:0 16px;scale:.92;filter:blur(6px)}60%{filter:blur(0)}100%{opacity:1;translate:0 0;scale:1;filter:blur(0)}}
-.acard::before{animation:barIn .6s .25s cubic-bezier(.2,.8,.2,1) both;transform-origin:top}
-@keyframes barIn{from{transform:scaleY(0)}to{transform:scaleY(1)}}
-#arSvg line{stroke-dasharray:600;stroke-dashoffset:600;animation:draw .9s .1s ease-out forwards;stroke:rgba(255,255,255,.9);stroke-width:1.75;filter:drop-shadow(0 0 3px rgba(0,60,130,.8))}
-@keyframes draw{to{stroke-dashoffset:0}}
-#arSvg circle{r:4.5;stroke-width:2.5;animation:popIn .5s .6s cubic-bezier(.2,.8,.2,1) both;transform-box:fill-box;transform-origin:center}
-@keyframes popIn{from{opacity:0;transform:scale(0)}to{opacity:1;transform:scale(1)}}
-.arBox i{width:18px;height:18px;border-width:3px;animation:cornerIn .6s cubic-bezier(.2,.8,.2,1) both}
-.arBox{animation:fadein .4s both}
-@keyframes cornerIn{from{opacity:0;scale:1.5}to{opacity:1;scale:1}}
-@media (prefers-reduced-motion:reduce){.acard,.acard::before,#arSvg line,#arSvg circle,.arBox i{animation-duration:.01s!important;animation-delay:0s!important}}
-.ic.pimg{background:#fff;padding:3px;overflow:hidden}
-.ic.pimg img{width:100%;height:100%;object-fit:contain;display:block}
-.ic.xl.pimg{width:150px;height:150px;border-radius:24px;padding:8px}
-.cmpP .mini img{max-height:84px;max-width:100%;object-fit:contain}
-.stage{display:block}
-.stage .m3d{position:absolute;inset:0;touch-action:none;cursor:grab;display:block}
-.stage .m3d:active{cursor:grabbing}
-.m3dhint{position:absolute;left:50%;top:4px;transform:translateX(-50%);font-family:var(--font-t);font-weight:700;font-size:12px;color:var(--blue-d);background:rgba(255,255,255,.8);border-radius:999px;padding:5px 12px;transition:opacity .4s;pointer-events:none;white-space:nowrap}
-.m3dhint.off{opacity:0}
-.acard b{font-size:10.5px}
-:focus-visible{outline:3px solid var(--sky);outline-offset:2px;border-radius:8px}
-
-/* ===== RA: puntos compactos a los lados del producto (el centro queda libre) ===== */
-body.cam .pv::before{background:linear-gradient(180deg,rgba(0,40,90,.3),transparent 24%,transparent 62%,rgba(6,24,50,.42))}
-.camLayer::after{background:radial-gradient(130% 90% at 50% 45%,transparent 55%,rgba(0,20,50,.3))}
-.acard.ar{width:auto;max-width:212px;padding:7px 12px 7px 11px;border-radius:999px;cursor:pointer;background:rgba(255,255,255,.88);pointer-events:auto;transition:background .2s,box-shadow .2s;-webkit-user-select:none;user-select:none}
-.acard.ar::before{display:none}
-.acard.ar .more{display:none}
-.acard.ar .ahead{display:flex;align-items:center;gap:7px;white-space:nowrap}
-.acard.ar .ahead b{margin:0;padding:0;font-size:10.5px;letter-spacing:.1em}
-.acard.ar .adot{flex:none;width:9px;height:9px;border-radius:50%;background:var(--ac);box-shadow:0 0 0 3px rgba(255,255,255,.9),0 0 0 4.5px var(--ac)}
-.acard.ar .aval{font-weight:700;font-size:13.5px;color:#0b2a4a;margin-left:2px}
-.acard.ar .aval small{font-size:10.5px;font-weight:600;color:#6a8199}
-.acard.ar .mdots{display:inline-flex;gap:3px;margin-left:2px}
-.acard.ar .mdots i{width:9px;height:9px;border-radius:50%;background:#9bb0c4}
-.acard.ar .mdots i.g{background:#7fb11a}.acard.ar .mdots i.y{background:#f2b300}.acard.ar .mdots i.r{background:#e0523a}
-.acard.ar .abody{display:none;margin-top:8px;white-space:normal;font-size:12.5px;line-height:1.35}
-.acard.ar .ago{display:none;margin-top:9px;border:0;background:none;padding:2px 0;font:inherit;font-weight:800;font-size:12.5px;color:var(--ac);cursor:pointer}
-.acard.ar.open{width:204px;border-radius:16px;padding:11px 13px 11px 14px;background:rgba(255,255,255,.96);box-shadow:0 14px 30px -10px rgba(0,35,80,.6)}
-.acard.ar.open::before{display:block}
-.acard.ar.open .abody,.acard.ar.open .ago{display:block}
-.acard.ar.open .ahead{white-space:normal}
-.acard.ar.open .aval,.acard.ar.open .mdots{display:none}
-.arLayer.lost .acard.ar{opacity:.6}
-</style>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@700&display=swap">
+<link rel="stylesheet" href="css/app.css?v=36">
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs><symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7H8l1.2-2h5.6L16 7h2.5A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5z"/><circle cx="12" cy="13" r="3.6"/></symbol><symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.2"/><path d="M12 7.5V12l3 2"/></symbol><symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M11 3.5l1.9 5.1 5.1 1.9-5.1 1.9L11 17.5l-1.9-5.1L4 10.5l5.1-1.9z"/><path d="M18.5 16v4M16.5 18h4"/></symbol><symbol id="i-scale" viewBox="0 0 24 24"><path d="M12 4v16M8 20h8"/><path d="M5 7.5h14"/><path d="m5 7.5-2.6 6a3.2 3.2 0 0 0 5.2 0zM19 7.5l-2.6 6a3.2 3.2 0 0 0 5.2 0z"/></symbol><symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.3"/><path d="m15.6 15.6 4.4 4.4"/></symbol><symbol id="i-cart" viewBox="0 0 24 24"><path d="M3 4h2.4l1.9 10.2a1 1 0 0 0 .8.8h8.4a1 1 0 0 0 1-.7L19.5 8H6.3"/><circle cx="9.5" cy="19" r="1.3"/><circle cx="16.5" cy="19" r="1.3"/></symbol><symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="9.5" rx="2"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></symbol><symbol id="i-x" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></symbol><symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol><symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol><symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol><symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s6.5-5.6 6.5-11a6.5 6.5 0 0 0-13 0C5.5 15.4 12 21 12 21z"/><circle cx="12" cy="10" r="2.3"/></symbol><symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r=".8"/></symbol><symbol id="i-arrows" viewBox="0 0 24 24"><path d="M4 12h16M8 8l-4 4 4 4M16 8l4 4-4 4"/></symbol><symbol id="i-cat-skincare" viewBox="0 0 24 24"><path d="M9 3.5h6M12 3.5V6"/><path d="M8.5 9A1.5 1.5 0 0 1 10 7.5h4A1.5 1.5 0 0 1 15.5 9v10.5a1.5 1.5 0 0 1-1.5 1.5h-4a1.5 1.5 0 0 1-1.5-1.5z"/><path d="M8.5 13h7"/></symbol><symbol id="i-cat-bebe" viewBox="0 0 24 24"><circle cx="12" cy="12.5" r="7.5"/><path d="M9.2 11.3v.4M14.8 11.3v.4"/><path d="M9.7 15a3.4 3.4 0 0 0 4.6 0"/><path d="M12 5c1.4 0 2.4-.9 2.4-2"/></symbol><symbol id="i-cat-vitaminas" viewBox="0 0 24 24"><path d="M5 19c0-8 5-13 14-14 0 9-5 14-13 14z"/><path d="M5 19c3-4 6-7 10-9"/></symbol><symbol id="i-cat-salud" viewBox="0 0 24 24"><g transform="rotate(-45 12 12)"><rect x="2.5" y="8.5" width="19" height="7" rx="3.5"/><path d="M12 8.5v7"/></g></symbol><symbol id="i-cat-higiene" viewBox="0 0 24 24"><path d="M12 3.5s5 5.4 5 9.2a5 5 0 0 1-10 0c0-3.8 5-9.2 5-9.2z"/><path d="M9.8 14a2.4 2.4 0 0 0 2.2 1.8"/></symbol><symbol id="i-cat-otro" viewBox="0 0 24 24"><path d="M6 8h12l1 12H5z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></symbol></defs></svg>
 <noscript><p style="padding:20px;font-family:sans-serif">Salco Lente necesita JavaScript para funcionar.</p></noscript>
 <div class="bg" aria-hidden="true"><i></i><i></i><i></i></div>
 
@@ -400,24 +22,24 @@ body.cam .pv::before{background:linear-gradient(180deg,rgba(0,40,90,.3),transpar
   <div class="top-in">
     <img src="img/sb-logo.png" alt="Farmacias Salcobrand">
     <div class="brand"><b>Salco Lente</b><small>Explora tu farmacia</small></div>
-    <button class="pbtn" id="openHist" type="button">🕘 Historial</button>
+    <button class="pbtn" id="openHist" type="button"><svg class="i" aria-hidden="true"><use href="#i-clock"/></svg> Historial</button>
   </div>
 </header>
 
 <main class="wrap">
   <!-- Inicio -->
-  <section class="screen on" id="s-home">
+  <section class="screen on stg" id="s-home">
     <div class="hero">
-      <span class="kicker">📷 Herramienta con Realidad Aumentada</span>
+      <span class="kicker"><svg class="i" aria-hidden="true"><use href="#i-camera"/></svg> Herramienta con Realidad Aumentada</span>
       <h1>APUNTA, DESCUBRE Y <em>DECIDE</em></h1>
       <p>Escanea el código de barras de cualquier producto y descubre más información sobre él.</p>
-      <div class="go"><button class="btn" id="homeScan">Escanear un producto 📷</button></div>
+      <div class="go"><button class="btn" id="homeScan">Escanear un producto <svg class="i" aria-hidden="true"><use href="#i-camera"/></svg></button></div>
     </div>
     <div class="sectitle">CÓMO FUNCIONA</div>
     <div class="card"><ul class="how">
-      <li><span class="ic" style="--c1:#d9f0ff;--c2:#9fd8ff">📷</span><div>Escanea el código de barras<small>O búscalo por nombre si prefieres</small></div></li>
-      <li><span class="ic" style="--c1:#e5f6b8;--c2:#c2e66a">✨</span><div>Mira tarjetas en realidad aumentada<small>Para qué sirve, ingredientes, precio por unidad y uso</small></div></li>
-      <li><span class="ic" style="--c1:#ffe9c4;--c2:#ffc978">⚖️</span><div>Compara y arma tu lista<small>Y muéstrala en caja con un QR</small></div></li>
+      <li><span class="ic" style="--c1:#d9f0ff;--c2:#9fd8ff"><svg class="i" aria-hidden="true"><use href="#i-camera"/></svg></span><div>Escanea el código de barras<small>O búscalo por nombre si prefieres</small></div></li>
+      <li><span class="ic" style="--c1:#e5f6b8;--c2:#c2e66a"><svg class="i" aria-hidden="true"><use href="#i-sparkle"/></svg></span><div>Mira tarjetas en realidad aumentada<small>Para qué sirve, ingredientes, precio por unidad y uso</small></div></li>
+      <li><span class="ic" style="--c1:#ffe9c4;--c2:#ffc978"><svg class="i" aria-hidden="true"><use href="#i-scale"/></svg></span><div>Compara y arma tu lista<small>Y muéstrala en caja con un QR</small></div></li>
     </ul></div>
     <p class="legal" id="legalHome"></p>
     <p class="foot">Farmacias Salcobrand · No guardaremos ninguna imagen de tu cámara.</p>
@@ -425,7 +47,7 @@ body.cam .pv::before{background:linear-gradient(180deg,rgba(0,40,90,.3),transpar
 
   <!-- Encuesta de satisfacción (anónima) -->
   <section class="screen" id="s-survey">
-    <button class="rbtn svBack" id="svBack" type="button">← Volver</button>
+    <button class="rbtn svBack" id="svBack" type="button"><svg class="i" aria-hidden="true"><use href="#i-back"/></svg> Volver</button>
     <div class="svCard">
       <div id="svForm">
         <span class="kicker">Tu opinión nos ayuda</span>
@@ -443,7 +65,7 @@ body.cam .pv::before{background:linear-gradient(180deg,rgba(0,40,90,.3),transpar
         <textarea id="svTxt" maxlength="500" rows="4" placeholder="Cuéntanos qué te gustó o qué mejorarías"></textarea>
         <div class="svCnt"><span id="svN">0</span>/500</div>
         <button class="btn" id="svSend" type="button" disabled>Enviar mi opinión</button>
-        <p class="svPriv">🔒 Anónima: no pedimos nombre, correo ni ningún dato personal.</p>
+        <p class="svPriv"><span class="svPriv-i"><svg class="i" aria-hidden="true"><use href="#i-lock"/></svg></span> Anónima: no pedimos nombre, correo ni ningún dato personal.</p>
       </div>
       <div id="svDone" class="svDone" hidden>
         <div class="svOk"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></div>
@@ -455,21 +77,21 @@ body.cam .pv::before{background:linear-gradient(180deg,rgba(0,40,90,.3),transpar
   </section>
 
   <!-- Buscar -->
-  <section class="screen" id="s-search">
-    <h2 style="font-size:28px;margin-bottom:12px">Buscar producto</h2>
+  <section class="screen stg" id="s-search">
+    <h2 class="page-t">Buscar producto</h2>
     <input class="srch" id="q" type="search" placeholder="Nombre, marca o categoría" autocomplete="off">
     <div class="chips" id="qchips"></div>
     <div class="plist" id="plist"></div>
   </section>
 
   <!-- Comparar -->
-  <section class="screen" id="s-compare"></section>
+  <section class="screen stg" id="s-compare"></section>
 
   <!-- Mi lista -->
-  <section class="screen" id="s-list"></section>
+  <section class="screen stg" id="s-list"></section>
 
   <!-- Historial -->
-  <section class="screen" id="s-history"></section>
+  <section class="screen stg" id="s-history"></section>
 </main>
 
 <nav class="nav" aria-label="Navegación principal"><div class="nav-in">
@@ -489,11 +111,11 @@ body.cam .pv::before{background:linear-gradient(180deg,rgba(0,40,90,.3),transpar
     <svg viewBox="0 0 100 100" preserveAspectRatio="none" fill="none" stroke="#fff" stroke-width="1.6" vector-effect="non-scaling-stroke"><path d="M0 22V8Q0 0 8 0H22M78 0H92Q100 0 100 8V22M100 78V92Q100 100 92 100H78M22 100H8Q0 100 0 92V78" stroke-width="5" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>
     <div class="laser"></div>
   </div>
-  <div class="sc-top"><button class="rbtn" id="scClose">✕ Cerrar</button><span class="t" id="scTitle">Escanear producto</span></div>
+  <div class="sc-top"><button class="rbtn" id="scClose"><svg class="i" aria-hidden="true"><use href="#i-x"/></svg> Cerrar</button><span class="t" id="scTitle">Escanear producto</span></div>
   <div class="sc-bot">
     <div class="glass hint" aria-live="polite"><b id="scMsg">Apunta al código de barras</b><span id="scSub">Acércate hasta que se vea nítido. Lo reconoceremos en segundos.</span></div>
     <form class="manual" id="manual"><input id="manualIn" inputmode="numeric" placeholder="O escribe el código" autocomplete="off"><button class="rbtn" type="submit">Buscar</button></form>
-    <button class="btn alt" id="scList" type="button">🔎 Busca por nombre</button>
+    <button class="btn alt" id="scList" type="button"><svg class="i" aria-hidden="true"><use href="#i-search"/></svg> Busca por nombre</button>
   </div>
 </div>
 
@@ -501,7 +123,8 @@ body.cam .pv::before{background:linear-gradient(180deg,rgba(0,40,90,.3),transpar
 <div class="ov pv" id="pv" role="dialog" aria-modal="true" aria-label="Información del producto">
   <div class="pv-in">
     <div class="pv-top">
-      <button class="rbtn" id="pvBack">← Volver</button>
+      <button class="rbtn" id="pvBack"><svg class="i" aria-hidden="true"><use href="#i-back"/></svg> Volver</button>
+      <span id="pvImg" class="pvImg"></span>
       <div class="nm"><b id="pvName"></b><small id="pvBrand"></small></div>
     </div>
     <div class="row2 t" id="rowT"></div>
@@ -509,9 +132,9 @@ body.cam .pv::before{background:linear-gradient(180deg,rgba(0,40,90,.3),transpar
     <div class="row2 b" id="rowB"></div>
     <div>
       <div class="glass cupon hidden" id="pvCupon"></div>
-      <div class="pv-act" style="margin-top:8px">
-        <button class="btn alt" id="pvCompare">⚖️ Comparar</button>
-        <button class="btn" id="pvAdd">＋ A mi lista</button>
+      <div class="pv-act">
+        <button class="btn alt" id="pvCompare"><svg class="i" aria-hidden="true"><use href="#i-scale"/></svg> Comparar</button>
+        <button class="btn" id="pvAdd"><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg> A mi lista</button>
       </div>
     </div>
   </div>
@@ -519,7 +142,7 @@ body.cam .pv::before{background:linear-gradient(180deg,rgba(0,40,90,.3),transpar
     <svg id="arSvg" width="100%" height="100%"></svg>
     <div class="arBox" id="arBox"><i></i><i></i><i></i><i></i></div>
     <div id="arCards"></div>
-    <div class="glass arMsg" id="arMsg">📍 Apunta al producto para ver la información</div>
+    <div class="glass arMsg" id="arMsg"><svg class="i" aria-hidden="true"><use href="#i-pin"/></svg> Apunta al producto para ver la información</div>
     <div class="arDbg" id="arDbg"></div>
   </div>
 </div>
@@ -528,9 +151,9 @@ body.cam .pv::before{background:linear-gradient(180deg,rgba(0,40,90,.3),transpar
 
 <script src="lib/zxing.min.js"></script>
 <script src="lib/qrcode.js"></script>
-<script src="js/config.js?v=34"></script>
-<script src="js/ar.js?v=34"></script>
-<script src="js/app.js?v=34"></script>
-<script src="js/encuesta.js?v=34"></script>
+<script src="js/config.js?v=36"></script>
+<script src="js/ar.js?v=36"></script>
+<script src="js/app.js?v=36"></script>
+<script src="js/encuesta.js?v=36"></script>
 </body>
 </html>

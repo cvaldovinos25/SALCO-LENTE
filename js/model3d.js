@@ -268,6 +268,11 @@
     return wrapG;
   }
 
+  function disposeObj(o) {   // libera geometrías, materiales y texturas de WebGL
+    if (o.geometry) o.geometry.dispose();
+    if (o.material) (Array.isArray(o.material) ? o.material : [o.material]).forEach((mm) => { if (mm.map) mm.map.dispose(); mm.dispose(); });
+  }
+
   M3.mount = function (el, p) {
     if (!M3.supported()) return null;
     const THREE = window.THREE;
@@ -277,7 +282,7 @@
     renderer.outputEncoding = THREE.sRGBEncoding;
     const cv = renderer.domElement; cv.className = 'm3d'; cv.setAttribute('aria-label', 'Modelo 3D de ' + p.nombre);
     el.innerHTML = ''; el.appendChild(cv);
-    const hint = document.createElement('div'); hint.className = 'm3dhint'; hint.textContent = '↔ Gira · pellizca para acercar'; el.appendChild(hint);
+    const hint = document.createElement('div'); hint.className = 'm3dhint'; hint.innerHTML = '<svg class="i" aria-hidden="true"><use href="#i-arrows"/></svg> Gira · pellizca para acercar'; el.appendChild(hint);
     const scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(32, 1, .1, 50);
     cam.position.set(0, .05, 5.3);
     scene.add(new THREE.HemisphereLight(0xffffff, 0xbcd6ea, .95));
@@ -306,7 +311,7 @@
           const g2 = caras ? boxFromFaces(THREE, { frente: ims[0], lado: ims[1], reverso: caras.reverso ? ims[2] : null }, p.modelo)
             : fromImage(THREE, ims[0], Object.assign({ tipo: 'frasco' }, p.modelo || {}), ims[1] || null);
           if (g2 && g2.userData.fitW) { fitK = Math.max(1, g2.userData.fitW / 1.7); baseZ = (w / h < .7 ? 6.6 : 5.7) * fitK; }
-          if (g2) { pivot.remove(model); model.traverse((o) => { if (o.geometry) o.geometry.dispose(); if (o.material) { (Array.isArray(o.material) ? o.material : [o.material]).forEach((mm) => { if (mm.map) mm.map.dispose(); mm.dispose(); }); } }); pivot.add(g2); pop = .7; }
+          if (g2) { pivot.remove(model); model.traverse(disposeObj); pivot.add(g2); pop = .7; }
           else console.info('Salco Lente: no se pudo separar el producto del fondo en', srcs[0]);
         } catch (e) { console.info('Salco Lente: modelo desde la foto no disponible', e); }
       }).catch((src) => console.info('Salco Lente: la imagen no se pudo cargar para el 3D', src));
@@ -317,17 +322,17 @@
     const sh = new THREE.Mesh(new THREE.PlaneGeometry(2.8, 2.8), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(sc), transparent: true, depthWrite: false }));
     sh.rotation.x = -Math.PI / 2; sh.position.y = -1.55; scene.add(sh);
 
-    let dead0 = 0, rx = -.12, ry = -.5, vx = 0, vy = 0, drag = false, lx = 0, ly = 0, idle = 0, raf = 0, dead = false, w = 0, h = 0, baseZ = 5.7, fitK = 1;
+    const calm = window.matchMedia && matchMedia('(prefers-reduced-motion:reduce)').matches;   // sin giro de entrada ni flotación
+    let intro = calm ? 0 : 1, rx = -.12, ry = calm ? -.5 : -2.9, vx = 0, vy = 0, drag = false, lx = 0, ly = 0, idle = 0, raf = 0, dead = false, w = 0, h = 0, baseZ = 5.7, fitK = 1;
     const resize = () => {
       const r = el.getBoundingClientRect(); const nw = Math.max(1, Math.round(r.width)), nh = Math.max(1, Math.round(r.height));
       if (nw === w && nh === h) return; w = nw; h = nh; renderer.setSize(w, h, false); cv.style.width = w + 'px'; cv.style.height = h + 'px';
       cam.aspect = w / h; baseZ = (w / h < .7 ? 6.6 : 5.7) * fitK; cam.updateProjectionMatrix();
     };
-    const down = (e) => { drag = true; lx = e.clientX; ly = e.clientY; vx = vy = 0; idle = 0; hint.classList.add('off'); try { cv.setPointerCapture(e.pointerId); } catch (x) {} };
+    const down = (e) => { drag = true; intro = 0; lx = e.clientX; ly = e.clientY; vx = vy = 0; idle = 0; hint.classList.add('off'); try { cv.setPointerCapture(e.pointerId); } catch (x) {} };
     const move = (e) => { if (!drag) return; const dx = e.clientX - lx, dy = e.clientY - ly; lx = e.clientX; ly = e.clientY; vy = dx * .012; vx = dy * .008; ry += vy; rx = Math.max(-.8, Math.min(.8, rx + vx)); };
     const ptrs = new Map(); let zoom = 1, pd0 = 0, z0 = 1;
     const setZoom = (z) => { zoom = Math.max(0.65, Math.min(1.9, z)); };
-    const down2 = down, move2 = move;
     const up = (e) => { drag = false; if (e && e.pointerId != null) ptrs.delete(e.pointerId); };
     cv.addEventListener('pointerdown', (e) => { ptrs.set(e.pointerId, [e.clientX, e.clientY]); if (ptrs.size === 2) { const a = [...ptrs.values()]; pd0 = Math.hypot(a[0][0] - a[1][0], a[0][1] - a[1][1]); z0 = zoom; drag = false; } else down(e); });
     cv.addEventListener('pointermove', (e) => { if (ptrs.has(e.pointerId)) ptrs.set(e.pointerId, [e.clientX, e.clientY]); if (ptrs.size === 2) { const a = [...ptrs.values()]; setZoom(z0 * Math.hypot(a[0][0] - a[1][0], a[0][1] - a[1][1]) / (pd0 || 1)); hint.classList.add('off'); } else move(e); });
@@ -337,11 +342,12 @@
     const ro = window.ResizeObserver ? new ResizeObserver(resize) : null; if (ro) ro.observe(el);
     const t0 = performance.now();
     const loop = (t) => {
-      if (dead) return; raf = requestAnimationFrame(loop); resize();
-      if (!drag) { idle++; if (idle > 90) ry += .008; ry += vy * .92; vy *= .92; rx += vx * .9; vx *= .9; rx += (-.12 - rx) * .01; rx = Math.max(-.8, Math.min(.8, rx)); }
-      const f = Math.sin((t - t0) / 900) * .05;
+      if (dead) return; raf = requestAnimationFrame(loop); if (!ro) resize();
+      if (intro && !drag) { ry += (-.5 - ry) * .06; if (Math.abs(ry + .5) < .03) intro = 0; }   // giro de entrada que se frena solo
+      else if (!drag) { idle++; if (idle > 90) ry += .008; ry += vy * .92; vy *= .92; rx += vx * .9; vx *= .9; rx += (-.12 - rx) * .01; rx = Math.max(-.8, Math.min(.8, rx)); }
+      const f = calm ? 0 : Math.sin((t - t0) / 900) * .05;
       cam.position.z += (baseZ / zoom - cam.position.z) * 0.18;
-      if (pop < 1) pop = Math.min(1, pop + .06); pivot.scale.setScalar(pop);
+      if (pop < 1) pop = pop > .995 ? 1 : pop + (1 - pop) * .14; pivot.scale.setScalar(pop);
       pivot.rotation.set(rx, ry, 0); pivot.position.y = f; sh.scale.setScalar(1 - f * .6);
       renderer.render(scene, cam);
     };
@@ -349,10 +355,10 @@
     // entrada suave
     cv.style.opacity = 0; requestAnimationFrame(() => { cv.style.transition = 'opacity .6s'; cv.style.opacity = 1; });
     return {
-      rotate(a, b) { ry = a; if (b != null) rx = b; idle = -1e6; vy = vx = 0; },
+      rotate(a, b) { intro = 0; ry = a; if (b != null) rx = b; idle = -1e6; vy = vx = 0; },
       destroy() {
         dead = true; cancelAnimationFrame(raf); if (ro) ro.disconnect();
-        scene.traverse((o) => { if (o.geometry) o.geometry.dispose(); if (o.material) { (Array.isArray(o.material) ? o.material : [o.material]).forEach((mm) => { if (mm.map) mm.map.dispose(); mm.dispose(); }); } });
+        scene.traverse(disposeObj);
         renderer.dispose(); try { renderer.forceContextLoss(); } catch (e) {} el.innerHTML = '';
       }
     };

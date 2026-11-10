@@ -17,7 +17,8 @@ Sitio (GitHub Pages): `https://cvaldovinos25.github.io/SALCO-LENTE/`
 
 ```
 SALCO-LENTE/
-├── index.html          Interfaz (mobile first), estilos y pantallas
+├── index.html          Pantallas (mobile first) y sprite de iconos de línea
+├── css/app.css         Estilos y animaciones (respetan "reducir movimiento")
 ├── js/
 │   ├── config.js       Recordatorio Mi Salcobrand, categorías y textos legales (lo que se edita)
 │   ├── app.js          Flujo: escaneo, vista RA, comparar, lista, historial
@@ -86,7 +87,7 @@ La cámara se ve de fondo y la información se mantiene en el espacio sobre el p
 
 ## Tipografía
 
-Los títulos usan **Avenir Bold** (`Avenir Next`/`Avenir` si el dispositivo la tiene, como iPhone y Mac). Avenir es una fuente con licencia y no se puede incluir en el sitio: en Android y Windows se usa Nunito Bold (Google Fonts) como reemplazo. Para usar Avenir en todos los dispositivos hay que comprar la licencia web y cargarla con `@font-face` en `index.html`.
+Los títulos usan **Avenir Bold** (`Avenir Next`/`Avenir` si el dispositivo la tiene, como iPhone y Mac). Avenir es una fuente con licencia y no se puede incluir en el sitio: en Android y Windows se usa Nunito Bold (Google Fonts) como reemplazo. Para usar Avenir en todos los dispositivos hay que comprar la licencia web y cargarla con `@font-face` en `css/app.css`.
 
 ## Sin conexión e instalación
 
@@ -125,3 +126,10 @@ Usa el lector nativo del navegador (`BarcodeDetector`, en Chrome Android) y, si 
 ## Créditos
 
 [three.js](https://threejs.org) (MIT), [ZXing](https://github.com/zxing-js/library) (Apache 2.0), [qrcode-generator](https://github.com/kazuhikoarase/qrcode-generator) (MIT). Ver licencias en `lib/`.
+
+
+## Iconos y animaciones
+
+- Los iconos son SVG de línea (mismo trazo que la barra inferior) definidos una sola vez en `index.html` (`<symbol id="i-...">`) y usados con `ico('nombre')` en `js/app.js`. Toman el color del texto: blanco sobre fondos azules y azul sobre fondos claros. Los iconos de categoría se eligen con `icono` en `CATEGORIAS` (`js/config.js`).
+- Las animaciones usan solo `opacity` y `transform`. Con "reducir movimiento" activado en el celular se muestran sin movimiento.
+- Al subir cambios, sube el número de versión (`?v=`) en `index.html` y en `sw.js` (`CACHE` y `V`).

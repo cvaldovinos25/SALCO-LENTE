@@ -25,11 +25,11 @@ SL.CONFIG = {
   SCAN: { INTERVALO_MS: 140, ANCHO_ANALISIS: 1280 },
 
   CATEGORIAS: {
-    skincare:  { nombre: 'Skincare',  emoji: '🧴', c1: '#d9f0ff', c2: '#9fd8ff' },
-    bebe:      { nombre: 'Bebé',      emoji: '👶', c1: '#fff3b0', c2: '#ffd54a' },
-    vitaminas: { nombre: 'Vitaminas', emoji: '🌿', c1: '#e5f6b8', c2: '#c2e66a' },
-    salud:     { nombre: 'Salud',     emoji: '💊', c1: '#ffd9d1', c2: '#ffb4a6' },
-    higiene:   { nombre: 'Higiene',   emoji: '🧼', c1: '#eadcff', c2: '#cdb8ff' }
+    skincare:  { nombre: 'Skincare',  icono: 'skincare', c1: '#d9f0ff', c2: '#9fd8ff' },
+    bebe:      { nombre: 'Bebé',      icono: 'bebe', c1: '#fff3b0', c2: '#ffd54a' },
+    vitaminas: { nombre: 'Vitaminas', icono: 'vitaminas', c1: '#e5f6b8', c2: '#c2e66a' },
+    salud:     { nombre: 'Salud',     icono: 'salud', c1: '#ffd9d1', c2: '#ffb4a6' },
+    higiene:   { nombre: 'Higiene',   icono: 'higiene', c1: '#eadcff', c2: '#cdb8ff' }
   },
 
   TEXTO: {

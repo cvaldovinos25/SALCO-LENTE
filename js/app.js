@@ -4,12 +4,15 @@
    Todo ocurre en el celular: no se envían imágenes ni datos.
    ============================================================ */
 (function () {
-  const SL = window.SL, C = SL.CONFIG; C.MI_SALCO = C.MI_SALCO || { activo: true, corto: 'No olvides usar tu código Mi Salcobrand en caja.', largo: 'Antes de pagar, indica tu código Mi Salcobrand en caja para aprovechar tus beneficios.' };
+  const SL = window.SL, C = SL.CONFIG;
+  const VER = ((document.currentScript && document.currentScript.src.match(/v=(\d+)/)) || [])[1] || '';   // misma versión que index.html: sirve para pedir los demás scripts
   const $ = (s, r) => (r || document).querySelector(s);
   const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
   const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const clp = (n) => '$ ' + Math.round(n).toLocaleString('es-CL');
-  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  /* Iconos de línea (sprite en index.html): toman el color del texto que los rodea */
+  const ico = (n, c) => '<svg class="i' + (c ? ' ' + c : '') + '" aria-hidden="true"><use href="#i-' + n + '"/></svg>';
+  const reduceMotion = () => matchMedia('(prefers-reduced-motion:reduce)').matches;
   const qs = new URLSearchParams(location.search);
   const DEBUG = qs.has('debug');
 
@@ -29,7 +32,7 @@
   function toast(msg, ms) {
     $$('.toast').forEach((t) => t.remove());
     const t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status'); t.setAttribute('aria-live', 'polite'); t.textContent = msg; document.body.appendChild(t);
-    setTimeout(() => t.remove(), ms || 3200);
+    setTimeout(() => { t.classList.add('out'); setTimeout(() => t.remove(), 250); }, ms || 3200);
   }
 
   /* ---------- Catálogo ---------- */
@@ -51,23 +54,29 @@
   /* ---------- Cálculos ---------- */
   const unitVal = (p) => p.precio / (p.cantidad && p.cantidad.valor ? p.cantidad.valor : 1);
   const unitTxt = (p) => { const v = unitVal(p); return '$ ' + (v < 10 ? v.toFixed(1).replace('.', ',') : Math.round(v).toLocaleString('es-CL')) + ' / ' + p.cantidad.unidad; };
-  const catMeta = (p) => C.CATEGORIAS[p.categoria] || { nombre: p.categoria, emoji: '🛍️', c1: '#e3f4ff', c2: '#f0fadb' };
+  const catMeta = (p) => C.CATEGORIAS[p.categoria] || { nombre: p.categoria, icono: 'otro', c1: '#e3f4ff', c2: '#f0fadb' };
+  const catIco = (p) => ico('cat-' + (catMeta(p).icono || 'otro'));
+  const catBg = (p) => '--c1:' + catMeta(p).c1 + ';--c2:' + catMeta(p).c2;
   /* Imagen del producto (campo "imagen" del catálogo); si falta o no carga, se usa el ícono de la categoría */
+  SL.imgFail = (img) => {
+    const b = img.parentNode, p = S.byId[b.dataset.id]; if (!p) return;
+    b.classList.remove('pimg'); b.style.cssText = catBg(p); b.innerHTML = catIco(p);
+  };
   const pimg = (p, cls) => p.imagen
-    ? '<span class="ic pimg ' + (cls || '') + '"><img src="' + esc(p.imagen) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.classList.remove(\'pimg\');this.parentNode.style.cssText=\'--c1:' + catMeta(p).c1 + ';--c2:' + catMeta(p).c2 + '\';this.parentNode.textContent=\'' + catMeta(p).emoji + '\'"></span>'
+    ? '<span class="ic pimg ' + (cls || '') + '" data-id="' + esc(p.id) + '"><img src="' + esc(p.imagen) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="SL.imgFail(this)"></span>'
     : '';
-  const icBubble = (p, cls) => pimg(p, cls) || '<span class="ic ' + (cls || '') + '" style="--c1:' + catMeta(p).c1 + ';--c2:' + catMeta(p).c2 + '">' + catMeta(p).emoji + '</span>';
+  const icBubble = (p, cls) => pimg(p, cls) || '<span class="ic ' + (cls || '') + '" style="' + catBg(p) + '">' + catIco(p) + '</span>';
 
   /* Advertencias de ingredientes (según la ficha del producto) */
   function sema(p, all) {
-    const f = p.flags || {}, pr = { embarazo: false, fragancias: false, sensible: false }, o = [];
+    const f = p.flags || {}, o = [];
     if (f.fragancia === false) o.push(['g', 'Sin fragancia declarada']);
-    else if (f.fragancia === true) o.push([pr.fragancias ? 'r' : 'n', pr.fragancias ? 'Tiene fragancia (tú las evitas)' : 'Con fragancia']);
+    else if (f.fragancia === true) o.push(['n', 'Con fragancia']);
     else o.push(['y', 'Fragancia: revisa el envase']);
     if (f.alcohol === false) o.push(['g', 'Sin alcohol']); else if (f.alcohol === true) o.push(['n', 'Contiene alcohol']);
     const emb = { ok: ['g', 'Embarazo y lactancia: sin alerta conocida'], consultar: ['y', 'Embarazo y lactancia: consulta antes'], evitar: ['r', 'Embarazo y lactancia: evitar'] }[f.embarazo];
-    if (emb && (pr.embarazo || all)) o.push(emb);
-    if (f.sensible === 'revisar' && (pr.sensible || all)) o.push(['y', 'Piel sensible: prueba en una zona pequeña']);
+    if (emb && all) o.push(emb);          // en el resumen solo se muestran fragancia y alcohol; el detalle completo va en la hoja
+    if (f.sensible === 'revisar' && all) o.push(['y', 'Piel sensible: prueba en una zona pequeña']);
     (f.alergenos || []).forEach((a) => o.push(['n', 'Contiene ' + a]));
     const ord = { r: 0, y: 1, g: 2, n: 3 };
     return o.sort((a, b) => ord[a[0]] - ord[b[0]]);
@@ -83,6 +92,8 @@
     $$('.screen').forEach((s) => s.classList.toggle('on', s.id === 's-' + name));
     $$('.nb[data-go]').forEach((b) => b.classList.toggle('on', b.dataset.go === name));
     window.scrollTo(0, 0);
+    const sc = $('#s-' + name);   // la clase "enter" hace que sus elementos aparezcan uno tras otro (css/app.css)
+    sc.classList.add('enter'); clearTimeout(sc._enter); sc._enter = setTimeout(() => sc.classList.remove('enter'), 900);
     document.dispatchEvent(new CustomEvent('sl:screen', { detail: name }));
     if (name === 'home') renderHome(); else if (name === 'search') renderSearch(); else if (name === 'compare') renderCompare(); else if (name === 'list') renderList(); else if (name === 'history') renderHistory();
   }
@@ -98,7 +109,7 @@
   /* ---------- Buscar ---------- */
   let qcat = '', qtext = '';
   function renderSearch() {
-    $('#qchips').innerHTML = '<button class="chp' + (qcat ? '' : ' on') + '" data-c="">Todo</button>' + Object.keys(C.CATEGORIAS).map((k) => '<button class="chp' + (qcat === k ? ' on' : '') + '" data-c="' + k + '">' + C.CATEGORIAS[k].emoji + ' ' + C.CATEGORIAS[k].nombre + '</button>').join('');
+    $('#qchips').innerHTML = '<button class="chp' + (qcat ? '' : ' on') + '" data-c="">Todo</button>' + Object.keys(C.CATEGORIAS).map((k) => '<button class="chp' + (qcat === k ? ' on' : '') + '" data-c="' + k + '">' + ico('cat-' + C.CATEGORIAS[k].icono) + ' ' + C.CATEGORIAS[k].nombre + '</button>').join('');
     $$('#qchips .chp').forEach((b) => b.addEventListener('click', () => { qcat = b.dataset.c; renderSearch(); }));
     const t = qtext.trim().toLowerCase();
     const list = S.cat.filter((p) => (!qcat || p.categoria === qcat) && (!t || (p.marca + ' ' + p.nombre + ' ' + catMeta(p).nombre + ' ' + (p.foco || '')).toLowerCase().includes(t)));
@@ -248,7 +259,7 @@
     stageTok++; if (model3) { model3.destroy(); model3 = null; }
     const ar = !!fromScan && !!stream;
     S.cur = p; S.pvFromScan = !!fromScan; S.arMode = ar; S.view = 'pv';
-    $('#pvName').textContent = p.nombre; $('#pvBrand').textContent = p.marca + ' · ' + p.formato;
+    $('#pvImg').innerHTML = icBubble(p); $('#pvName').textContent = p.nombre; $('#pvBrand').textContent = p.marca + ' · ' + p.formato;
     const sm = sema(p), pr = unitTxt(p);
     const card = (k, tit, color, body, delay) => '<button class="glass acard' + (ar ? ' ar' : '') + '" data-k="' + k + '" style="--ac:' + color + ';animation-delay:' + delay + 's"><b>' + tit + '</b><span class="more" aria-hidden="true"></span>' + body + '</button>';
     const c1 = card('sirve', 'Para qué sirve', 'var(--blue)', esc(p.resumen), 0.35);
@@ -276,7 +287,7 @@
       $('#arCards').innerHTML = ''; $('#rowT').innerHTML = c1 + c2; $('#rowB').innerHTML = c3 + c4;
       $('#stage').innerHTML = '<div class="hero2">' + icBubble(p, 'xl') + '<b>' + esc(p.marca) + '</b><span>' + esc(p.nombre) + '</span></div>';
       const tk = ++stageTok;   // el 3D (three.js) se descarga recién aquí, no al abrir la app
-      loadJS('lib/three.min.js').then(() => loadJS('js/model3d.js?v=22')).then(() => {
+      loadJS('lib/three.min.js').then(() => loadJS('js/model3d.js?v=' + VER)).then(() => {
         if (tk !== stageTok || S.cur !== p || !$('#pv').classList.contains('on') || S.arMode) return;
         const m = SL.Model3D && SL.Model3D.mount($('#stage'), p); if (m) model3 = m;
       }).catch(() => {});
@@ -395,24 +406,41 @@
     if (DEBUG) $('#arDbg').textContent = 'ok:' + t.ok + ' sad:' + t.score.toFixed(1) + ' x:' + ax.toFixed(0) + ' y:' + ay.toFixed(0);
   }
 
-  function syncAdd() {
+  /* Lista de compra: una sola vía para agregar y quitar, desde la ficha o desde el historial */
+  const saveList = () => { sset('lista', S.list); badge(); };
+  function toggleList(id) {
+    const had = !!inList(id);
+    if (had) S.list = S.list.filter((i) => i.id !== id); else { S.list.push({ id, qty: 1 }); uso('Mi lista'); }
+    saveList(); return !had;
+  }
+  function syncAdd(animate) {
     const b = $('#pvAdd'), on = !!(S.cur && inList(S.cur.id));
-    b.classList.toggle('sel', on); b.textContent = on ? '✓ En mi lista' : '＋ A mi lista';
+    b.classList.toggle('sel', on); b.innerHTML = on ? ico('check') + ' En mi lista' : ico('plus') + ' A mi lista';
+    if (animate) { b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop'); }
+  }
+  /* Un punto sale del botón y vuela hasta "Mi lista" de la barra inferior */
+  function fly(from) {
+    const to = $('.nb[data-go="list"]'); if (!from || !to || !from.animate || reduceMotion()) return;
+    const a = from.getBoundingClientRect(), b = to.getBoundingClientRect(), d = document.createElement('div');
+    const x0 = a.left + a.width / 2 - 9, y0 = a.top + a.height / 2 - 9, x1 = b.left + b.width / 2 - 9, y1 = b.top + b.height / 2 - 9;
+    d.className = 'fly'; document.body.appendChild(d);
+    d.animate([{ transform: 'translate(' + x0 + 'px,' + y0 + 'px) scale(1)', opacity: 1 }, { transform: 'translate(' + (x0 + x1) / 2 + 'px,' + (Math.min(y0, y1) - 70) + 'px) scale(1.25)', opacity: 1, offset: .5 }, { transform: 'translate(' + x1 + 'px,' + y1 + 'px) scale(.35)', opacity: .3 }], { duration: 620, easing: 'cubic-bezier(.4,0,.2,1)' }).onfinish = () => d.remove();
   }
   $('#pvAdd').addEventListener('click', () => {
     const p = S.cur; if (!p) return;
-    const it = inList(p.id);
-    if (it) S.list = S.list.filter((i) => i.id !== p.id); else { S.list.push({ id: p.id, qty: 1 }); uso('Mi lista'); }
-    sset('lista', S.list); syncAdd(); badge();
-    if (!it) toast('Agregado a tu lista ✓', 1500);
+    const added = toggleList(p.id); syncAdd(true);
+    if (added) toast('Agregado a tu lista', 1500);
   });
   $('#pvCompare').addEventListener('click', () => {
     const p = S.cur; if (!p) return;
     S.cmp = { a: p, b: null }; closePV(); openScan('slotB');
   });
+  let lastN = null;
   function badge() {
-    const n = S.list.reduce((s, i) => s + i.qty, 0), b = $('#badge');
+    const n = S.list.reduce((t, i) => t + i.qty, 0), b = $('#badge');
     b.textContent = n; b.classList.toggle('hidden', !n);
+    if (lastN !== null && n > lastN) { b.classList.remove('bump'); void b.offsetWidth; b.classList.add('bump'); }
+    lastN = n;
   }
 
   /* ---------- Hoja de detalle ---------- */
@@ -420,49 +448,53 @@
     const p = S.cur; if (!p) return;
     let h = '<div class="grip"></div>';
     const adv = (p.advertencias || []).map((a) => '<div class="note">' + esc(a) + '</div>').join('');
-    const aviso = '<p class="legal" style="margin-top:14px">' + esc(p.categoria === 'salud' ? C.TEXTO.AVISO_SALUD : C.TEXTO.AVISO) + '</p>';
+    const aviso = '<p class="legal sheet-end">' + esc(p.categoria === 'salud' ? C.TEXTO.AVISO_SALUD : C.TEXTO.AVISO) + '</p>';
     if (k === 'sirve') {
-      h += '<h3>Para qué sirve</h3><p style="font-weight:600">' + esc(p.resumen) + '</p><h4>Enfoque</h4><p style="font-weight:700">' + esc(p.foco.charAt(0).toUpperCase() + p.foco.slice(1)) + '.</p>' + adv + aviso;
+      h += '<h3>Para qué sirve</h3><p>' + esc(p.resumen) + '</p><h4>Enfoque</h4><p class="strong">' + esc(p.foco.charAt(0).toUpperCase() + p.foco.slice(1)) + '.</p>' + adv + aviso;
     } else if (k === 'ingr') {
       h += '<h3>Ingredientes y advertencias</h3><div>' + pills(sema(p, true)) + '</div><h4>Ingredientes clave</h4><ul>' + (p.ingredientes || []).map((i) => '<li>' + esc(i) + '</li>').join('') + '</ul>' +
         adv + aviso;
     } else if (k === 'precio') {
-      h += '<h3>Precio por unidad</h3><p class="big">' + clp(p.precio) + ' <small>· ' + esc(p.formato) + '</small></p><p style="font-weight:800;margin-top:4px">' + esc(unitTxt(p)) + '</p>';
+      h += '<h3>Precio por unidad</h3><p class="big">' + clp(p.precio) + ' <small>· ' + esc(p.formato) + '</small></p><p class="price">' + esc(unitTxt(p)) + '</p>';
       const alts = (p.alternativas || []).map((id) => S.byId[id]).filter(Boolean);
       if (alts.length) {
         h += '<h4>Alternativas</h4>' + alts.map((a) => {
           let d = ''; if (a.cantidad.unidad === p.cantidad.unidad) { const pc = Math.round((unitVal(a) / unitVal(p) - 1) * 100); d = pc === 0 ? 'Mismo precio por unidad' : (pc < 0 ? Math.abs(pc) + '% más barato por unidad' : pc + '% más caro por unidad'); }
-          return '<button class="alt" data-id="' + esc(a.id) + '">' + icBubble(a) + '<span><b>' + esc(a.marca) + ' ' + esc(a.nombre) + '</b><span class="s">' + esc(a.formato) + (d ? ' · ' + d : '') + '</span></span><span class="p">' + clp(a.precio) + '<br><span class="s">' + esc(unitTxt(a)) + '</span></span></button>';
+          return '<button class="altp" data-id="' + esc(a.id) + '">' + icBubble(a) + '<span><b>' + esc(a.marca) + ' ' + esc(a.nombre) + '</b><span class="s">' + esc(a.formato) + (d ? ' · ' + d : '') + '</span></span><span class="p">' + clp(a.precio) + '<br><span class="s">' + esc(unitTxt(a)) + '</span></span></button>';
         }).join('');
       } else h += '<p class="legal">No hay alternativas cargadas para este producto.</p>';
       h += '<p class="legal">El precio por unidad permite comparar formatos distintos de forma justa. Revisa el precio vigente en caja.</p>';
     } else {
-      h += '<h3>Cómo usar</h3><p style="font-weight:700">' + esc(p.cuando) + '</p><ol>' + (p.pasos || []).map((s) => '<li>' + esc(s) + '</li>').join('') + '</ol>' + adv + aviso;
+      h += '<h3>Cómo usar</h3><p class="strong">' + esc(p.cuando) + '</p><ol>' + (p.pasos || []).map((s) => '<li>' + esc(s) + '</li>').join('') + '</ol>' + adv + aviso;
     }
-    $('#sheet').innerHTML = h; $('#sheetBg').classList.add('on');
-    $$('#sheet .alt').forEach((b) => b.addEventListener('click', () => { closeSheet(); openProduct(S.byId[b.dataset.id], S.pvFromScan); }));
+    $('#sheet').innerHTML = h; clearTimeout(sheetT); $('#sheetBg').classList.remove('closing'); $('#sheetBg').classList.add('on');
+    $$('#sheet .altp').forEach((b) => b.addEventListener('click', () => { closeSheet(); openProduct(S.byId[b.dataset.id], S.pvFromScan); }));
   }
-  function closeSheet() { $('#sheetBg').classList.remove('on'); }
+  let sheetT = 0;
+  function closeSheet() {   // se desliza hacia abajo antes de ocultarse
+    const bg = $('#sheetBg'); if (!bg.classList.contains('on') || bg.classList.contains('closing')) return;
+    bg.classList.add('closing'); clearTimeout(sheetT); sheetT = setTimeout(() => bg.classList.remove('on', 'closing'), 220);
+  }
   $('#sheetBg').addEventListener('click', (e) => { if (e.target.id === 'sheetBg') closeSheet(); });
 
   /* ---------- Comparar ---------- */
   function renderCompare() {
     const a = S.cmp.a, b = S.cmp.b, el = $('#s-compare');
     if (a && b) uso('Comparación');
-    let h = '<h2 style="font-size:28px;font-weight:950;margin-bottom:12px">Comparar ⚖️</h2>';
+    let h = '<h2 class="page-t">Comparar</h2>';
     const col = (p, slot) => p
-      ? '<div class="card cmpP"><div class="mini">' + (p.imagen ? '<img src="' + esc(p.imagen) + '" alt="" referrerpolicy="no-referrer">' : catMeta(p).emoji) + '</div><b>' + esc(p.marca) + '</b><small>' + esc(p.nombre) + '</small><button class="btn sm alt" data-slot="' + slot + '">Escanear otro</button><button class="btn sm ghost" data-pick="' + slot + '">Buscar otro</button><button class="btn sm ghost" data-clear="' + slot + '" style="color:#c0392b;margin-top:2px">✕ Quitar</button></div>'
-      : '<div class="card cmpP"><div class="mini">➕</div><b>Elige un producto</b><button class="btn sm" data-slot="' + slot + '">Escanear</button><button class="btn sm ghost" data-pick="' + slot + '">Buscar por nombre</button></div>';
+      ? '<div class="card cmpP"><div class="mini">' + (p.imagen ? '<img src="' + esc(p.imagen) + '" alt="" referrerpolicy="no-referrer">' : catIco(p)) + '</div><b>' + esc(p.marca) + '</b><small>' + esc(p.nombre) + '</small><button class="btn sm alt" data-slot="' + slot + '">Escanear otro</button><button class="btn sm ghost" data-pick="' + slot + '">Buscar otro</button><button class="btn sm ghost danger" data-clear="' + slot + '">' + ico('x') + ' Quitar</button></div>'
+      : '<div class="card cmpP"><div class="mini empty-slot">' + ico('plus') + '</div><b>Elige un producto</b><button class="btn sm" data-slot="' + slot + '">Escanear</button><button class="btn sm ghost" data-pick="' + slot + '">Buscar por nombre</button></div>';
     h += '<div class="cmpH">' + col(a, 'a') + col(b, 'b') + '</div>';
     if (a && b) {
       const same = a.cantidad.unidad === b.cantidad.unidad;
       const ua = unitVal(a), ub = unitVal(b), best = same ? (ua < ub ? 'a' : ub < ua ? 'b' : '') : '';
-      const bestPill = (s) => best === s ? ' <span class="pill g">Mejor</span>' : '';
+      const bestPill = (k) => best === k ? ' <span class="pill g">Mejor</span>' : '';
       const fr = (p) => p.flags.fragancia === false ? '<span class="pill g">Sin fragancia</span>' : p.flags.fragancia === true ? '<span class="pill n">Con fragancia</span>' : '<span class="pill y">Revisar envase</span>';
       const al = (p) => p.flags.alcohol === false ? '<span class="pill g">Sin alcohol</span>' : p.flags.alcohol === true ? '<span class="pill n">Con alcohol</span>' : '<span class="pill y">Revisar envase</span>';
       const em = (p) => ({ ok: '<span class="pill g">Sin alerta</span>', consultar: '<span class="pill y">Consultar</span>', evitar: '<span class="pill r">Evitar</span>' }[p.flags.embarazo] || '<span class="pill y">Consultar</span>');
       const row = (t, x, y) => '<div class="cm"><small>' + t + '</small><span>' + x + '</span><span>' + y + '</span></div>';
-      h += '<div class="card" style="margin-top:12px;padding:6px 14px">' +
+      h += '<div class="card cmpT">' +
         row('Para qué sirve', esc(a.foco), esc(b.foco)) +
         row('Precio', clp(a.precio), clp(b.precio)) +
         row('Precio por unidad', esc(unitTxt(a)) + bestPill('a'), esc(unitTxt(b)) + bestPill('b')) +
@@ -474,65 +506,65 @@
       else if (same && best) { const w = best === 'a' ? a : b, l = best === 'a' ? b : a, d = Math.round((1 - unitVal(w) / unitVal(l)) * 100); tip = '<b>' + esc(w.marca + ' ' + w.nombre) + '</b> sale ' + d + '% más barato por ' + esc(w.cantidad.unidad) + '.' + (a.foco !== b.foco ? ' Si buscas <b>' + esc(a.foco) + '</b>, mira ' + esc(a.marca) + '; si buscas <b>' + esc(b.foco) + '</b>, mira ' + esc(b.marca) + '.' : ''); }
       else if (a.foco !== b.foco) tip = 'Si buscas <b>' + esc(a.foco) + '</b>, mira ' + esc(a.marca) + '. Si buscas <b>' + esc(b.foco) + '</b>, mira ' + esc(b.marca) + '.';
       else tip = 'Son parecidos. Revisa el precio por unidad y los ingredientes.';
-      h += '<div class="card tip"><span style="font-size:22px">🎯</span><span>' + tip + '</span></div>';
-      h += '<div style="margin-top:14px;display:grid;gap:10px"><button class="btn" data-open="a">Ver ' + esc(a.marca) + '</button><button class="btn alt" data-open="b">Ver ' + esc(b.marca) + '</button></div>';
-    } else h += '<p class="legal" style="margin-top:16px">Escanea dos productos (o elígelos por nombre) para verlos lado a lado, con precio por unidad e ingredientes.</p>';
+      h += '<div class="card tip">' + ico('target') + '<span>' + tip + '</span></div>';
+      h += '<div class="cmpGo"><button class="btn" data-open="a">Ver ' + esc(a.marca) + '</button><button class="btn alt" data-open="b">Ver ' + esc(b.marca) + '</button></div>';
+    } else h += '<p class="legal">Escanea dos productos (o elígelos por nombre) para verlos lado a lado, con precio por unidad e ingredientes.</p>';
     el.innerHTML = h;
-    $$('#s-compare [data-slot]').forEach((b2) => b2.addEventListener('click', () => openScan(b2.dataset.slot === 'a' ? 'slotA' : 'slotB')));
-    $$('#s-compare [data-pick]').forEach((b2) => b2.addEventListener('click', () => { S.pick = b2.dataset.pick; go('search'); }));
-    $$('#s-compare [data-clear]').forEach((b2) => b2.addEventListener('click', () => { S.cmp[b2.dataset.clear] = null; renderCompare(); }));
-    $$('#s-compare [data-open]').forEach((b2) => b2.addEventListener('click', () => openProduct(S.cmp[b2.dataset.open], false)));
+    $$('#s-compare [data-slot]').forEach((x) => x.addEventListener('click', () => openScan(x.dataset.slot === 'a' ? 'slotA' : 'slotB')));
+    $$('#s-compare [data-pick]').forEach((x) => x.addEventListener('click', () => { S.pick = x.dataset.pick; go('search'); }));
+    $$('#s-compare [data-clear]').forEach((x) => x.addEventListener('click', () => { S.cmp[x.dataset.clear] = null; renderCompare(); }));
+    $$('#s-compare [data-open]').forEach((x) => x.addEventListener('click', () => openProduct(S.cmp[x.dataset.open], false)));
   }
 
   /* ---------- Mi lista ---------- */
+  /* Precio con Mi Salcobrand: si el producto trae "precioMi" se usa ese; si no, el % general de config.js (MI_SALCO.pct) */
+  function pMi(p) {
+    if (!C.MI_SALCO.activo) return p.precio;
+    if (p.precioMi > 0 && p.precioMi < p.precio) return p.precioMi;
+    const pc = +C.MI_SALCO.pct || 0;
+    return pc > 0 ? Math.round(p.precio * (1 - pc / 100)) : p.precio;
+  }
   function renderList() {
     const el = $('#s-list'), items = S.list.map((i) => ({ p: S.byId[i.id], qty: i.qty })).filter((i) => i.p);
-    let h = '<h2 style="font-size:28px;font-weight:950;margin-bottom:12px">Mi lista 🛒</h2>';
-    if (!items.length) h += '<div class="card empty">Aún no has agregado productos.<br>Escanea uno y toca “A mi lista”.<div style="margin-top:14px"><button class="btn" id="lEmpty">Escanear 📷</button></div></div>';
+    let h = '<h2 class="page-t">Mi lista</h2>';
+    if (!items.length) h += '<div class="card empty">Aún no has agregado productos.<br>Escanea uno y toca “A mi lista”.<br><button class="btn" id="lEmpty">Escanear ' + ico('camera') + '</button></div>';
     else {
-      // Precio con Mi Salcobrand: si el producto trae "precioMi" se usa ese; si no, se aplica el % general de config.js (MI_SALCO.pct)
-      const pMi = (p) => {
-        if (!C.MI_SALCO.activo) return p.precio;
-        if (p.precioMi > 0 && p.precioMi < p.precio) return p.precioMi;
-        const pc = +C.MI_SALCO.pct || 0;
-        return pc > 0 ? Math.round(p.precio * (1 - pc / 100)) : p.precio;
-      };
       h += items.map((i) => {
         const dto = pMi(i.p) < i.p.precio;
-        const pr = dto ? '<s style="font-weight:700;font-size:12px;color:var(--muted);display:block;line-height:1.1">' + clp(i.p.precio * i.qty) + '</s><span style="color:#0a8f3c">' + clp(pMi(i.p) * i.qty) + '</span>' : clp(i.p.precio * i.qty);
-        return '<div class="card lit">' + icBubble(i.p) + '<div><b>' + esc(i.p.marca + ' ' + i.p.nombre) + '</b><span class="s">' + esc(i.p.formato) + (dto ? ' · con Mi Salcobrand' : '') + '</span></div><div class="p">' + pr + '</div><button class="x" data-rm="' + esc(i.p.id) + '" aria-label="Quitar">✕</button></div>';
+        const pr = dto ? '<s>' + clp(i.p.precio * i.qty) + '</s><span class="dto">' + clp(pMi(i.p) * i.qty) + '</span>' : clp(i.p.precio * i.qty);
+        return '<div class="card lit">' + icBubble(i.p) + '<div><b>' + esc(i.p.marca + ' ' + i.p.nombre) + '</b><span class="s">' + esc(i.p.formato) + (dto ? ' · con Mi Salcobrand' : '') + '</span></div><div class="p">' + pr + '</div><button class="x" data-rm="' + esc(i.p.id) + '" aria-label="Quitar">' + ico('x') + '</button></div>';
       }).join('');
-      const total = items.reduce((s, i) => s + i.p.precio * i.qty, 0);
-      const real = items.reduce((s, i) => s + pMi(i.p) * i.qty, 0);
-      const desc = total - real;
+      const total = items.reduce((t, i) => t + i.p.precio * i.qty, 0), real = items.reduce((t, i) => t + pMi(i.p) * i.qty, 0), desc = total - real;
       if (desc > 0) {
-        h += '<div class="card" style="font-size:15px;font-weight:800"><div style="display:flex;justify-content:space-between"><span>Total sin descuento</span><span>' + clp(total) + '</span></div>' +
-          '<div style="display:flex;justify-content:space-between;margin-top:6px;color:#0a8f3c"><span>Descuento Mi Salcobrand</span><span>− ' + clp(desc) + '</span></div>' +
-          '<div style="display:flex;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1.5px solid rgba(0,60,120,.12);font-weight:950;font-size:19px"><span>Total real</span><span>' + clp(real) + '</span></div>' +
-          '<p class="legal" style="margin-top:8px;font-weight:600">Ahorras ' + Math.round(desc / total * 100) + '% en toda tu compra usando tu código Mi Salcobrand en caja. Descuento referencial: confirma el valor final en caja.</p></div>';
-      } else h += '<div class="card" style="display:flex;justify-content:space-between;font-weight:950;font-size:17px"><span>Total referencial</span><span>' + clp(total) + '</span></div>';
-      h += '<div class="card qrbox" style="margin-top:12px"><small class="k" style="font-size:12px;font-weight:900;letter-spacing:.1em;color:var(--muted)">MUESTRA ESTE QR EN CAJA</small><div class="qr" id="qrBox"></div><p class="legal" style="margin-top:8px">Los precios son referenciales: confirma el valor vigente en caja.</p></div>';
+        h += '<div class="card sum"><div class="r"><span>Total sin descuento</span><span>' + clp(total) + '</span></div>' +
+          '<div class="r dto"><span>Descuento Mi Salcobrand</span><span>− ' + clp(desc) + '</span></div>' +
+          '<div class="r tot"><span>Total real</span><span>' + clp(real) + '</span></div>' +
+          '<p class="legal tight">Ahorras ' + Math.round(desc / total * 100) + '% en toda tu compra usando tu código Mi Salcobrand en caja. Descuento referencial: confirma el valor final en caja.</p></div>';
+      } else h += '<div class="card sum plain"><span>Total referencial</span><span>' + clp(total) + '</span></div>';
+      h += '<div class="card qrbox"><small class="k">MUESTRA ESTE QR EN CAJA</small><div class="qr" id="qrBox"></div><p class="legal tight">Los precios son referenciales: confirma el valor vigente en caja.</p></div>';
     }
     if (C.MI_SALCO.activo) h += '<div class="card misalco"><img src="img/mi-salcobrand.png" alt="Mi Salcobrand"><p>' + esc(C.MI_SALCO.largo) + '</p></div>';
-    if (items.length) h += '<button class="btn ghost" id="lClear" style="margin-top:8px">Vaciar lista</button>';
+    if (items.length) h += '<button class="btn ghost" id="lClear">Vaciar lista</button>';
     el.innerHTML = h;
     if (items.length && window.qrcode) {
       try {
-        const txt = 'SALCOLENTE:' + items.map((i) => i.p.ean + 'x' + i.qty).join(',');
-        const q = qrcode(0, 'M'); q.addData(txt); q.make();
+        const q = qrcode(0, 'M'); q.addData('SALCOLENTE:' + items.map((i) => i.p.ean + 'x' + i.qty).join(',')); q.make();
         $('#qrBox').innerHTML = q.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
       } catch (e) { console.warn(e); }
     }
-    $$('#s-list [data-rm]').forEach((b) => b.addEventListener('click', () => { S.list = S.list.filter((i) => i.id !== b.dataset.rm); sset('lista', S.list); badge(); renderList(); }));
-    const lc = $('#lClear'); if (lc) lc.addEventListener('click', () => { S.list = []; sset('lista', S.list); badge(); renderList(); });
+    $$('#s-list [data-rm]').forEach((x) => x.addEventListener('click', () => {
+      const row = x.closest('.lit'), quitar = () => { S.list = S.list.filter((i) => i.id !== x.dataset.rm); saveList(); renderList(); };
+      if (reduceMotion()) return quitar();
+      row.classList.add('rm'); setTimeout(quitar, 240);   // la fila se desliza antes de desaparecer
+    }));
+    const lc = $('#lClear'); if (lc) lc.addEventListener('click', () => { S.list = []; saveList(); renderList(); });
     const le = $('#lEmpty'); if (le) le.addEventListener('click', () => openScan('view'));
   }
 
   /* ---------- Historial de escaneos ---------- */
   function addHist(p) {
-    S.hist = S.hist.filter((h) => h.id !== p.id);
-    S.hist.unshift({ id: p.id, t: Date.now() });
-    S.hist = S.hist.slice(0, 50); sset('historial', S.hist);
+    S.hist = [{ id: p.id, t: Date.now() }].concat(S.hist.filter((h) => h.id !== p.id)).slice(0, 50);
+    sset('historial', S.hist);
   }
   function ago(t) {
     const m = Math.round((Date.now() - t) / 60000);
@@ -545,33 +577,42 @@
   }
   function renderHistory() {
     const el = $('#s-history'), items = S.hist.map((h) => ({ p: S.byId[h.id], t: h.t })).filter((i) => i.p);
-    let h = '<h2 style="font-size:28px;margin-bottom:4px">Historial</h2><p style="color:var(--muted);font-weight:700;margin-bottom:14px">Los productos que escaneaste, del más reciente al más antiguo. Tócalos para ver su información de nuevo.</p>';
+    let h = '<h2 class="page-t hist-t">Historial</h2><p class="hist-sub">Los productos que escaneaste, del más reciente al más antiguo. Tócalos para ver su información de nuevo.</p>';
     if (!items.length) {
-      h += '<div class="empty">Aún no has escaneado productos.<br><button class="btn" id="hEmpty" style="margin-top:14px">Escanear un producto 📷</button></div>';
+      h += '<div class="empty">Aún no has escaneado productos.<br><button class="btn" id="hEmpty">Escanear un producto ' + ico('camera') + '</button></div>';
     } else {
       h += items.map((i) => {
         const on = !!inList(i.p.id);
         return '<div class="hrow"><button class="pit" data-id="' + esc(i.p.id) + '">' + icBubble(i.p) + '<span><b>' + esc(i.p.marca) + ' ' + esc(i.p.nombre) + '</b><span class="s">' + esc(i.p.formato) + ' · ' + esc(catMeta(i.p).nombre) + '</span><span class="htime">' + ago(i.t) + '</span></span><span class="p">' + clp(i.p.precio) + '<small>' + unitTxt(i.p) + '</small></span></button>' +
-          '<button class="hadd' + (on ? ' sel' : '') + '" data-add="' + esc(i.p.id) + '" aria-label="' + (on ? 'Quitar de mi lista' : 'Agregar a mi lista') + '"><span>' + (on ? '✓' : '＋') + '</span>' + (on ? 'En lista' : 'Lista') + '</button></div>';
-      }).join('') + '<button class="btn ghost" id="hClear" style="margin-top:6px">Borrar historial</button>';
+          '<button class="hadd' + (on ? ' sel' : '') + '" data-add="' + esc(i.p.id) + '" aria-label="' + (on ? 'Quitar de mi lista' : 'Agregar a mi lista') + '"><span>' + ico(on ? 'check' : 'plus') + '</span>' + (on ? 'En lista' : 'Lista') + '</button></div>';
+      }).join('') + '<button class="btn ghost" id="hClear">Borrar historial</button>';
     }
     el.innerHTML = h;
-    $$('#s-history .pit').forEach((b) => b.addEventListener('click', () => openProduct(S.byId[b.dataset.id], false)));
-    $$('#s-history [data-add]').forEach((b) => b.addEventListener('click', () => {
-      const id = b.dataset.add;
-      if (inList(id)) S.list = S.list.filter((i) => i.id !== id); else { S.list.push({ id, qty: 1 }); toast('Agregado a tu lista ✓', 1500); }
-      sset('lista', S.list); badge(); renderHistory();
+    $$('#s-history .pit').forEach((x) => x.addEventListener('click', () => openProduct(S.byId[x.dataset.id], false)));
+    $$('#s-history [data-add]').forEach((x) => x.addEventListener('click', () => {
+      const added = toggleList(x.dataset.add);
+      if (added) fly(x);
+      renderHistory();
     }));
     const hc = $('#hClear'); if (hc) hc.addEventListener('click', () => { S.hist = []; sset('historial', S.hist); renderHistory(); });
     const he = $('#hEmpty'); if (he) he.addEventListener('click', () => openScan('view'));
   }
   $('#openHist').addEventListener('click', () => { S.pick = null; go('history'); });
 
-  /* ---------- Inicio ---------- */
+  /* Teclado: Escape cierra lo que esté arriba (hoja, producto o escáner) */
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if ($('#sheetBg').classList.contains('on')) closeSheet();
+    else if (S.view === 'pv') $('#pvBack').click();
+    else if (S.view === 'scan') $('#scClose').click();
+  });
+
+  /* ---------- Arranque ---------- */
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
   (async function init() {
     await loadCatalog();
     badge(); renderHome();
+    $('#s-home').classList.add('enter'); setTimeout(() => $('#s-home').classList.remove('enter'), 900);
     SL.app = { go, onHome: () => S.screen === 'home' && !S.view && !document.body.classList.contains('cam') && !$('#pv').classList.contains('on'), screen: () => S.screen };
     document.dispatchEvent(new CustomEvent('sl:ready'));
     if (DEBUG) window.__SL = { S, openProduct, openScan, go, found, AR: SL.AR, AP };

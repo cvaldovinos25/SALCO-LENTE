@@ -190,7 +190,8 @@
         "tipo": "tubo",
         "color": "#fff3b0",
         "acento": "#f29100"
-      }
+      },
+      "imagen": "img/productos/thumb/fps-a.webp"
     },
     {
       "id": "fps-b",
@@ -231,7 +232,8 @@
         "tipo": "tubo",
         "color": "#ffe0d6",
         "acento": "#ff5b3a"
-      }
+      },
+      "imagen": "img/productos/thumb/fps-b.webp"
     },
     {
       "id": "panales",
@@ -273,7 +275,8 @@
         "tipo": "caja",
         "color": "#d9f0ff",
         "acento": "#007dc3"
-      }
+      },
+      "imagen": "img/productos/thumb/panales.webp"
     },
     {
       "id": "crema-panal",
@@ -314,7 +317,8 @@
         "tipo": "tubo",
         "color": "#eafbea",
         "acento": "#2f8f4e"
-      }
+      },
+      "imagen": "img/productos/thumb/crema-panal.webp"
     },
     {
       "id": "toallitas",
@@ -354,7 +358,8 @@
         "tipo": "caja",
         "color": "#e8f7ff",
         "acento": "#00a9e8"
-      }
+      },
+      "imagen": "img/productos/thumb/toallitas.webp"
     },
     {
       "id": "vitd-60",
@@ -397,7 +402,8 @@
         "tipo": "frasco",
         "color": "#ffe9b8",
         "acento": "#f29100"
-      }
+      },
+      "imagen": "img/productos/thumb/vitd-60.webp"
     },
     {
       "id": "vitd-30",
@@ -440,7 +446,8 @@
         "tipo": "frasco",
         "color": "#ffe9b8",
         "acento": "#d97b00"
-      }
+      },
+      "imagen": "img/productos/thumb/vitd-30.webp"
     },
     {
       "id": "omega3",
@@ -483,7 +490,8 @@
         "tipo": "frasco",
         "color": "#cfeaf5",
         "acento": "#007dc3"
-      }
+      },
+      "imagen": "img/productos/thumb/omega3.webp"
     },
     {
       "id": "para-a",
@@ -527,7 +535,8 @@
         "tipo": "caja",
         "color": "#ffffff",
         "acento": "#ff5b3a"
-      }
+      },
+      "imagen": "img/productos/thumb/para-a.webp"
     },
     {
       "id": "para-bio",
@@ -571,7 +580,8 @@
         "tipo": "caja",
         "color": "#f0fadb",
         "acento": "#6a9a00"
-      }
+      },
+      "imagen": "img/productos/thumb/para-bio.webp"
     },
     {
       "id": "shampoo",
@@ -610,7 +620,8 @@
         "tipo": "bomba",
         "color": "#eadcff",
         "acento": "#7a4fd6"
-      }
+      },
+      "imagen": "img/productos/thumb/shampoo.webp"
     },
     {
       "id": "sandtan",
@@ -681,7 +692,8 @@
           "frente": "img/productos/sandtan-frente.png",
           "reverso": "img/productos/sandtan-reverso.png"
         }
-      }
+      },
+      "imagen": "img/productos/thumb/sandtan.webp"
     },
     {
       "id": "ferranem",
@@ -737,7 +749,8 @@
           }
         }
       },
-      "precioMi": 14255
+      "precioMi": 14255,
+      "imagen": "img/productos/thumb/ferranem.webp"
     },
     {
       "id": "oleo-petrizzio",
@@ -800,7 +813,8 @@
         },
         "vidrioDesde": 0.287
       },
-      "precioMi": 4490
+      "precioMi": 4490,
+      "imagen": "img/productos/thumb/oleo-petrizzio.webp"
     }
   ]
 }

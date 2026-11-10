@@ -19,10 +19,10 @@
   const lset = (k, v) => { try { localStorage.setItem(k, v); } catch (e) { /* sin almacenamiento: sigue funcionando en memoria */ } };
 
   function boot() {
-    const cfg = Object.assign({ URL: '', PRIMERA_S: 120, VISIBLE_S: 20, REPETIR_S: 300, MAX_APARICIONES: 3, SILENCIO_DIAS: 30 }, (SL.CONFIG && SL.CONFIG.ENCUESTA) || {});
+    const cfg = Object.assign({ URL: '', PRIMERA_S: 120 }, (SL.CONFIG && SL.CONFIG.ENCUESTA) || {});
     if (test) { cfg.PRIMERA_S = 5; }
-    const st = { respondida: false, funciones: [], uso: 0, next: cfg.PRIMERA_S, shown: 0, left: 0, bubble: null, rating: 0, inSurvey: false, sent: false };
-    
+    const st = { respondida: false, funciones: [], uso: 0, bubble: null, rating: 0, inSurvey: false, sent: false };
+
     // recorrido por la herramienta, en orden y con repeticiones (se omiten solo las repeticiones seguidas): Escáner → Mi lista → Comparación → Escáner...
     document.addEventListener('sl:uso', (e) => { const f = st.funciones; if (e.detail && f[f.length - 1] !== e.detail && f.length < 40) f.push(e.detail); });
 
@@ -60,13 +60,13 @@
     function sync() {
       const b = st.bubble || (st.bubble = makeBubble());
       const on = SL.app.onHome() && !st.inSurvey && !st.respondida;   // respondida: no vuelve a aparecer mientras la página siga abierta (al reabrirla con el QR, vuelve)
-      if (on && b.hidden) { b.classList.remove('out'); b.hidden = false; }
+      if (on && b.hidden) { b.hidden = false; }
       else if (!on && !b.hidden) { b.hidden = true; }
       b.classList.toggle('open', st.uso >= cfg.PRIMERA_S);
     }
 
     /* ---------- Pantalla de la encuesta ---------- */
-    function abrir() { st.opened = true; SL.app.go('survey'); }
+    function abrir() { SL.app.go('survey'); }
     function reset() {
       st.rating = 0; st.sent = false;
       document.querySelectorAll('#svScale button').forEach((x) => x.setAttribute('aria-checked', 'false'));
