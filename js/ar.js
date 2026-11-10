@@ -255,5 +255,14 @@
   AR.stop = function () { runId++; AR.running = false; cancelAnimationFrame(raf); tpl = null; pos = null; target = null; AR.last = null; };
   /* Fija el código que se sigue (solo ese re-ancla). null = el primero que aparezca. */
   AR.lock = function (key) { target = key ? norm(key) : null; if (!key) { tpl = null; pos = null; AR.last = null; wSm = 0; } };
+  /* Ancla la información en un punto dado sin leer el código (reconocimiento por el frente).
+     det: centro y ancho del producto en px del video; 'ancho' del recorte ≈ ancho del producto. */
+  AR.anchorAt = function (det) {
+    if (!vid || !AR.running) return false;
+    const pre = grab(); if (!pre) return false;
+    pos = null; tpl = null; AR.last = null;
+    anchor({ x: det.x, y: det.y, w: det.w / 1.7 }, pre);
+    return !!(tpl && pos);
+  };
   AR.hasLock = () => !!(tpl && pos);
 })();

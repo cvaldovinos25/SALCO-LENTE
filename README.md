@@ -133,3 +133,10 @@ Usa el lector nativo del navegador (`BarcodeDetector`, en Chrome Android) y, si 
 - Los iconos son SVG de línea (mismo trazo que la barra inferior) definidos una sola vez en `index.html` (`<symbol id="i-...">`) y usados con `ico('nombre')` en `js/app.js`. Toman el color del texto: blanco sobre fondos azules y azul sobre fondos claros. Los iconos de categoría se eligen con `icono` en `CATEGORIAS` (`js/config.js`).
 - Las animaciones usan solo `opacity` y `transform`. Con "reducir movimiento" activado en el celular se muestran sin movimiento.
 - Al subir cambios, sube el número de versión (`?v=`) en `index.html` y en `sw.js` (`CACHE` y `V`).
+
+## Lectura automática: código de barras o frente del producto
+- Al abrir el escáner la app hace dos cosas a la vez: lee el código de barras y compara la cámara con la imagen del frente de cada producto (`js/frente.js`, *template matching*: desliza la referencia a varios tamaños y mide el parecido por forma y color). Lo que ocurra primero abre el producto, sin botones.
+- Para evitar errores, el reconocimiento por el frente exige el mismo producto 3 veces seguidas con un parecido alto y claro (umbrales en `SL.Frente`: `UMBRAL`, `VENTAJA`). Al abrir, la información AR queda anclada sobre el frente detectado.
+- **Ayuda en pantalla:** si no logra reconocer, avisa qué corregir: poca luz, reflejos, imagen borrosa o demasiado cerca ("aléjate"), demasiado lejos, y "casi lo reconozco" cuando el frente se parece pero no lo suficiente (pide mostrarlo de cara, derecho y sin reflejos). A los 10 s ofrece ingresar el código o buscar por nombre.
+- Solo participan los productos con el campo `frente` en `data/productos.json` (los que tienen imagen real: Centella, Cluny, Nivea, Ferranem, Óleo Petrizzio y Sandtan). Para agregar uno: crear su referencia en `img/productos/ref/` (PNG con transparencia, unos 64 px de ancho) y poner `"frente": "img/productos/ref/<id>.png"`.
+- Todo ocurre en el celular; no se guarda ni se envía ninguna imagen. En la encuesta aparece como "Reconocimiento por el frente".

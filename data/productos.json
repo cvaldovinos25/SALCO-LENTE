@@ -52,7 +52,8 @@
           "reverso": "img/productos/centella-reverso.png"
         },
         "vidrioDesde": 0.366
-      }
+      },
+      "frente": "img/productos/ref/centella.png"
     },
     {
       "id": "cluny",
@@ -101,7 +102,8 @@
           "frente": "img/productos/cluny-frente.png",
           "reverso": "img/productos/cluny-reverso.png"
         }
-      }
+      },
+      "frente": "img/productos/ref/cluny.png"
     },
     {
       "id": "nivea",
@@ -149,7 +151,8 @@
           "reverso": "img/productos/nivea-reverso.png"
         },
         "vidrioDesde": 0.15
-      }
+      },
+      "frente": "img/productos/ref/nivea.png"
     },
     {
       "id": "fps-a",
@@ -693,7 +696,8 @@
           "reverso": "img/productos/sandtan-reverso.png"
         }
       },
-      "imagen": "img/productos/thumb/sandtan.webp"
+      "imagen": "img/productos/thumb/sandtan.webp",
+      "frente": "img/productos/ref/sandtan.png"
     },
     {
       "id": "ferranem",
@@ -750,7 +754,8 @@
         }
       },
       "precioMi": 14255,
-      "imagen": "img/productos/thumb/ferranem.webp"
+      "imagen": "img/productos/thumb/ferranem.webp",
+      "frente": "img/productos/ref/ferranem.png"
     },
     {
       "id": "oleo-petrizzio",
@@ -814,7 +819,8 @@
         "vidrioDesde": 0.287
       },
       "precioMi": 4490,
-      "imagen": "img/productos/thumb/oleo-petrizzio.webp"
+      "imagen": "img/productos/thumb/oleo-petrizzio.webp",
+      "frente": "img/productos/ref/oleo-petrizzio.png"
     }
   ]
 }

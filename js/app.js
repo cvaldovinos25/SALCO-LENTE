@@ -172,7 +172,7 @@
     }
   }
   function found(p) {
-    uso(S.man ? 'Ingreso manual del código' : 'Escáner');
+    uso(S.man ? 'Ingreso manual del código' : S.via === 'frente' ? 'Reconocimiento por el frente' : 'Escáner');
     addHist(p);
     if (navigator.vibrate) try { navigator.vibrate(30); } catch (e) {}
     $('#reticle').classList.add('ok');
@@ -182,10 +182,40 @@
     setTimeout(() => { $('#reticle').classList.remove('ok'); $('#scan').classList.remove('on'); openProduct(p, !!stream && SL.AR.hasLock()); }, 300);
   }
 
+  /* ---------- Reconocer el producto por su frente (js/frente.js) ---------- */
+  // Mientras el escáner está abierto, además de leer el código de barras la app compara la cámara con la imagen
+  // real del frente de cada producto que la tenga (campo "frente" del catálogo). Lo que ocurra primero abre el producto.
+  // Para evitar errores, el mismo producto debe salir 3 veces seguidas con un parecido alto y claro.
+  let frTimer = 0, frBusy = false, frLast = '', frN = 0, frInfo = null;
+  function frOn() {
+    frOff(); frLast = ''; frN = 0; frInfo = null;
+    const items = S.cat.filter((p) => p.frente).map((p) => ({ id: p.id, src: p.frente }));
+    if (!items.length || !SL.Frente) return;
+    frTimer = setInterval(async () => {
+      if (frBusy || S.view !== 'scan' || !stream || document.hidden) return;
+      if (Date.now() - lastT < 1500) return;                       // se acaba de leer un código
+      frBusy = true;
+      let r = []; try { r = await SL.Frente.identify(vid, items, 1); } catch (e) { console.warn(e); }
+      frBusy = false;
+      if (S.view !== 'scan') return;
+      frInfo = r.length ? { t: Date.now(), score: r[0].score, h: r[0].h, vh: vid.videoHeight, nombre: (S.byId[r[0].id] || {}).nombre || 'el producto' } : null;
+      const d = SL.Frente.decide(r);
+      if (d.tipo !== 'seguro') { frLast = ''; frN = 0; return; }
+      if (d.top.id === frLast) frN++; else { frLast = d.top.id; frN = 1; }
+      if (frN >= 3) {
+        const p = S.byId[frLast]; frLast = ''; frN = 0; if (!p) return;
+        S.via = 'frente';
+        if (S.mode === 'view') SL.AR.anchorAt(d.top);               // la información queda sobre el frente aunque no se lea el código
+        found(p); S.via = '';
+      }
+    }, 450);
+  }
+  function frOff() { clearInterval(frTimer); frTimer = 0; frBusy = false; }
+
   /* ---------- Ayuda cuando no logra leer el código ---------- */
   // Mide la imagen cada medio segundo (luz, nitidez, brillo) y, si pasan unos segundos sin leer nada,
   // sugiere qué hacer. Los umbrales son aproximados: los avisos están redactados como sugerencia.
-  const HINT_DEF = { m: 'Apunta al código de barras', s: 'Acércate hasta que se vea nítido. Lo reconoceremos en segundos.' };
+  const HINT_DEF = { m: 'Apunta al código de barras o al frente', s: 'Centra el producto en el marco. Lo reconoceremos en segundos.' };
   let hintT0 = 0, hintTimer = 0, hintKey = '', hintSince = 0, hintSamples = [];
   function hintShow(h) {
     const key = h ? h.k : '';
@@ -197,12 +227,15 @@
     $('#manual').classList.toggle('attn', !!h && h.k === 'manual');
   }
   function hintPick(q, secs) {
+    const fr = frInfo && Date.now() - frInfo.t < 2500 ? frInfo : null;   // última comparación del frente (js/frente.js)
     if (q.L < 70 && q.p95 < 150) return { k: 'luz', m: 'Hay poca luz', s: 'Busca un lugar más iluminado o enciende la linterna del celular.' };
     if (q.sat > 0.35) return { k: 'brillo', m: 'Hay reflejos', s: 'Inclina un poco el producto o el celular para evitar el brillo.' };
     if (q.con >= 100 && q.sharp < 0.03) return { k: 'cerca', m: 'Se ve borroso', s: 'Aléjate un poco (unos 15 cm) y espera a que la cámara enfoque.' };
-    if (q.con < 60) return { k: 'lejos', m: 'No veo el código', s: 'Centra las barras en el marco y acércate un poco.' };
-    if (secs >= 8 && secs % 8 >= 4) return { k: 'acerca', m: 'Acércate un poco', s: 'El código debe ocupar buena parte del marco.' };
-    return { k: 'firme', m: 'Casi lo tengo', s: 'Mantén el código horizontal, firme y centrado en el marco.' };
+    if (fr && fr.h > fr.vh * 0.9) return { k: 'muycerca', m: 'Estás muy cerca', s: 'Aléjate un poco para que se vea el producto completo.' };
+    if (fr && fr.score >= 0.45) return { k: 'casi', m: 'Casi lo reconozco', s: 'Muéstrame el frente de ' + fr.nombre + ' de cara a la cámara, derecho y sin reflejos.' };
+    if (q.con < 60) return { k: 'lejos', m: 'No veo el producto', s: 'Acércalo hasta que llene buena parte del marco, con el código o el frente a la vista.' };
+    if (secs >= 8 && secs % 8 >= 4) return { k: 'acerca', m: 'Acércate un poco', s: 'El código o el frente debe ocupar buena parte del marco.' };
+    return { k: 'firme', m: 'Casi lo tengo', s: 'Mantén el producto firme y centrado, con el código horizontal o el frente de cara.' };
   }
   function hintTick() {
     if (S.view !== 'scan' || !stream) { hintShow(null); return; }
@@ -211,7 +244,7 @@
     const avg = (k) => hintSamples.reduce((a, s) => a + s[k], 0) / hintSamples.length;
     const secs = Math.floor((Date.now() - hintT0) / 1000);
     if (secs < 3) { hintShow(null); return; }   // antes de 10 s no se ofrece la entrada manual ni la búsqueda
-    if (secs >= 10) { $('#scan .sc-bot').classList.add('more'); hintShow({ k: 'manual', m: 'Estamos teniendo problemas para leer este código', s: 'Ingrésalo manualmente o busca el producto por su nombre.' }); return; }
+    if (secs >= 10) { $('#scan .sc-bot').classList.add('more'); hintShow({ k: 'manual', m: 'No logramos reconocer este producto', s: 'Ingresa el código manualmente o busca el producto por su nombre.' }); return; }
     const h = hintPick({ L: avg('L'), p95: avg('p95'), con: avg('con'), sat: avg('sat'), sharp: avg('sharp') }, secs);
     // evita que el texto cambie de golpe: mantiene cada aviso al menos 2,5 s
     if (hintKey && hintKey !== 'manual' && Date.now() - hintSince < 2500 && h.k !== 'luz') return;
@@ -231,10 +264,10 @@
     if (!ok) { S.pick = mode === 'slotA' ? 'a' : mode === 'slotB' ? 'b' : null; go('search'); return; }
     $('#pv').classList.remove('on', 'ar');
     $('#scan').classList.add('on'); S.view = 'scan';
-    SL.AR.lock(null); visionOn(); hintOn();
+    SL.AR.lock(null); visionOn(); hintOn(); frOn();
   }
   function closeScan(stopCam) {
-    scanTok++; S.view = null; $('#scan').classList.remove('on'); hintOff();
+    scanTok++; S.view = null; $('#scan').classList.remove('on'); hintOff(); frOff();
     if (stopCam) camStop();
   }
   $('#scClose').addEventListener('click', () => { closeScan(true); });
