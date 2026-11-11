@@ -821,6 +821,102 @@
       "precioMi": 4490,
       "imagen": "img/productos/thumb/oleo-petrizzio.webp",
       "frente": "img/productos/ref/oleo-petrizzio.png"
+    },
+    {
+      "id": "butterfly",
+      "ean": "0667559109860",
+      "categoria": "skincare",
+      "marca": "Bath & Body Works",
+      "nombre": "Butterfly Crema Corporal Hidratación Intensa",
+      "formato": "226 g",
+      "cantidad": {
+        "valor": 226,
+        "unidad": "g"
+      },
+      "precio": 14990,
+      "foco": "hidratar y suavizar la piel del cuerpo",
+      "resumen": "Crema corporal de hidratación intensa con vitamina E, aloe, mantecas de karité y cacao, y ácido hialurónico. Fragancia de néctar de frambuesa, pétalos de iris y vainilla ligera.",
+      "cuando": "Después de la ducha, sobre la piel limpia y seca",
+      "pasos": [
+        "Aplica sobre la piel limpia y seca",
+        "Masajea hasta que se absorba",
+        "Repite cuando sientas la piel seca"
+      ],
+      "ingredientes": [
+        "Water (Aqua, Eau)",
+        "Glycerin",
+        "Caprylic/Capric Triglyceride",
+        "Isohexadecane",
+        "Fragrance (Parfum)",
+        "Cetyl Alcohol",
+        "C12-15 Alkyl Benzoate",
+        "Glyceryl Stearate SE",
+        "Palmitic Acid",
+        "Stearic Acid",
+        "Dimethicone",
+        "Theobroma Cacao (Cocoa) Seed Butter",
+        "Butyrospermum Parkii (Shea) Butter",
+        "Phenoxyethanol",
+        "Polymethylsilsesquioxane",
+        "Acrylates/C10-30 Alkyl Acrylate Crosspolymer",
+        "Aminomethyl Propanol",
+        "PEG-100 Stearate",
+        "Hydrogenated Rapeseed Oil",
+        "Chlorphenesin",
+        "Sodium Dehydroacetate",
+        "Tocopherol",
+        "Disodium EDTA",
+        "Ethylhexylglycerin",
+        "Polyacrylate-13",
+        "Sodium Hyaluronate",
+        "Aloe Barbadensis Leaf Juice",
+        "Polyisobutene",
+        "Polysorbate 20",
+        "Hydroxycitronellal",
+        "Alpha-Isomethyl Ionone",
+        "Geraniol",
+        "Benzyl Salicylate",
+        "Citronellol",
+        "Limonene",
+        "Linalool",
+        "Coumarin"
+      ],
+      "flags": {
+        "fragancia": true,
+        "alcohol": null,
+        "embarazo": "consultar",
+        "sensible": "revisar",
+        "alergenos": [
+          "Hydroxycitronellal",
+          "Alpha-Isomethyl Ionone",
+          "Geraniol",
+          "Benzyl Salicylate",
+          "Citronellol",
+          "Limonene",
+          "Linalool",
+          "Coumarin"
+        ]
+      },
+      "advertencias": [
+        "Contiene fragancia y alérgenos de fragancia declarados en el envase. Si tu piel es sensible, prueba primero en una zona pequeña.",
+        "Solo para uso externo. Evita el contacto con los ojos."
+      ],
+      "alternativas": [
+        "nivea",
+        "oleo-petrizzio"
+      ],
+      "verificado": false,
+      "imagen": "img/productos/thumb/butterfly.webp",
+      "modelo": {
+        "tipo": "tubo",
+        "color": "#2b2f97",
+        "acento": "#8fd3e0",
+        "vistas": {
+          "frente": "img/productos/butterfly-frente.png",
+          "reverso": "img/productos/butterfly-reverso.png"
+        }
+      },
+      "frente": "img/productos/ref/butterfly.png"
     }
   ]
 }
